@@ -12,6 +12,8 @@ using namespace glm;
 #include "Graphics/Window.hpp"
 #include "Scenes/Base/Scene.hpp"
 
+#define RESOURCES = "../IscEngine/src/IscEngine/Resources/";
+
 namespace IscEngine {
 
 	class Engine {

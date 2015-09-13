@@ -22,7 +22,12 @@ std::vector<GLfloat> vertices = {
 	1.0f, -1.0f, 0.0f,
 	1.0f, -1.0f, 2.0f,
 	1.0f, 1.0f, 2.0f,
-	1.0f, 1.0f, 0.0f
+	1.0f, 1.0f, 0.0f,
+
+	-1.0f, -1.0f, 2.0f,
+	1.0f, -1.0f, 2.0f,
+	1.0f, 1.0f, 2.0f,
+	-1.0f, 1.0f, 2.0f,
 
 };
 
@@ -32,11 +37,19 @@ std::vector<GLuint> indexes = {
 	2, 3, 0,
 
 	4, 5, 6,
-	6, 7, 4
+	6, 7, 4,
+
+	8, 9, 10,
+	10, 11, 8
 
 };
 
 std::vector<GLfloat> colors = {
+
+	1.0f, 0.0f, 1.0f,
+	0.0f, 1.0f, 1.0f,
+	1.0f, 0.0f, 0.0f,
+	0.0f, 1.0f, 0.0f,
 
 	1.0f, 0.0f, 1.0f,
 	0.0f, 1.0f, 1.0f,
@@ -53,8 +66,8 @@ std::vector<GLfloat> colors = {
 Mesh* mesh;
 
 mat4 windowProjection;
-mat4 Model;
-mat4 MVP;
+mat4 VP;
+mat4 Model[10000];
 
 bool rotatingCamera = false;
 
@@ -64,18 +77,29 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsTime = sf::Time::Zero;
 
 	shader = new Shader();
-	shader->loadFromFiles("../IscEngine/src/IscEngine/Graphics/Shaders/shader.vsh", "../IscEngine/src/IscEngine/Graphics/Shaders/shader.fsh");
+	shader->loadFromFiles("shader.vsh", "shader.fsh");
 
-	camera.setPosition(vec3(0, 2, 5));
+	camera.setPosition(vec3(5, 6, 5));
 	camera.lookAt(vec3(0, 2, 0));
 
-	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 100.0f);
+	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
 	vec3 position(0.0f, 2.0f, 0.0f);
 	vec3 rotation(0.0f, 0.0f, 0.0f);
 	vec3 scale(1.0f, 1.0f, 1.0f);
 
-	Model = getModelView(position, rotation, scale);
+	for (int i = 0; i < 100; i++) {
+
+		for (int j = 0; j < 100; j++) {
+
+			vec3 position(i * 5, 2.0f, j * 5);
+			vec3 rotation(0.0f, 0.0f, 0.0f);
+			vec3 scale(1.0f, 1.0f + i / 10.f, 1.0f);
+			Model[i * 100 + j] = getModelView(position, rotation, scale);
+
+		}
+
+	}
 
 	mesh = new Mesh(vertices);
 	mesh->addIndexes(indexes);
@@ -135,21 +159,21 @@ void TestScene::processInput() {
 
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) && window->isFocused()) {
 
-		camera.setPosition(vec3(camera.getPosition().x + camera.getDirection().x * 2 * deltaTime.asSeconds(),
-			camera.getPosition().y + camera.getDirection().y * 2 * deltaTime.asSeconds(),
-			camera.getPosition().z + camera.getDirection().z * 2 * deltaTime.asSeconds()));
+		camera.setPosition(vec3(camera.getPosition().x + camera.getDirection().x * 20 * deltaTime.asSeconds(),
+								camera.getPosition().y + camera.getDirection().y * 20 * deltaTime.asSeconds(),
+								camera.getPosition().z + camera.getDirection().z * 20 * deltaTime.asSeconds()));
 
 	}
 
 	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
 
-		camera.setPosition(vec3(camera.getPosition().x - camera.getDirection().x * 2 * deltaTime.asSeconds(),
-			camera.getPosition().y - camera.getDirection().y * 2 * deltaTime.asSeconds(),
-			camera.getPosition().z - camera.getDirection().z * 2 * deltaTime.asSeconds()));
+		camera.setPosition(vec3(camera.getPosition().x - camera.getDirection().x * 20 * deltaTime.asSeconds(),
+								camera.getPosition().y - camera.getDirection().y * 20 * deltaTime.asSeconds(),
+								camera.getPosition().z - camera.getDirection().z * 20 * deltaTime.asSeconds()));
 
 	}
 
-	MVP = windowProjection * camera.getView() * Model;
+	VP = windowProjection * camera.getView();
 
 }
 
@@ -159,9 +183,35 @@ void TestScene::render() {
 	glColor3ub(255, 0, 0);
 
 	shader->bind();
-	shader->setUniformMatrix("MVP", &MVP[0][0]);
+	shader->setUniformMatrix("VP", &VP[0][0]);
 
-	mesh->render(GL_TRIANGLES);
+	uint objetos = 0;
+
+	for (int i = 0; i < 1; i++) {
+
+		for (int j = 0; j < 1; j++) {
+
+			mat4 model = Model[i * 100 + j];
+			vec3 modelPos = vec3(model[3].x, model[3].y, model[3].z);
+			vec4 positionWorld = VP * vec4(model[3].x, model[3].y, model[3].z, 1.0f);
+
+			/*vec3 out = vec3(camera.getView()[0]);
+			cout << out.x << ", " << out.y << ", " << out.z << endl;*/
+
+			if (positionWorld.z > 0.0f) {
+
+				objetos++;
+				shader->setUniformMatrix("M", &model[0][0]);
+				mesh->render(GL_TRIANGLES);
+
+			}
+
+		}
+
+	}
+
+	system("cls");
+	//cout << "Pintados " << objetos << " objetos" << endl;
 
 	shader->unbind();
 	window->display();

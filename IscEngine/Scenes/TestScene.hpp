@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Base/Scene.hpp"
+#include <GLM/gtx/vector_angle.hpp>
 
 namespace IscEngine { namespace Scenes {
 

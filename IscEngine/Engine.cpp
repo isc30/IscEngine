@@ -50,10 +50,10 @@ void Engine::setupOpenGL() {
 	// Clear color
 	glClearColor(1.0f, 0.7f, 0.1f, 1.0f);
 
-	// Backface culling
+	/* Backface culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	glFrontFace(GL_CCW);*/
 
 	// Depth control
 	glEnable(GL_DEPTH_TEST);
