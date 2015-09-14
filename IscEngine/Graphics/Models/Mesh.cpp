@@ -30,10 +30,6 @@ Mesh::Mesh(Buffer* vertexBuffer) {
 Mesh::~Mesh() {
 
 	delete this->vertexArray;
-	delete this->indexBuffer;
-	delete this->normalBuffer;
-	delete this->textureBuffer;
-	delete this->colorBuffer;
 
 }
 

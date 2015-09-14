@@ -23,7 +23,7 @@ void Engine::create(string title, uint width, uint height, uint style) {
 	sf::ContextSettings contextSettings;
 	contextSettings.depthBits = 24;
 	contextSettings.stencilBits = 8;
-	contextSettings.antialiasingLevel = 2;
+	contextSettings.antialiasingLevel = 0;
 
 	this->window = new Window(sf::VideoMode(width, height), title, style, contextSettings);
 	this->window->setVerticalSyncEnabled(false);

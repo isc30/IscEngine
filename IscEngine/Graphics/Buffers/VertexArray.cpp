@@ -12,9 +12,9 @@ VertexArray::VertexArray() {
 
 VertexArray::~VertexArray() {
 
-	for (unsigned int i = 0; i < this->buffers.size(); i++) {
+	for (int i = 0; i < this->buffers.size(); i++) {
 
-		delete this->buffers[i];
+		delete this->buffers.at(i);
 
 	}
 

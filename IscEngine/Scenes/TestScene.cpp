@@ -44,32 +44,41 @@ std::vector<GLuint> indexes = {
 
 };
 
-std::vector<GLfloat> colors = {
+std::vector<GLfloat> texture = {
 
-	1.0f, 0.0f, 1.0f,
-	0.0f, 1.0f, 1.0f,
-	1.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
 
-	1.0f, 0.0f, 1.0f,
-	0.0f, 1.0f, 1.0f,
-	1.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f,
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f,
 
-	1.0f, 0.0f, 1.0f,
-	0.0f, 1.0f, 1.0f,
-	1.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f
+	1.0f, 1.0f,
+	1.0f, 0.0f,
+	0.0f, 0.0f,
+	0.0f, 1.0f
 
 };
 
-Mesh* mesh;
-
 mat4 windowProjection;
 mat4 VP;
-mat4 Model[10000];
+
+/////////////////////////////////
+
+std::vector<GLfloat> allVertices;
+std::vector<GLuint> allIndexes;
+std::vector<GLfloat> allTextures;
+
+Mesh* mesh;
+
+/////////////////////////////////
 
 bool rotatingCamera = false;
+
+GLuint textureId;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -79,31 +88,80 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	shader = new Shader();
 	shader->loadFromFiles("shader.vsh", "shader.fsh");
 
-	camera.setPosition(vec3(5, 6, 5));
+	camera.setPosition(vec3(148 * 5, 25, 148 * 5));
 	camera.lookAt(vec3(0, 2, 0));
 
-	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
+	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 10000.0f);
 
-	vec3 position(0.0f, 2.0f, 0.0f);
-	vec3 rotation(0.0f, 0.0f, 0.0f);
-	vec3 scale(1.0f, 1.0f, 1.0f);
+	for (int i = 0; i < 300; i++) {
 
-	for (int i = 0; i < 100; i++) {
-
-		for (int j = 0; j < 100; j++) {
+		for (int j = 0; j < 300; j++) {
 
 			vec3 position(i * 5, 2.0f, j * 5);
-			vec3 rotation(0.0f, 0.0f, 0.0f);
-			vec3 scale(1.0f, 1.0f + i / 10.f, 1.0f);
-			Model[i * 100 + j] = getModelView(position, rotation, scale);
+
+			////////////////////////////////////////////////////////////////////////////////////////
+			for (int k = 0; k < vertices.size(); k += 3) {
+
+				allVertices.push_back(vertices.at(k) + position.x);
+				allVertices.push_back(vertices.at(k + 1) + position.y);
+				allVertices.push_back(vertices.at(k + 2) + position.z);
+
+			}
+
+			for (int k = 0; k < indexes.size(); k += 6) {
+
+				int offset = allIndexes.size() / 6 * 4;
+				allIndexes.push_back(offset); allIndexes.push_back(offset + 1); allIndexes.push_back(offset + 2);
+				allIndexes.push_back(offset + 2); allIndexes.push_back(offset + 3); allIndexes.push_back(offset);
+
+			}
+
+			for (int k = 0; k < texture.size(); k++) {
+
+				allTextures.push_back(texture.at(k));
+
+			}
 
 		}
 
 	}
 
-	mesh = new Mesh(vertices);
-	mesh->addIndexes(indexes);
-	mesh->addColors(colors);
+	mesh = new Mesh(allVertices);
+	mesh->addIndexes(allIndexes);
+	mesh->addTextureCoords(allTextures);
+
+	GLuint texture;
+	sf::Image image;
+
+	if (!image.loadFromFile("textura.png")) {
+
+		std::cout << "Texture loading error" << std::endl;
+
+	} else {
+
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,  //mip-map level
+			GL_RGBA, //We want the internal texture to have RGBA components
+			image.getSize().x, image.getSize().y,// size of texture
+			0, //border (0=no border, 1=border)
+			GL_RGBA, //format of the external texture data
+			GL_UNSIGNED_BYTE,
+			image.getPixelsPtr() //pointer to array of pixel data
+		);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		textureId = texture;
+
+	}
 
 }
 
@@ -132,6 +190,8 @@ void TestScene::update() {
 	}
 
 	if (window->isFocused()) processInput();
+
+	VP = windowProjection * camera.getView();
 
 }
 
@@ -173,8 +233,6 @@ void TestScene::processInput() {
 
 	}
 
-	VP = windowProjection * camera.getView();
-
 }
 
 void TestScene::render() {
@@ -182,36 +240,15 @@ void TestScene::render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glColor3ub(255, 0, 0);
 
+	mat4 model(1.0f);
+
+	glBindTexture(GL_TEXTURE_2D, textureId);
+
 	shader->bind();
 	shader->setUniformMatrix("VP", &VP[0][0]);
+	shader->setUniformMatrix("M", &model[0][0]);
 
-	uint objetos = 0;
-
-	for (int i = 0; i < 1; i++) {
-
-		for (int j = 0; j < 1; j++) {
-
-			mat4 model = Model[i * 100 + j];
-			vec3 modelPos = vec3(model[3].x, model[3].y, model[3].z);
-			vec4 positionWorld = VP * vec4(model[3].x, model[3].y, model[3].z, 1.0f);
-
-			/*vec3 out = vec3(camera.getView()[0]);
-			cout << out.x << ", " << out.y << ", " << out.z << endl;*/
-
-			if (positionWorld.z > 0.0f) {
-
-				objetos++;
-				shader->setUniformMatrix("M", &model[0][0]);
-				mesh->render(GL_TRIANGLES);
-
-			}
-
-		}
-
-	}
-
-	system("cls");
-	//cout << "Pintados " << objetos << " objetos" << endl;
+	mesh->render(GL_TRIANGLES);
 
 	shader->unbind();
 	window->display();
