@@ -86,7 +86,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsTime = sf::Time::Zero;
 
 	shader = new Shader();
-	shader->loadFromFiles("shader.vsh", "shader.fsh");
+	shader->loadFromFiles(RESOURCES + "shader.vsh", RESOURCES + "shader.fsh");
 
 	camera.setPosition(vec3(10 * 5, 25, 10 * 5));
 	camera.lookAt(vec3(0, 2, 0));
