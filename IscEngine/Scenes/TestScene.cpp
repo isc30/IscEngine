@@ -88,14 +88,14 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	shader = new Shader();
 	shader->loadFromFiles("shader.vsh", "shader.fsh");
 
-	camera.setPosition(vec3(148 * 5, 25, 148 * 5));
+	camera.setPosition(vec3(10 * 5, 25, 10 * 5));
 	camera.lookAt(vec3(0, 2, 0));
 
-	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 10000.0f);
+	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000000000.0f);
 
-	for (int i = 0; i < 300; i++) {
+	for (int i = 0; i < 100; i++) {
 
-		for (int j = 0; j < 300; j++) {
+		for (int j = 0; j < 100; j++) {
 
 			vec3 position(i * 5, 2.0f, j * 5);
 
@@ -133,7 +133,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	GLuint texture;
 	sf::Image image;
 
-	if (!image.loadFromFile("textura.png")) {
+	if (!image.loadFromFile(RESOURCES + "textura.png")) {
 
 		std::cout << "Texture loading error" << std::endl;
 

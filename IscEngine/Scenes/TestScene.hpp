@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Engine.hpp"
 #include "Base/Scene.hpp"
 #include <GLM/gtx/vector_angle.hpp>
 

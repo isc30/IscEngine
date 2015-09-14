@@ -3,6 +3,8 @@
 #include <iostream>
 using namespace std;
 
+const string RESOURCES = "../IscEngine/IscEngine/Resources/";
+
 #include <gl/glew.h>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics.hpp>
@@ -11,8 +13,6 @@ using namespace glm;
 
 #include "Graphics/Window.hpp"
 #include "Scenes/Base/Scene.hpp"
-
-#define RESOURCES = "../IscEngine/src/IscEngine/Resources/";
 
 namespace IscEngine {
 
