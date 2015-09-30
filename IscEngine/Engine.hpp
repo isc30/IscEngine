@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-const string RESOURCES = "../IscEngine/IscEngine/Resources/";
+static const string RESOURCE_PATH = "../IscEngine/IscEngine/Resources/";
 
 #include <gl/glew.h>
 #include <SFML/OpenGL.hpp>

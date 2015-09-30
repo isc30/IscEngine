@@ -13,36 +13,36 @@ namespace IscEngine {
 
 	class Mesh {
 
-	private:
+		private:
 
-		VertexArray* vertexArray;
+			VertexArray* vertexArray;
 
-		Buffer* vertexBuffer; // 0
-		IndexBuffer* indexBuffer;
-		Buffer* normalBuffer; // 1
-		Buffer* textureBuffer; // 2
-		Buffer* colorBuffer; // 3
+			Buffer* vertexBuffer; // 0
+			IndexBuffer* indexBuffer;
+			Buffer* normalBuffer; // 1
+			Buffer* textureBuffer; // 2
+			Buffer* colorBuffer; // 3
 
-	public:
+		public:
 
-		Mesh(vector<float> vertices);
-		Mesh(Buffer* vertexBuffer);
-		~Mesh();
+			Mesh(vector<float> vertices);
+			Mesh(Buffer* vertexBuffer);
+			~Mesh();
 
-		void addIndexes(vector<GLushort> indexes);
-		void addIndexes(vector<GLuint> indexes);
-		void addIndexBuffer(IndexBuffer* indexBuffer);
+			void addIndexes(vector<GLushort> indexes);
+			void addIndexes(vector<GLuint> indexes);
+			void addIndexBuffer(IndexBuffer* indexBuffer);
 
-		void addNormals(vector<float> normals);
-		void addNormalBuffer(Buffer* normalBuffer);
+			void addNormals(vector<float> normals);
+			void addNormalBuffer(Buffer* normalBuffer);
 
-		void addTextureCoords(vector<float> textureCoords);
-		void addTextureBuffer(Buffer* textureBuffer);
+			void addTextureCoords(vector<float> textureCoords);
+			void addTextureBuffer(Buffer* textureBuffer);
 
-		void addColors(vector<float> colors);
-		void addColorBuffer(Buffer* colorBuffer);
+			void addColors(vector<float> colors);
+			void addColorBuffer(Buffer* colorBuffer);
 
-		void render(GLenum type);
+			void render(GLenum type);
 
 	};
 

@@ -11,7 +11,7 @@ using namespace IscEngine;
 int main() {
 
 	Engine game;
-	game.create("Woo", 500, 500, sf::Style::Default);
+	game.create("Woo", 640, 480, sf::Style::Close);
 	game.setScene(new Scenes::TestScene(game.getWindow()));
 	game.run();
 

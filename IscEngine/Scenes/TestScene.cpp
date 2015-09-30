@@ -86,12 +86,12 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsTime = sf::Time::Zero;
 
 	shader = new Shader();
-	shader->loadFromFiles(RESOURCES + "shader.vsh", RESOURCES + "shader.fsh");
+	shader->loadFromFiles(RESOURCE_PATH + "shader.vsh", RESOURCE_PATH + "shader.fsh");
 
 	camera.setPosition(vec3(10 * 5, 25, 10 * 5));
-	camera.lookAt(vec3(0, 2, 0));
+	camera.lookAt(vec3(1, 2, 0));
 
-	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000000000.0f);
+	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000000.0f);
 
 	for (int i = 0; i < 100; i++) {
 
@@ -133,7 +133,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	GLuint texture;
 	sf::Image image;
 
-	if (!image.loadFromFile(RESOURCES + "textura.png")) {
+	if (!image.loadFromFile(RESOURCE_PATH + "textura.png")) {
 
 		std::cout << "Texture loading error" << std::endl;
 
@@ -144,9 +144,9 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 		glTexImage2D(
 			GL_TEXTURE_2D,
-			0,  //mip-map level
+			0, //mip-map level
 			GL_RGBA, //We want the internal texture to have RGBA components
-			image.getSize().x, image.getSize().y,// size of texture
+			image.getSize().x, image.getSize().y, // size of texture
 			0, //border (0=no border, 1=border)
 			GL_RGBA, //format of the external texture data
 			GL_UNSIGNED_BYTE,
