@@ -1,11 +1,13 @@
 #include "Mesh.hpp"
+#include "../Shaders/ShaderManager.hpp"
 using namespace IscEngine;
 
 Mesh::Mesh(vector<float> vertices) {
 
 	this->vertexBuffer = new Buffer(vertices, 3);
 	vertexArray = new VertexArray();
-	vertexArray->addBuffer(this->vertexBuffer, 0);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexPosition_modelspace");
+	vertexArray->addBuffer(this->vertexBuffer, position);
 
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
@@ -18,7 +20,8 @@ Mesh::Mesh(Buffer* vertexBuffer) {
 
 	this->vertexBuffer = vertexBuffer;
 	vertexArray = new VertexArray();
-	vertexArray->addBuffer(this->vertexBuffer, 0);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexPosition_modelspace");
+	vertexArray->addBuffer(this->vertexBuffer, position);
 
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
@@ -30,13 +33,6 @@ Mesh::Mesh(Buffer* vertexBuffer) {
 Mesh::~Mesh() {
 
 	delete this->vertexArray;
-
-}
-
-void Mesh::addIndexes(vector<GLushort> indexes) {
-
-	this->indexBuffer = new IndexBuffer(indexes);
-	vertexArray->addBuffer(this->normalBuffer, 1);
 
 }
 
@@ -55,42 +51,48 @@ void Mesh::addIndexBuffer(IndexBuffer* indexBuffer) {
 void Mesh::addNormals(vector<float> normals) {
 
 	this->normalBuffer = new Buffer(normals, 3);
-	vertexArray->addBuffer(this->normalBuffer, 1);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexNormal_modelspace");
+	vertexArray->addBuffer(this->normalBuffer, position);
 
 }
 
 void Mesh::addNormalBuffer(Buffer* normalBuffer) {
 
 	this->normalBuffer = normalBuffer;
-	vertexArray->addBuffer(this->normalBuffer, 1);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexNormal_modelspace");
+	vertexArray->addBuffer(this->normalBuffer, position);
 
 }
 
 void Mesh::addTextureCoords(vector<float> textureCoords) {
 
 	this->textureBuffer = new Buffer(textureCoords, 2);
-	vertexArray->addBuffer(this->textureBuffer, 2);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexUV");
+	vertexArray->addBuffer(this->textureBuffer, position);
 
 }
 
 void Mesh::addTextureBuffer(Buffer* textureBuffer) {
 
 	this->textureBuffer = textureBuffer;
-	vertexArray->addBuffer(this->textureBuffer, 2);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexUV");
+	vertexArray->addBuffer(this->textureBuffer, position);
 
 }
 
 void Mesh::addColors(vector<float> colors) {
 
 	this->colorBuffer = new Buffer(colors, 3);
-	vertexArray->addBuffer(this->colorBuffer, 3);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexColor");
+	vertexArray->addBuffer(this->colorBuffer, position);
 
 }
 
 void Mesh::addColorBuffer(Buffer* colorBuffer) {
 
 	this->colorBuffer = colorBuffer;
-	vertexArray->addBuffer(this->colorBuffer, 3);
+	int position = ShaderManager::currentShader->getAttributeLocation("vertexColor");
+	vertexArray->addBuffer(this->colorBuffer, position);
 
 }
 

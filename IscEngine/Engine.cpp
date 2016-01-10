@@ -24,6 +24,8 @@ void Engine::create(string title, uint width, uint height, uint style) {
 	contextSettings.depthBits = 24;
 	contextSettings.stencilBits = 8;
 	contextSettings.antialiasingLevel = 0;
+	contextSettings.majorVersion = 2;
+	contextSettings.minorVersion = 1;
 
 	this->window = new Window(sf::VideoMode(width, height), title, style, contextSettings);
 	this->window->setVerticalSyncEnabled(false);
@@ -36,6 +38,9 @@ void Engine::create(string title, uint width, uint height, uint style) {
 		cout << "Stencil bits: " << contextSettings.stencilBits << endl;
 		cout << "Antialiasing: " << contextSettings.antialiasingLevel << endl;
 	#endif
+
+	cout << glGetString(GL_VENDOR) << endl;
+	cout << glGetString(GL_RENDERER) << endl;
 
 	this->setupOpenGL();
 
@@ -58,6 +63,10 @@ void Engine::setupOpenGL() {
 	// Depth control
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+
+	// Transparency
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 }
 

@@ -9,3 +9,13 @@ using namespace glm;
 
 #include "Base/Shader.hpp"
 
+namespace IscEngine {
+
+	class ShaderManager {
+
+		public:
+			static Shader* currentShader;
+
+	};
+
+}

@@ -9,68 +9,16 @@ using namespace IscEngine::Scenes;
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Views/Modelview.hpp"
 
+#include "../Graphics/Models/Loaders/ObjLoader.hpp"
+
 Shader* shader;
+Shader* shShadowMap;
 Camera camera;
 
-std::vector<GLfloat> vertices = {
-
-	-1.0f, -1.0f, 0.0f,
-	1.0f, -1.0f, 0.0f,
-	1.0f, 1.0f, 0.0f,
-	-1.0f, 1.0f, 0.0f,
-
-	1.0f, -1.0f, 0.0f,
-	1.0f, -1.0f, 2.0f,
-	1.0f, 1.0f, 2.0f,
-	1.0f, 1.0f, 0.0f,
-
-	-1.0f, -1.0f, 2.0f,
-	1.0f, -1.0f, 2.0f,
-	1.0f, 1.0f, 2.0f,
-	-1.0f, 1.0f, 2.0f,
-
-};
-
-std::vector<GLuint> indexes = {
-
-	0, 1, 2,
-	2, 3, 0,
-
-	4, 5, 6,
-	6, 7, 4,
-
-	8, 9, 10,
-	10, 11, 8
-
-};
-
-std::vector<GLfloat> texture = {
-
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f,
-
-	1.0f, 1.0f,
-	1.0f, 0.0f,
-	0.0f, 0.0f,
-	0.0f, 1.0f
-
-};
-
-mat4 windowProjection;
-mat4 VP;
+mat4 P;
+mat4 V;
 
 /////////////////////////////////
-
-std::vector<GLfloat> allVertices;
-std::vector<GLuint> allIndexes;
-std::vector<GLfloat> allTextures;
 
 Mesh* mesh;
 
@@ -79,6 +27,10 @@ Mesh* mesh;
 bool rotatingCamera = false;
 
 GLuint textureId;
+GLuint depthTexture;
+GLuint FramebufferName;
+
+int mapsize = 2;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -86,51 +38,59 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsTime = sf::Time::Zero;
 
 	shader = new Shader();
-	shader->loadFromFiles(RESOURCE_PATH + "shader.vsh", RESOURCE_PATH + "shader.fsh");
+	shader->loadFromFiles(RESOURCE_PATH + "ShadowMapping_SimpleVersion.vertexshader", RESOURCE_PATH + "ShadowMapping_SimpleVersion.fragmentshader");
 
-	camera.setPosition(vec3(10 * 5, 25, 10 * 5));
-	camera.lookAt(vec3(1, 2, 0));
+	shShadowMap = new Shader();
+	shShadowMap->loadFromFiles(RESOURCE_PATH + "shShadowMap.vsh", RESOURCE_PATH + "shShadowMap.fsh");
 
-	windowProjection = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000000.0f);
+	camera.setPosition(vec3(mapsize * 25 / 2 - 3, 10.5, mapsize * 25 / 2 - 3));
+	camera.lookAt(vec3(0, 0, 0));
 
-	for (int i = 0; i < 100; i++) {
+	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
-		for (int j = 0; j < 100; j++) {
+	std::vector<glm::vec3> objVertices;
+	std::vector<glm::vec2> objUvs;
+	std::vector<glm::vec3> objNormals;
 
-			vec3 position(i * 5, 2.0f, j * 5);
+	loadOBJ(RESOURCE_PATH + "room.obj", objVertices, objUvs, objNormals);
 
-			////////////////////////////////////////////////////////////////////////////////////////
-			for (int k = 0; k < vertices.size(); k += 3) {
+	/*std::vector<unsigned int> indices;
+	std::vector<glm::vec3> indexed_vertices;
+	std::vector<glm::vec2> indexed_uvs;
+	std::vector<glm::vec3> indexed_normals;
 
-				allVertices.push_back(vertices.at(k) + position.x);
-				allVertices.push_back(vertices.at(k + 1) + position.y);
-				allVertices.push_back(vertices.at(k + 2) + position.z);
+	indexVBO(objVertices, objUvs, objNormals, indices, indexed_vertices, indexed_uvs, indexed_normals);*/
 
-			}
-
-			for (int k = 0; k < indexes.size(); k += 6) {
-
-				int offset = allIndexes.size() / 6 * 4;
-				allIndexes.push_back(offset); allIndexes.push_back(offset + 1); allIndexes.push_back(offset + 2);
-				allIndexes.push_back(offset + 2); allIndexes.push_back(offset + 3); allIndexes.push_back(offset);
-
-			}
-
-			for (int k = 0; k < texture.size(); k++) {
-
-				allTextures.push_back(texture.at(k));
-
-			}
-
-		}
-
+	std::vector<GLfloat> vertices;
+	for (int i = 0; i < objVertices.size(); i++) {
+		vertices.push_back(objVertices.at(i).x);
+		vertices.push_back(objVertices.at(i).y);
+		vertices.push_back(objVertices.at(i).z);
 	}
 
-	mesh = new Mesh(allVertices);
-	mesh->addIndexes(allIndexes);
-	mesh->addTextureCoords(allTextures);
+	std::vector<GLfloat> normals;
+	for (int i = 0; i < objNormals.size(); i++) {
+		normals.push_back(objNormals.at(i).x);
+		normals.push_back(objNormals.at(i).y);
+		normals.push_back(objNormals.at(i).z);
+	}
 
-	GLuint texture;
+	std::vector<GLfloat> texture;
+	for (int i = 0; i < objUvs.size(); i++) {
+		texture.push_back(objUvs.at(i).x);
+		texture.push_back(objUvs.at(i).y);
+	}
+
+	cout << "Vertices: " << vertices.size() / 3 << endl;
+
+	shader->bind();
+	mesh = new Mesh(vertices);
+	//mesh->addIndexes(indices);
+	mesh->addNormals(normals);
+	mesh->addTextureCoords(texture);
+	shader->unbind();
+
+	GLuint textureGl;
 	sf::Image image;
 
 	if (!image.loadFromFile(RESOURCE_PATH + "textura.png")) {
@@ -139,8 +99,8 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	} else {
 
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		glGenTextures(1, &textureGl);
+		glBindTexture(GL_TEXTURE_2D, textureGl);
 
 		glTexImage2D(
 			GL_TEXTURE_2D,
@@ -159,9 +119,28 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glGenerateMipmap(GL_TEXTURE_2D);
 
-		textureId = texture;
+		textureId = textureGl;
 
 	}
+
+	///////////////////////////////////////////////////////
+
+	FramebufferName = 0;
+	glGenFramebuffers(1, &FramebufferName);
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+
+	// Depth texture. Slower than a depth buffer, but you can sample it later in your shader
+	glGenTextures(1, &depthTexture);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 2048, 2048, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
 
 }
 
@@ -191,7 +170,7 @@ void TestScene::update() {
 
 	if (window->isFocused()) processInput();
 
-	VP = windowProjection * camera.getView();
+	V = camera.getView();
 
 }
 
@@ -237,20 +216,74 @@ void TestScene::processInput() {
 
 void TestScene::render() {
 
+	// Render to texture
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	glViewport(0, 0, 2048, 2048);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glColor3ub(255, 0, 0);
 
-	mat4 model(1.0f);
+	shShadowMap->bind();
 
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	int size = 30;
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -100, 200);
+	glm::mat4 depthViewMatrix = glm::lookAt(vec3(2, 2, 2), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+
+	shShadowMap->setUniformMatrix("V", &depthViewMatrix[0][0]);
+	shShadowMap->setUniformMatrix("P", &depthProjectionMatrix[0][0]);
+
+	for (int i = 0; i < mapsize; i++) {
+		for (int j = 0; j < mapsize; j++) {
+			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
+			model = glm::rotate(model, radians(i * 25.f), glm::vec3(0, 1, 0));
+			shShadowMap->setUniformMatrix("M", &model[0][0]);
+			mesh->render(GL_TRIANGLES);
+		}
+	}
+
+	shShadowMap->unbind();
+
+	glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
+	glm::mat4 biasMatrix(
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0
+	);
+	glm::mat4 depthBiasVP = biasMatrix * depthVP;
+	
+	///////////////////////////////////////-
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, window->getSize().x, window->getSize().y);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shader->bind();
-	shader->setUniformMatrix("VP", &VP[0][0]);
-	shader->setUniformMatrix("M", &model[0][0]);
+	shader->setUniformMatrix("V", &V[0][0]);
+	shader->setUniformMatrix("P", &P[0][0]);
+	vec3 cameraPosition = camera.getPosition();
+	shader->setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
-	mesh->render(GL_TRIANGLES);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	shader->setUniform("myTextureSampler", 0);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	shader->setUniform("shadowMap", 1);
+
+	shader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
+
+	for (int i = 0; i < mapsize; i++) {
+		for (int j = 0; j < mapsize; j++) {
+			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
+			model = glm::rotate(model, radians(i * 25.f), glm::vec3(0, 1, 0));
+			shader->setUniformMatrix("M", &model[0][0]);
+			mesh->render(GL_TRIANGLES);
+		}
+	}
 
 	shader->unbind();
+	//*/
+
 	window->display();
 
 }

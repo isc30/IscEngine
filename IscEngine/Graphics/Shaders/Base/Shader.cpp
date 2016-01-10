@@ -1,4 +1,5 @@
 #include "Shader.hpp"
+#include "../ShaderManager.hpp"
 using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -7,6 +8,12 @@ Shader::Shader() {
 
 	this->id = 0;
 
+	// Fix for template generation
+	this->setUniform("", 0.f, 0.f, 0.f);
+	this->setUniform("", 0);
+
+	float asd[] = {1.f};
+	this->setUniformArray("", 0, asd);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -30,6 +37,7 @@ GLuint Shader::getId() {
 void Shader::bind() {
 
 	glUseProgram(this->id);
+	ShaderManager::currentShader = this;
 
 }
 
@@ -38,6 +46,7 @@ void Shader::bind() {
 void Shader::unbind() {
 
 	glUseProgram(0);
+	ShaderManager::currentShader = nullptr;
 
 }
 
@@ -63,25 +72,10 @@ template <class T> void Shader::setUniform(string uniform, T value0) {
 
 	GLuint uniformLocation = this->getUniformLocation(uniform);
 
-	switch (typeid(T)) {
-
-		case typeid(double) :
-			glUniform1d(uniformLocation, value0);
-			break;
-
-		case typeid(float) :
-			glUniform1f(uniformLocation, value0);
-			break;
-
-		case typeid(int) :
-			glUniform1i(uniformLocation, value0);
-			break;
-
-		case typeid(uint) :
-			glUniform1ui(uniformLocation, value0);
-			break;
-
-	}
+	if (typeid(T) == typeid(double)) glUniform1d(uniformLocation, value0);
+	else if (typeid(T) == typeid(float)) glUniform1f(uniformLocation, value0);
+	else if (typeid(T) == typeid(int)) glUniform1i(uniformLocation, value0);
+	else if (typeid(T) == typeid(uint)) glUniform1ui(uniformLocation, value0);
 
 }
 
@@ -119,25 +113,10 @@ template <class T> void Shader::setUniform(string uniform, T value0, T value1, T
 
 	GLuint uniformLocation = this->getUniformLocation(uniform);
 
-	switch (typeid(T)) {
-
-		case typeid(double) :
-			glUniform3d(uniformLocation, value0, value1, value2);
-			break;
-
-		case typeid(float) :
-			glUniform3f(uniformLocation, value0, value1, value2);
-			break;
-
-		case typeid(int) :
-			glUniform3i(uniformLocation, value0, value1, value2);
-			break;
-
-		case typeid(uint) :
-			glUniform3ui(uniformLocation, value0, value1, value2);
-			break;
-
-	}
+	if (typeid(T) == typeid(double)) glUniform3d(uniformLocation, value0, value1, value2);
+	else if (typeid(T) == typeid(float)) glUniform3f(uniformLocation, value0, value1, value2);
+	else if (typeid(T) == typeid(int)) glUniform3i(uniformLocation, value0, value1, value2);
+	else if (typeid(T) == typeid(uint)) glUniform3ui(uniformLocation, value0, value1, value2);
 
 }
 
@@ -175,6 +154,17 @@ void Shader::setUniformMatrix(string uniform, float* value) {
 
 	GLuint uniformLocation = this->getUniformLocation(uniform);
 	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, value);
+
+}
+
+template <class T> void Shader::setUniformArray(string uniform, uint size, T* pointer) {
+
+	GLuint uniformLocation = this->getUniformLocation(uniform);
+
+	if (typeid(T) == typeid(double)) glUniform3dv(uniformLocation, size, (const GLdouble*)pointer);
+	else if (typeid(T) == typeid(float)) glUniform3fv(uniformLocation, size, (const GLfloat*) pointer);
+	else if (typeid(T) == typeid(int)) glUniform3iv(uniformLocation, size, (const GLint*) pointer);
+	else if (typeid(T) == typeid(uint)) glUniform3uiv(uniformLocation, size, (const GLuint*) pointer);
 
 }
 

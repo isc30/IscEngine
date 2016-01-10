@@ -26,11 +26,12 @@ namespace IscEngine {
 		public:
 
 			Mesh(vector<float> vertices);
+			Mesh(vector<vec3> vertices);
 			Mesh(Buffer* vertexBuffer);
 			~Mesh();
 
-			void addIndexes(vector<GLushort> indexes);
 			void addIndexes(vector<GLuint> indexes);
+			void addIndexes(vector<vec3> indexes);
 			void addIndexBuffer(IndexBuffer* indexBuffer);
 
 			void addNormals(vector<float> normals);

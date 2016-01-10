@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <vector>
 using namespace std;
 
 #include <GL/glew.h>
@@ -38,6 +39,8 @@ namespace IscEngine {
 			template <class T> void setUniform(string uniform, T value0, T value1, T value2);
 			template <class T> void setUniform(string uniform, T value0, T value1, T value2, T value3);
 			void setUniformMatrix(string uniform, float* value);
+			template <class T> void setUniformArray(string uniform, uint size, T* pointer);
+			template <class T> void setUniformVector(string uniform, std::vector<T>* vector);
 
 	};
 
