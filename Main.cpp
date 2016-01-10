@@ -7,7 +7,7 @@ using namespace std;
 using namespace IscEngine;
 
 ///////////////////////////////////////////////////////////////////////////////
-// Hola xD
+// https://github.com/isc30/IscEngine
 int main() {
 
 	Engine game;
