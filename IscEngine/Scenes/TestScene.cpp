@@ -160,10 +160,10 @@ void TestScene::update() {
 
 	fpsCount++;
 	fpsTime += deltaTime;
-	if (fpsTime.asSeconds() >= 1) {
+	if (fpsTime.asSeconds() >= 1.f) {
 
-		cout << "Fps: " << fpsCount << endl;
-		fpsTime -= sf::seconds(1);
+		window->setTitle("Fps: " + std::to_string(fpsCount));
+		fpsTime -= sf::seconds(1.f);
 		fpsCount = 0;
 
 	}
