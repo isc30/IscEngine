@@ -56,8 +56,18 @@ void Engine::create(string title, uint width, uint height, uint style) {
 
 void Engine::setupOpenGL() {
 
+	Log::cout << " Initializing GLEW..." << endl << endl;
+
 	if (glewInit() != GLEW_OK) {
-		cerr << "Error initializing GLEW" << endl;
+		Log::cout << "  >> Error initializing GLEW" << endl;
+	} else {
+		Log::cout << "  >> Using GLEW v" << glewGetString(GLEW_VERSION) << endl;
+	}
+
+	if (GLEW_ARB_vertex_array_object) {
+		Log::cout << "  >> Using VAO" << endl;
+	} else {
+		Log::cout << "  >> Using VBO :'(" << endl;
 	}
 
 	// Clear color
@@ -72,9 +82,9 @@ void Engine::setupOpenGL() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	// Transparency
+	/* Transparency
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
 
 }
 

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream> // Files
 #include <chrono>
+#include <ctime>
 
 namespace IscEngine {
 
@@ -21,7 +22,7 @@ namespace IscEngine {
 			logFilename = fileName;
 			std::ofstream outFile;
 			outFile.open(logFilename, std::ios::trunc);
-			const auto time = chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+			const auto time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 			outFile << std::ctime(&time);
 			outFile << "------------------------" << std::endl;
 			outFile.close();
@@ -54,7 +55,5 @@ namespace IscEngine {
 		}
 
 	};
-
-	Log Log::cout("logs.txt");
 
 }

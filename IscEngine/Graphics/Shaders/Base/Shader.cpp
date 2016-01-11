@@ -1,5 +1,6 @@
 #include "Shader.hpp"
 #include "../ShaderManager.hpp"
+#include "../../../Utils/Log.hpp"
 using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -12,8 +13,6 @@ Shader::Shader() {
 	this->setUniform("", 0.f, 0.f, 0.f);
 	this->setUniform("", 0);
 
-	float asd[] = {1.f};
-	this->setUniformArray("", 0, asd);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -187,7 +186,7 @@ bool Shader::loadFromStrings(string vertexShader, string fragmentShader) {
 
 	#ifdef DEBUG
 		glGetShaderiv(vertexShaderId, GL_COMPILE_STATUS, &result);
-		cout << "Vertex shader: " << (result ? "OK" : "ERROR") << endl;
+		Log::cout << "Vertex shader: " << (result ? "OK" : "ERROR") << endl;
 	#endif
 
 	// Compile fragment Shader
@@ -197,7 +196,7 @@ bool Shader::loadFromStrings(string vertexShader, string fragmentShader) {
 
 	#ifdef DEBUG
 		glGetShaderiv(fragmentShaderId, GL_COMPILE_STATUS, &result);
-		cout << "Fragment shader: " << (result ? "OK" : "ERROR") << endl;
+		Log::cout << "Fragment shader: " << (result ? "OK" : "ERROR") << endl;
 	#endif
 
 	// Link both shaders
@@ -217,7 +216,7 @@ bool Shader::loadFromStrings(string vertexShader, string fragmentShader) {
 				glGetProgramiv(programId, GL_INFO_LOG_LENGTH, &errorLength);
 				string errorMessage(errorLength, 1);
 				glGetProgramInfoLog(programId, errorLength, NULL, &errorMessage[0]);
-				cout << "Shader id " << programId << " error: " << endl << '\t' << errorMessage << endl;
+				Log::cout << "Shader id " << programId << " error: " << endl << '\t' << errorMessage << endl;
 		#endif
 
 		glDeleteProgram(programId);

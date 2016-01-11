@@ -2,20 +2,22 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 using namespace std;
 
 #include <GLM/glm.hpp>
 using namespace glm;
 
 #include "../Buffers/Buffers.hpp"
+#include "../Shaders/Base/Shader.hpp"
 
 namespace IscEngine {
 
 	class Mesh {
 
 		private:
-
-			VertexArray* vertexArray;
+			
+			std::map<Shader*, VertexArray*> vertexArrays; // Each Shader has different Attribute positions :'(
 
 			Buffer* vertexBuffer; // 0
 			IndexBuffer* indexBuffer;

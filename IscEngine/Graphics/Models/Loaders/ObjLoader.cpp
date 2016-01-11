@@ -1,4 +1,6 @@
 #include "objloader.hpp"
+#include "../../../Utils/Log.hpp"
+using namespace IscEngine;
 
 #include <vector>
 #include <map>
@@ -197,7 +199,7 @@ bool loadOBJ(
 	std::vector<glm::vec2> & out_uvs,
 	std::vector<glm::vec3> & out_normals
 	) {
-	std::cout << "Cargando modelo " << path << std::endl;
+	Log::cout << "Cargando modelo " << path << std::endl;
 
 	std::vector<unsigned int> vertexIndices, uvIndices, normalIndices;
 	std::vector<glm::vec3> temp_vertices;
@@ -206,7 +208,7 @@ bool loadOBJ(
 
 	FILE * file = fopen(path.c_str(), "r");
 	if (file == NULL) {
-		printf("Impossible to open the file!\n");
+		Log::cout << "Impossible to open the file!" << std::endl;
 		return false;
 	}
 
@@ -238,7 +240,7 @@ bool loadOBJ(
 			unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
 			int matches = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0], &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
 			if (matches != 9) {
-				printf("File can't be read by our simple parser :-( Try exporting with other options\n");
+				Log::cout << "File can't be read by our simple parser :-( Try exporting with other options" << std::endl;
 				return false;
 			}
 			vertexIndices.push_back(vertexIndex[0]);
