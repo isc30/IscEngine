@@ -291,8 +291,15 @@ void TestScene::render() {
 	}
 
 	shader->unbind();
-
 	//*/
+
+	/*window->popGLStates();
+
+	sf::CircleShape a(100.f);
+	a.setFillColor(sf::Color::Red);
+	window->draw(a);
+
+	window->pushGLStates();*/
 
 	window->display();
 
