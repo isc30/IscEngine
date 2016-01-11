@@ -291,6 +291,19 @@ void TestScene::render() {
 	}
 
 	shader->unbind();
+
+	window->pushGLStates();
+
+	glDisable(GL_TEXTURE_2D);
+
+	sf::CircleShape a(100.f);
+	a.setFillColor(sf::Color::Red);
+	window->draw(a);
+
+	window->popGLStates();
+
+	glEnable(GL_DEPTH_TEST);
+
 	//*/
 
 	/*window->popGLStates();
