@@ -26,11 +26,10 @@ Mesh::Mesh(Buffer* vertexBuffer) {
 Mesh::~Mesh() {
 
 	this->vertexArrays.clear();
-	//delete this->vertexArray;
 
 }
 
-void Mesh::addIndexes(vector<GLuint> indexes) {
+void Mesh::addIndexes(vector<unsigned int> indexes) {
 
 	this->indexBuffer = new IndexBuffer(indexes);
 
@@ -80,9 +79,10 @@ void Mesh::addColorBuffer(Buffer* colorBuffer) {
 
 void Mesh::render(GLenum type) {
 
+	Shader* currentShader = ShaderManager::currentShader;
+
 	if (GLEW_ARB_vertex_array_object) {
 		
-		Shader* currentShader = ShaderManager::currentShader;
 		VertexArray* currentVertexArray;
 
 		if (this->vertexArrays.find(currentShader) == this->vertexArrays.end()) {
@@ -90,9 +90,9 @@ void Mesh::render(GLenum type) {
 			Log::cout << "Creating VAO " << currentShader->getId() << std::endl;
 
 			currentVertexArray = new VertexArray();
-			currentVertexArray->addBuffer(this->vertexBuffer, ShaderManager::currentShader->getAttributeLocation("vertexPosition_modelspace"));
-			currentVertexArray->addBuffer(this->textureBuffer, ShaderManager::currentShader->getAttributeLocation("vertexUV"));
-			currentVertexArray->addBuffer(this->normalBuffer, ShaderManager::currentShader->getAttributeLocation("vertexNormal_modelspace"));
+			currentVertexArray->addBuffer(this->vertexBuffer, currentShader->getAttributeLocation("vertexPosition_modelspace"));
+			currentVertexArray->addBuffer(this->textureBuffer, currentShader->getAttributeLocation("vertexUV"));
+			currentVertexArray->addBuffer(this->normalBuffer, currentShader->getAttributeLocation("vertexNormal_modelspace"));
 
 			vertexArrays[currentShader] = currentVertexArray;
 
@@ -117,7 +117,7 @@ void Mesh::render(GLenum type) {
 	} else {
 
 		GLuint attributeLocation[3];
-		attributeLocation[0] = ShaderManager::currentShader->getAttributeLocation("vertexPosition_modelspace");
+		attributeLocation[0] = currentShader->getAttributeLocation("vertexPosition_modelspace");
 		glEnableVertexAttribArray(attributeLocation[0]);
 		this->vertexBuffer->bind();
 		glVertexAttribPointer(
@@ -129,7 +129,7 @@ void Mesh::render(GLenum type) {
 			(void*)0                      // array buffer offset
 		);
 
-		attributeLocation[1] = ShaderManager::currentShader->getAttributeLocation("vertexUV");
+		attributeLocation[1] = currentShader->getAttributeLocation("vertexUV");
 		glEnableVertexAttribArray(attributeLocation[1]);
 		this->textureBuffer->bind();
 		glVertexAttribPointer(
@@ -141,7 +141,7 @@ void Mesh::render(GLenum type) {
 			(void*)0                      // array buffer offset
 		);
 
-		attributeLocation[2] = ShaderManager::currentShader->getAttributeLocation("vertexNormal_modelspace");
+		attributeLocation[2] = currentShader->getAttributeLocation("vertexNormal_modelspace");
 		glEnableVertexAttribArray(attributeLocation[2]);
 		this->normalBuffer->bind();
 		glVertexAttribPointer(

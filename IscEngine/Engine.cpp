@@ -42,13 +42,13 @@ void Engine::create(string title, uint width, uint height, uint style) {
 	contextSettings = window->getSettings();
 	Log::cout << "  >> " << glGetString(GL_VENDOR) << " | " << glGetString(GL_RENDERER) << endl;
 	Log::cout << "  >> OpenGL " << contextSettings.majorVersion << "." << contextSettings.minorVersion << endl;
-	Log::cout << "  >> Depth: " << contextSettings.depthBits;
-	Log::cout << ", Stencil: " << contextSettings.stencilBits;
-	Log::cout << ", Antialiasing: " << contextSettings.antialiasingLevel << endl << endl;
+	Log::cout << "  >> Depth: " << contextSettings.depthBits << ", Stencil: " << contextSettings.stencilBits << ", Antialiasing: " << contextSettings.antialiasingLevel << endl;
 
 	if (contextSettings.majorVersion < 2 || (contextSettings.majorVersion == 2 && contextSettings.minorVersion < 1)) {
-		Log::cout << "No compatible graphics card found" << std::endl;
+		Log::cout << std::endl << "  ## No compatible graphics card found" << std::endl;
 	}
+
+	Log::cout << endl;
 
 	this->setupOpenGL();
 
@@ -69,6 +69,8 @@ void Engine::setupOpenGL() {
 	} else {
 		Log::cout << "  >> Using VBO :'(" << endl;
 	}
+
+	Log::cout << endl;
 
 	// Clear color
 	glClearColor(1.0f, 0.7f, 0.1f, 1.0f);

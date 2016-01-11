@@ -31,7 +31,7 @@ GLuint textureId;
 GLuint depthTexture;
 GLuint FramebufferName;
 
-int mapsize = 10;
+int mapsize = 2;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -60,32 +60,32 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	std::vector<glm::vec2> indexed_uvs;
 	std::vector<glm::vec3> indexed_normals;
 
-	indexVBO(objVertices, objUvs, objNormals, indices, indexed_vertices, indexed_uvs, indexed_normals);
+	//indexVBO(objVertices, objUvs, objNormals, indices, indexed_vertices, indexed_uvs, indexed_normals);
 
 	std::vector<GLfloat> vertices;
-	for (int i = 0; i < indexed_vertices.size(); i++) {
-		vertices.push_back(indexed_vertices.at(i).x);
-		vertices.push_back(indexed_vertices.at(i).y);
-		vertices.push_back(indexed_vertices.at(i).z);
+	for (int i = 0; i < objVertices.size(); i++) {
+		vertices.push_back(objVertices.at(i).x);
+		vertices.push_back(objVertices.at(i).y);
+		vertices.push_back(objVertices.at(i).z);
 	}
 
 	std::vector<GLfloat> normals;
-	for (int i = 0; i < indexed_normals.size(); i++) {
-		normals.push_back(indexed_normals.at(i).x);
-		normals.push_back(indexed_normals.at(i).y);
-		normals.push_back(indexed_normals.at(i).z);
+	for (int i = 0; i < objNormals.size(); i++) {
+		normals.push_back(objNormals.at(i).x);
+		normals.push_back(objNormals.at(i).y);
+		normals.push_back(objNormals.at(i).z);
 	}
 
 	std::vector<GLfloat> texture;
-	for (int i = 0; i < indexed_uvs.size(); i++) {
-		texture.push_back(indexed_uvs.at(i).x);
-		texture.push_back(indexed_uvs.at(i).y);
+	for (int i = 0; i < objUvs.size(); i++) {
+		texture.push_back(objUvs.at(i).x);
+		texture.push_back(objUvs.at(i).y);
 	}
 
 	Log::cout << "Vertices: " << vertices.size() / 3 << endl;
 
 	mesh = new Mesh(vertices);
-	mesh->addIndexes(indices);
+	//mesh->addIndexes(indices);
 	mesh->addNormals(normals);
 	mesh->addTextureCoords(texture);
 

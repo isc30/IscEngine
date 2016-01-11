@@ -16,7 +16,7 @@ namespace IscEngine {
 
 		public:
 
-			Buffer(vector<GLfloat> data, GLuint componentCount);
+			Buffer(vector<float> data, unsigned int componentCount);
 			~Buffer();
 
 			void bind();

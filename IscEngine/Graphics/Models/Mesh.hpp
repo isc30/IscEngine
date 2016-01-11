@@ -32,8 +32,7 @@ namespace IscEngine {
 			Mesh(Buffer* vertexBuffer);
 			~Mesh();
 
-			void addIndexes(vector<GLuint> indexes);
-			void addIndexes(vector<vec3> indexes);
+			void addIndexes(vector<unsigned int> indexes);
 			void addIndexBuffer(IndexBuffer* indexBuffer);
 
 			void addNormals(vector<float> normals);

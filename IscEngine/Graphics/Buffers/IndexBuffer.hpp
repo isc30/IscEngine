@@ -10,19 +10,19 @@ namespace IscEngine {
 
 		private:
 
-			GLuint id;
-			GLuint count;
+			unsigned int id;
+			unsigned int count;
 
 		public:
 
-			IndexBuffer(vector<GLushort> data);
-			IndexBuffer(vector<GLuint> data);
+			IndexBuffer(vector<unsigned short> data);
+			IndexBuffer(vector<unsigned int> data);
 			~IndexBuffer();
 
 			void bind();
 			void unbind();
 
-			GLuint getCount() { return this->count; }
+			unsigned int getCount() { return this->count; }
 
 	};
 

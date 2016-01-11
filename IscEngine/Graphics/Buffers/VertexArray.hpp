@@ -12,7 +12,7 @@ namespace IscEngine {
 
 		private:
 
-			GLuint id;
+			unsigned int id;
 			vector<Buffer*> buffers;
 
 		public:
@@ -20,7 +20,7 @@ namespace IscEngine {
 			VertexArray();
 			~VertexArray();
 
-			void addBuffer(Buffer* buffer, GLuint index);
+			void addBuffer(Buffer* buffer, unsigned int index);
 
 			void bind();
 			void unbind();

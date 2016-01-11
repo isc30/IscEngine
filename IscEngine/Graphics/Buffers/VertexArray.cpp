@@ -22,7 +22,7 @@ VertexArray::~VertexArray() {
 
 }
 
-void VertexArray::addBuffer(Buffer* buffer, GLuint index) {
+void VertexArray::addBuffer(Buffer* buffer, unsigned int index) {
 
 	this->bind();
 	buffer->bind();
