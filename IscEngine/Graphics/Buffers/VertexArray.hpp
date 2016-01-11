@@ -2,7 +2,6 @@
 
 #include <vector>
 using namespace std;
-#include <GL/glew.h>
 
 #include "Buffer.hpp"
 
@@ -14,7 +13,6 @@ namespace IscEngine {
 
 			unsigned int id;
 			vector<Buffer*> buffers;
-			vector<unsigned int> indexes;
 
 		public:
 
