@@ -8,32 +8,18 @@ varying vec4 ShadowCoord;
 uniform sampler2D myTextureSampler;
 uniform sampler2DShadow shadowMap;
 
-// Returns a random number based on a vec3 and an int.
-float random(vec3 seed, int i){
-	vec4 seed4 = vec4(seed,i);
-	float dot_product = dot(seed4, vec4(12.9898,78.233,45.164,94.673));
-	return fract(sin(dot_product) * 43758.5453);
-}
-
-void main(){
-
-	// Light emission properties
-	vec3 LightColor = vec3(1, 1, 1);
+void main() {
 	
 	// Material properties
-	vec3 MaterialDiffuseColor = texture2D( myTextureSampler, UV ).rgb;
-
-	float bias = 0.00015;
+	vec3 MaterialDiffuseColor = texture2D(myTextureSampler, UV).rgb;
 
 	float visibility = 1.0;
-	for (int i = 0; i < 4; i++){
-		visibility -= 0.2*(1.0-shadow2D( shadowMap, vec3(ShadowCoord.xy,  (ShadowCoord.z - bias)/ShadowCoord.w )).r);
+	int iterations = 4;
+	for (int i = 0; i < iterations; i++){
+		visibility -= 0.4 / iterations * (1.0 - shadow2D(shadowMap, vec3(ShadowCoord.xy, (ShadowCoord.z - 0.00006) / ShadowCoord.w)).r);
 	}
 
-	//float visibility = shadow2D(shadowMap, vec3(ShadowCoord.xy, (ShadowCoord.z)/ShadowCoord.w) ).r;
-	//visibility += 0.4; // Base light :S
-
-	gl_FragColor.rgb = visibility * MaterialDiffuseColor * LightColor;
+	gl_FragColor.rgb = visibility * MaterialDiffuseColor;
 	gl_FragColor.a = 1.f;
 
 }

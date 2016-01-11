@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <fstream> // Files
 using namespace std;
 
 static const string RESOURCE_PATH = "../IscEngine/IscEngine/Resources/"; // ../IscEngine/IscEngine/Resources/
@@ -22,7 +23,7 @@ namespace IscEngine {
 
 			Window* window;
 			Scene* currentScene;
-
+			
 			void loop();
 			void setupOpenGL();
 

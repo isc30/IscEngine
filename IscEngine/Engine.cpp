@@ -1,5 +1,8 @@
 #include "Engine.hpp"
+#include "Utils\Log.hpp"
 using namespace IscEngine;
+
+#include <chrono>
 
 Engine::Engine() {
 
@@ -20,6 +23,11 @@ Window* Engine::getWindow() {
 
 void Engine::create(string title, uint width, uint height, uint style) {
 
+	Log::cout << endl;
+	Log::cout << " IscEngine" << endl;
+	Log::cout << " -----------------------" << endl << endl;
+	Log::cout << " Creating context..." << endl << endl;
+
 	sf::ContextSettings contextSettings;
 	contextSettings.depthBits = 24;
 	contextSettings.stencilBits = 8;
@@ -31,16 +39,16 @@ void Engine::create(string title, uint width, uint height, uint style) {
 	this->window->setVerticalSyncEnabled(false);
 	//this->window->setFramerateLimit(144);
 
-	#ifdef DEBUG
-		contextSettings = window->getSettings();
-		cout << "OpenGL Version: " << contextSettings.majorVersion << "." << contextSettings.minorVersion << endl;
-		cout << "Depth bits: " << contextSettings.depthBits << endl;
-		cout << "Stencil bits: " << contextSettings.stencilBits << endl;
-		cout << "Antialiasing: " << contextSettings.antialiasingLevel << endl;
-	#endif
+	contextSettings = window->getSettings();
+	Log::cout << "  >> " << glGetString(GL_VENDOR) << " | " << glGetString(GL_RENDERER) << endl;
+	Log::cout << "  >> OpenGL " << contextSettings.majorVersion << "." << contextSettings.minorVersion << endl;
+	Log::cout << "  >> Depth: " << contextSettings.depthBits;
+	Log::cout << ", Stencil: " << contextSettings.stencilBits;
+	Log::cout << ", Antialiasing: " << contextSettings.antialiasingLevel << endl << endl;
 
-	cout << glGetString(GL_VENDOR) << endl;
-	cout << glGetString(GL_RENDERER) << endl;
+	if (contextSettings.majorVersion < 2 || (contextSettings.majorVersion == 2 && contextSettings.minorVersion < 1)) {
+		Log::cout << "No compatible graphics card found" << std::endl;
+	}
 
 	this->setupOpenGL();
 
@@ -55,10 +63,10 @@ void Engine::setupOpenGL() {
 	// Clear color
 	glClearColor(1.0f, 0.7f, 0.1f, 1.0f);
 
-	/* Backface culling
+	// Backface culling
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);*/
+	glFrontFace(GL_CCW);
 
 	// Depth control
 	glEnable(GL_DEPTH_TEST);

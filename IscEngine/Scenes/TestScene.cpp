@@ -30,7 +30,7 @@ GLuint textureId;
 GLuint depthTexture;
 GLuint FramebufferName;
 
-int mapsize = 2;
+int mapsize = 1;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -139,8 +139,15 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
+
+	// We dont want color, only depth
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) std::cout << "Error framebuffer: " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0); // End framebuffer
 
 }
 
@@ -219,13 +226,18 @@ void TestScene::render() {
 	// Render to texture
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	glViewport(0, 0, 2048, 2048);
+
+	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	//glViewport(0, 0, window->getSize().x, window->getSize().y);
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shShadowMap->bind();
 
 	int size = 30;
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -100, 200);
-	glm::mat4 depthViewMatrix = glm::lookAt(vec3(2, 2, 2), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -size * 10, size * 10);
+	//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50000.0f);
+	glm::mat4 depthViewMatrix = glm::lookAt(vec3(20, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
 	shShadowMap->setUniformMatrix("V", &depthViewMatrix[0][0]);
 	shShadowMap->setUniformMatrix("P", &depthProjectionMatrix[0][0]);
@@ -233,7 +245,7 @@ void TestScene::render() {
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
 			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
-			model = glm::rotate(model, radians(i * 25.f), glm::vec3(0, 1, 0));
+			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
 			shShadowMap->setUniformMatrix("M", &model[0][0]);
 			mesh->render(GL_TRIANGLES);
 		}
@@ -275,7 +287,7 @@ void TestScene::render() {
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
 			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
-			model = glm::rotate(model, radians(i * 25.f), glm::vec3(0, 1, 0));
+			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
 			shader->setUniformMatrix("M", &model[0][0]);
 			mesh->render(GL_TRIANGLES);
 		}
