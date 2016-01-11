@@ -12,11 +12,8 @@ VertexArray::VertexArray() {
 
 VertexArray::~VertexArray() {
 
-	for (int i = 0; i < this->buffers.size(); i++) {
-
-		delete this->buffers.at(i);
-
-	}
+	for (unsigned int index : indexes) glDisableVertexAttribArray(index);
+	for (Buffer* buffer : this->buffers) delete buffer;
 
 	glDeleteVertexArrays(1, &this->id);
 
@@ -29,11 +26,13 @@ void VertexArray::addBuffer(Buffer* buffer, unsigned int index) {
 	
 	glEnableVertexAttribArray(index);
 	glVertexAttribPointer(index, buffer->getComponentCount(), GL_FLOAT, GL_FALSE, 0, 0);
+	//glDisableVertexAttribArray(index);
 
 	buffer->unbind();
 	this->unbind();
 
 	this->buffers.push_back(buffer);
+	indexes.push_back(index);
 
 }
 

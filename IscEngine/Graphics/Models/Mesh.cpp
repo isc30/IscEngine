@@ -128,6 +128,7 @@ void Mesh::render(GLenum type) {
 			0,                            // stride
 			(void*)0                      // array buffer offset
 		);
+		this->vertexBuffer->unbind();
 
 		attributeLocation[1] = currentShader->getAttributeLocation("vertexUV");
 		glEnableVertexAttribArray(attributeLocation[1]);
@@ -140,6 +141,7 @@ void Mesh::render(GLenum type) {
 			0,                            // stride
 			(void*)0                      // array buffer offset
 		);
+		this->textureBuffer->unbind();
 
 		attributeLocation[2] = currentShader->getAttributeLocation("vertexNormal_modelspace");
 		glEnableVertexAttribArray(attributeLocation[2]);
@@ -152,6 +154,7 @@ void Mesh::render(GLenum type) {
 			0,                            // stride
 			(void*)0                      // array buffer offset
 		);
+		this->normalBuffer->unbind();
 
 		if (this->indexBuffer != nullptr) {
 			this->indexBuffer->bind();

@@ -7,6 +7,7 @@ using namespace IscEngine::Scenes;
 #include "../Graphics/Shaders/Base/Shader.hpp"
 #include "../Graphics/Buffers/Buffers.hpp"
 #include "../Graphics/Models/Mesh.hpp"
+#include "../Graphics/Utils/SfmlOpengl.hpp"
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Views/Modelview.hpp"
 
@@ -226,10 +227,6 @@ void TestScene::render() {
 	// Render to texture
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	glViewport(0, 0, 2048, 2048);
-
-	//glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glViewport(0, 0, window->getSize().x, window->getSize().y);
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	shShadowMap->bind();
@@ -263,7 +260,7 @@ void TestScene::render() {
 	glm::mat4 depthBiasVP = biasMatrix * depthVP;
 	
 	///////////////////////////////////////-
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -294,6 +291,7 @@ void TestScene::render() {
 	}
 
 	shader->unbind();
+
 	//*/
 
 	window->display();

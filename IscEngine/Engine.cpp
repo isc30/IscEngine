@@ -31,7 +31,7 @@ void Engine::create(string title, uint width, uint height, uint style) {
 	sf::ContextSettings contextSettings;
 	contextSettings.depthBits = 24;
 	contextSettings.stencilBits = 8;
-	contextSettings.antialiasingLevel = 0;
+	contextSettings.antialiasingLevel = 1;
 	contextSettings.majorVersion = 2;
 	contextSettings.minorVersion = 1;
 

@@ -14,6 +14,7 @@ namespace IscEngine {
 
 			unsigned int id;
 			vector<Buffer*> buffers;
+			vector<unsigned int> indexes;
 
 		public:
 
