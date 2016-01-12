@@ -89,10 +89,14 @@ void Mesh::render(GLenum type) {
 
 			Log::cout << "Creating VAO " << currentShader->getId() << std::endl;
 
+			int position;
 			currentVertexArray = new VertexArray();
-			currentVertexArray->addBuffer(this->vertexBuffer, currentShader->getAttributeLocation("vertexPosition_modelspace"));
-			currentVertexArray->addBuffer(this->textureBuffer, currentShader->getAttributeLocation("vertexUV"));
-			currentVertexArray->addBuffer(this->normalBuffer, currentShader->getAttributeLocation("vertexNormal_modelspace"));
+			position = currentShader->getAttributeLocation("vertexPosition_modelspace");
+			if (position > -1) currentVertexArray->addBuffer(this->vertexBuffer, position);
+			position = currentShader->getAttributeLocation("vertexUV");
+			if (position > -1) currentVertexArray->addBuffer(this->textureBuffer, position);
+			position = currentShader->getAttributeLocation("vertexNormal_modelspace");
+			if (position > -1) currentVertexArray->addBuffer(this->normalBuffer, position);
 
 			vertexArrays[currentShader] = currentVertexArray;
 
@@ -116,45 +120,52 @@ void Mesh::render(GLenum type) {
 
 	} else {
 
-		GLuint attributeLocation[3];
+		int attributeLocation[3];
+
 		attributeLocation[0] = currentShader->getAttributeLocation("vertexPosition_modelspace");
-		glEnableVertexAttribArray(attributeLocation[0]);
-		this->vertexBuffer->bind();
-		glVertexAttribPointer(
-			attributeLocation[0],  // The attribute we want to configure
-			this->vertexBuffer->getComponentCount(),                            // size
-			GL_FLOAT,                     // type
-			GL_FALSE,                     // normalized?
-			0,                            // stride
-			(void*)0                      // array buffer offset
-		);
-		this->vertexBuffer->unbind();
+		if (attributeLocation[0] > -1 && this->vertexBuffer != nullptr) {
+			glEnableVertexAttribArray(attributeLocation[0]);
+			this->vertexBuffer->bind();
+			glVertexAttribPointer(
+				attributeLocation[0],  // The attribute we want to configure
+				this->vertexBuffer->getComponentCount(),                            // size
+				GL_FLOAT,                     // type
+				GL_FALSE,                     // normalized?
+				0,                            // stride
+				(void*) 0                      // array buffer offset
+				);
+			this->vertexBuffer->unbind();
+		}
 
 		attributeLocation[1] = currentShader->getAttributeLocation("vertexUV");
-		glEnableVertexAttribArray(attributeLocation[1]);
-		this->textureBuffer->bind();
-		glVertexAttribPointer(
-			attributeLocation[1],  // The attribute we want to configure
-			this->textureBuffer->getComponentCount(),                            // size
-			GL_FLOAT,                     // type
-			GL_FALSE,                     // normalized?
-			0,                            // stride
-			(void*)0                      // array buffer offset
-		);
-		this->textureBuffer->unbind();
+		if (attributeLocation[1] > -1 && this->textureBuffer != nullptr) {
+			glEnableVertexAttribArray(attributeLocation[1]);
+			this->textureBuffer->bind();
+			glVertexAttribPointer(
+				attributeLocation[1],  // The attribute we want to configure
+				this->textureBuffer->getComponentCount(),                            // size
+				GL_FLOAT,                     // type
+				GL_FALSE,                     // normalized?
+				0,                            // stride
+				(void*) 0                      // array buffer offset
+				);
+			this->textureBuffer->unbind();
+		}
 
 		attributeLocation[2] = currentShader->getAttributeLocation("vertexNormal_modelspace");
-		glEnableVertexAttribArray(attributeLocation[2]);
-		this->normalBuffer->bind();
-		glVertexAttribPointer(
-			attributeLocation[2],  // The attribute we want to configure
-			this->normalBuffer->getComponentCount(),                            // size
-			GL_FLOAT,                     // type
-			GL_FALSE,                     // normalized?
-			0,                            // stride
-			(void*)0                      // array buffer offset
-		);
-		this->normalBuffer->unbind();
+		if (attributeLocation[2] > -1 && this->normalBuffer != nullptr) {
+			glEnableVertexAttribArray(attributeLocation[2]);
+			this->normalBuffer->bind();
+			glVertexAttribPointer(
+				attributeLocation[2],  // The attribute we want to configure
+				this->normalBuffer->getComponentCount(),                            // size
+				GL_FLOAT,                     // type
+				GL_FALSE,                     // normalized?
+				0,                            // stride
+				(void*) 0                      // array buffer offset
+				);
+			this->normalBuffer->unbind();
+		}
 
 		if (this->indexBuffer != nullptr) {
 			this->indexBuffer->bind();
@@ -164,9 +175,9 @@ void Mesh::render(GLenum type) {
 			glDrawArrays(type, 0, this->vertexBuffer->getCount());
 		}
 
-		glDisableVertexAttribArray(attributeLocation[0]);
-		glDisableVertexAttribArray(attributeLocation[1]);
-		glDisableVertexAttribArray(attributeLocation[2]);
+		if (attributeLocation[0] > -1 && this->vertexBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[0]);
+		if (attributeLocation[1] > -1 && this->textureBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[1]);
+		if (attributeLocation[2] > -1 && this->normalBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[2]);
 
 	}
 

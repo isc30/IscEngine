@@ -296,10 +296,83 @@ void TestScene::render() {
 
 	//*/
 
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	glViewport(0, 0, 2048, 2048);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	shShadowMap->bind();
+
+	int size = 30;
+	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -size * 10, size * 10);
+	//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50000.0f);
+	glm::mat4 depthViewMatrix = glm::lookAt(vec3(20, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+
+	shShadowMap->setUniformMatrix("V", &depthViewMatrix[0][0]);
+	shShadowMap->setUniformMatrix("P", &depthProjectionMatrix[0][0]);
+
+	for (int i = 0; i < mapsize; i++) {
+		for (int j = 0; j < mapsize; j++) {
+			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
+			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
+			shShadowMap->setUniformMatrix("M", &model[0][0]);
+			mesh->render(GL_TRIANGLES);
+		}
+	}
+
+	shShadowMap->unbind();
+
+	glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
+	glm::mat4 biasMatrix(
+		0.5, 0.0, 0.0, 0.0,
+		0.0, 0.5, 0.0, 0.0,
+		0.0, 0.0, 0.5, 0.0,
+		0.5, 0.5, 0.5, 1.0
+		);
+	glm::mat4 depthBiasVP = biasMatrix * depthVP;
+
+	////////////////////////////////////////////////////////
+
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	shader->bind();
+	shader->setUniformMatrix("V", &V[0][0]);
+	shader->setUniformMatrix("P", &P[0][0]);
+	vec3 cameraPosition = camera.getPosition();
+	shader->setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, textureId);
+	shader->setUniform("myTextureSampler", 0);
 
+	glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
+	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	shader->setUniform("shadowMap", 1);
+
+	shader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
+
+	for (int i = 0; i < mapsize; i++) {
+		for (int j = 0; j < mapsize; j++) {
+			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
+			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
+			shader->setUniformMatrix("M", &model[0][0]);
+			mesh->render(GL_TRIANGLES);
+		}
+	}
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
+
+	shader->unbind();
+	
 	window->pushGLStates();
 
 	sf::CircleShape a(100.f);

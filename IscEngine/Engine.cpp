@@ -58,6 +58,7 @@ void Engine::setupOpenGL() {
 
 	Log::cout << " Initializing GLEW..." << endl << endl;
 
+	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
 		Log::cout << "  >> Error initializing GLEW" << endl;
 	} else {
