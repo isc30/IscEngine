@@ -51,7 +51,7 @@ void Shader::unbind() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Returns shader uniform location
-GLuint Shader::getUniformLocation(string uniform) {
+int Shader::getUniformLocation(string uniform) {
 
 	return glGetUniformLocation(this->id, uniform.c_str());
 
@@ -59,7 +59,7 @@ GLuint Shader::getUniformLocation(string uniform) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Returns shader attribute location
-GLuint Shader::getAttributeLocation(string attribute) {
+int Shader::getAttributeLocation(string attribute) {
 
 	return glGetAttribLocation(this->id, attribute.c_str());
 
@@ -69,8 +69,9 @@ GLuint Shader::getAttributeLocation(string attribute) {
 // Sets a shader uniform value
 template <class T> void Shader::setUniform(string uniform, T value0) {
 
-	GLuint uniformLocation = this->getUniformLocation(uniform);
-
+	if (uniform == "") return;
+	int uniformLocation = this->getUniformLocation(uniform);
+	
 	if (typeid(T) == typeid(double)) glUniform1d(uniformLocation, value0);
 	else if (typeid(T) == typeid(float)) glUniform1f(uniformLocation, value0);
 	else if (typeid(T) == typeid(int)) glUniform1i(uniformLocation, value0);
@@ -82,7 +83,8 @@ template <class T> void Shader::setUniform(string uniform, T value0) {
 // Sets a shader uniform value
 template <class T> void Shader::setUniform(string uniform, T value0, T value1) {
 
-	GLuint uniformLocation = this->getUniformLocation(uniform);
+	if (uniform == "") return;
+	int uniformLocation = this->getUniformLocation(uniform);
 
 	switch (typeid(T)) {
 
@@ -110,7 +112,8 @@ template <class T> void Shader::setUniform(string uniform, T value0, T value1) {
 // Sets a shader uniform value
 template <class T> void Shader::setUniform(string uniform, T value0, T value1, T value2) {
 
-	GLuint uniformLocation = this->getUniformLocation(uniform);
+	if (uniform == "") return;
+	int uniformLocation = this->getUniformLocation(uniform);
 
 	if (typeid(T) == typeid(double)) glUniform3d(uniformLocation, value0, value1, value2);
 	else if (typeid(T) == typeid(float)) glUniform3f(uniformLocation, value0, value1, value2);
@@ -123,7 +126,8 @@ template <class T> void Shader::setUniform(string uniform, T value0, T value1, T
 // Sets a shader uniform value
 template <class T> void Shader::setUniform(string uniform, T value0, T value1, T value2, T value3) {
 
-	GLuint uniformLocation = this->getUniformLocation(uniform);
+	if (uniform == "") return;
+	int uniformLocation = this->getUniformLocation(uniform);
 
 	switch (typeid(T)) {
 
@@ -151,13 +155,15 @@ template <class T> void Shader::setUniform(string uniform, T value0, T value1, T
 // Sets a shader uniform matrix
 void Shader::setUniformMatrix(string uniform, float* value) {
 
-	GLuint uniformLocation = this->getUniformLocation(uniform);
+	if (uniform == "") return;
+	int uniformLocation = this->getUniformLocation(uniform);
 	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, value);
 
 }
 
 template <class T> void Shader::setUniformArray(string uniform, uint size, T* pointer) {
 
+	if (uniform == "") return;
 	GLuint uniformLocation = this->getUniformLocation(uniform);
 
 	if (typeid(T) == typeid(double)) glUniform3dv(uniformLocation, size, (const GLdouble*)pointer);

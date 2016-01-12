@@ -31,8 +31,8 @@ namespace IscEngine {
 			bool loadFromFiles(string vertexShader, string fragmentShader);
 			bool loadFromStrings(string vertexShader, string fragmentShader);
 
-			GLuint getUniformLocation(string uniform);
-			GLuint getAttributeLocation(string attribute);
+			int getUniformLocation(string uniform);
+			int getAttributeLocation(string attribute);
 
 			template <class T> void setUniform(string uniform, T value0);
 			template <class T> void setUniform(string uniform, T value0, T value1);

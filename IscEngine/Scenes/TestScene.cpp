@@ -224,6 +224,7 @@ void TestScene::processInput() {
 
 void TestScene::render() {
 
+	/*
 	// Render to texture
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	glViewport(0, 0, 2048, 2048);
@@ -291,28 +292,21 @@ void TestScene::render() {
 	}
 
 	shader->unbind();
+	*/
+
+	//*/
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glViewport(0, 0, window->getSize().x, window->getSize().y);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	window->pushGLStates();
-
-	glDisable(GL_TEXTURE_2D);
 
 	sf::CircleShape a(100.f);
 	a.setFillColor(sf::Color::Red);
 	window->draw(a);
 
 	window->popGLStates();
-
-	glEnable(GL_DEPTH_TEST);
-
-	//*/
-
-	/*window->popGLStates();
-
-	sf::CircleShape a(100.f);
-	a.setFillColor(sf::Color::Red);
-	window->draw(a);
-
-	window->pushGLStates();*/
 
 	window->display();
 
