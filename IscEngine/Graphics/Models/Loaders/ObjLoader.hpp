@@ -40,4 +40,4 @@ void indexVBO_TBN(
 	std::vector<glm::vec3> & out_normals,
 	std::vector<glm::vec3> & out_tangents,
 	std::vector<glm::vec3> & out_bitangents
-	);
+);
