@@ -7,7 +7,6 @@ using namespace IscEngine::Scenes;
 #include "../Graphics/Shaders/Base/Shader.hpp"
 #include "../Graphics/Buffers/Buffers.hpp"
 #include "../Graphics/Models/Mesh.hpp"
-#include "../Graphics/Utils/SfmlOpengl.hpp"
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Views/Modelview.hpp"
 
