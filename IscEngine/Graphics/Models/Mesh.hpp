@@ -32,6 +32,7 @@ namespace IscEngine {
 			Mesh(Buffer* vertexBuffer);
 			~Mesh();
 
+			void addIndexes(vector<unsigned short> indexes);
 			void addIndexes(vector<unsigned int> indexes);
 			void addIndexBuffer(IndexBuffer* indexBuffer);
 

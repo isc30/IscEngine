@@ -31,7 +31,8 @@ GLuint textureId;
 GLuint depthTexture;
 GLuint FramebufferName;
 
-int mapsize = 2;
+int mapsize = 40;
+float separation = 7.f;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -44,23 +45,17 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	shShadowMap = new Shader();
 	shShadowMap->loadFromFiles(RESOURCE_PATH + "shShadowMap.vsh", RESOURCE_PATH + "shShadowMap.fsh");
 
-	camera.setPosition(vec3(mapsize * 25 / 2 - 3, 10.5, mapsize * 25 / 2 - 3));
+	camera.setPosition(vec3(mapsize * separation / 2 - 3, 10.5, mapsize * separation / 2 - 3));
 	camera.lookAt(vec3(0, 0, 0));
 
 	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
+	vector<unsigned short> objIndices;
 	std::vector<glm::vec3> objVertices;
 	std::vector<glm::vec2> objUvs;
 	std::vector<glm::vec3> objNormals;
 
-	loadOBJ(RESOURCE_PATH + "room.obj", objVertices, objUvs, objNormals);
-
-	std::vector<unsigned int> indices;
-	std::vector<glm::vec3> indexed_vertices;
-	std::vector<glm::vec2> indexed_uvs;
-	std::vector<glm::vec3> indexed_normals;
-
-	//indexVBO(objVertices, objUvs, objNormals, indices, indexed_vertices, indexed_uvs, indexed_normals);
+	loadObj(RESOURCE_PATH + "katarina.obj", objIndices, objVertices, objUvs, objNormals);
 
 	std::vector<GLfloat> vertices;
 	for (int i = 0; i < objVertices.size(); i++) {
@@ -82,17 +77,17 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		texture.push_back(objUvs.at(i).y);
 	}
 
-	Log::cout << "Vertices: " << vertices.size() / 3 << endl;
+	Log::cout << "Vertices: " << vertices.size() * mapsize * mapsize << endl;
 
 	mesh = new Mesh(vertices);
-	//mesh->addIndexes(indices);
-	mesh->addNormals(normals);
-	mesh->addTextureCoords(texture);
+	if (objIndices.size() > 0) mesh->addIndexes(objIndices);
+	if (normals.size() > 0) mesh->addNormals(normals);
+	if (texture.size() > 0) mesh->addTextureCoords(texture);
 
 	GLuint textureGl;
 	sf::Image image;
 
-	if (!image.loadFromFile(RESOURCE_PATH + "textura.png")) {
+	if (!image.loadFromFile(RESOURCE_PATH + "katarina_base_diffuse.jpg")) {
 
 		Log::cout << "Texture loading error" << std::endl;
 
@@ -222,10 +217,9 @@ void TestScene::processInput() {
 }
 
 void TestScene::render() {
-
-	/*
+	
 	// Render to texture
-	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	/*glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	glViewport(0, 0, 2048, 2048);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -241,77 +235,7 @@ void TestScene::render() {
 
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
-			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
-			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
-			shShadowMap->setUniformMatrix("M", &model[0][0]);
-			mesh->render(GL_TRIANGLES);
-		}
-	}
-
-	shShadowMap->unbind();
-
-	glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
-	glm::mat4 biasMatrix(
-		0.5, 0.0, 0.0, 0.0,
-		0.0, 0.5, 0.0, 0.0,
-		0.0, 0.0, 0.5, 0.0,
-		0.5, 0.5, 0.5, 1.0
-	);
-	glm::mat4 depthBiasVP = biasMatrix * depthVP;
-	
-	///////////////////////////////////////-
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, window->getSize().x, window->getSize().y);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	shader->bind();
-	shader->setUniformMatrix("V", &V[0][0]);
-	shader->setUniformMatrix("P", &P[0][0]);
-	vec3 cameraPosition = camera.getPosition();
-	shader->setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureId);
-	shader->setUniform("myTextureSampler", 0);
-
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, depthTexture);
-	shader->setUniform("shadowMap", 1);
-
-	shader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
-
-	for (int i = 0; i < mapsize; i++) {
-		for (int j = 0; j < mapsize; j++) {
-			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
-			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
-			shader->setUniformMatrix("M", &model[0][0]);
-			mesh->render(GL_TRIANGLES);
-		}
-	}
-
-	shader->unbind();
-	*/
-
-	//*/
-
-	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
-	glViewport(0, 0, 2048, 2048);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	shShadowMap->bind();
-
-	int size = 30;
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -size * 10, size * 10);
-	//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50000.0f);
-	glm::mat4 depthViewMatrix = glm::lookAt(vec3(20, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
-	shShadowMap->setUniformMatrix("V", &depthViewMatrix[0][0]);
-	shShadowMap->setUniformMatrix("P", &depthProjectionMatrix[0][0]);
-
-	for (int i = 0; i < mapsize; i++) {
-		for (int j = 0; j < mapsize; j++) {
-			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
+			mat4 model = glm::translate(vec3(i * separation, 2.0f, j * separation));
 			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
 			shShadowMap->setUniformMatrix("M", &model[0][0]);
 			mesh->render(GL_TRIANGLES);
@@ -330,7 +254,7 @@ void TestScene::render() {
 	glm::mat4 depthBiasVP = biasMatrix * depthVP;
 
 	////////////////////////////////////////////////////////
-
+	*/
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -351,11 +275,11 @@ void TestScene::render() {
 	glBindTexture(GL_TEXTURE_2D, depthTexture);
 	shader->setUniform("shadowMap", 1);
 
-	shader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
+	//shader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
 
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
-			mat4 model = glm::translate(vec3(i * 25, 2.0f, j * 25));
+			mat4 model = glm::translate(vec3(i * separation, 2.0f, j * separation));
 			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
 			shader->setUniformMatrix("M", &model[0][0]);
 			mesh->render(GL_TRIANGLES);
@@ -373,11 +297,9 @@ void TestScene::render() {
 	shader->unbind();
 	
 	window->pushGLStates();
-
 	sf::CircleShape a(100.f);
 	a.setFillColor(sf::Color::Red);
 	window->draw(a);
-
 	window->popGLStates();
 
 	window->display();

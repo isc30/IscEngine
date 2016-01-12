@@ -29,6 +29,12 @@ Mesh::~Mesh() {
 
 }
 
+void Mesh::addIndexes(vector<unsigned short> indexes) {
+
+	this->indexBuffer = new IndexBuffer(indexes);
+
+}
+
 void Mesh::addIndexes(vector<unsigned int> indexes) {
 
 	this->indexBuffer = new IndexBuffer(indexes);
@@ -87,16 +93,16 @@ void Mesh::render(GLenum type) {
 
 		if (this->vertexArrays.find(currentShader) == this->vertexArrays.end()) {
 
-			Log::cout << "Creating VAO " << currentShader->getId() << std::endl;
+			//Log::cout << "Creating VAO " << currentShader->getId() << std::endl;
 
 			int position;
 			currentVertexArray = new VertexArray();
 			position = currentShader->getAttributeLocation("vertexPosition_modelspace");
-			if (position > -1) currentVertexArray->addBuffer(this->vertexBuffer, position);
+			if (position > -1 && this->vertexBuffer != nullptr) currentVertexArray->addBuffer(this->vertexBuffer, position);
 			position = currentShader->getAttributeLocation("vertexUV");
-			if (position > -1) currentVertexArray->addBuffer(this->textureBuffer, position);
+			if (position > -1 && this->textureBuffer != nullptr) currentVertexArray->addBuffer(this->textureBuffer, position);
 			position = currentShader->getAttributeLocation("vertexNormal_modelspace");
-			if (position > -1) currentVertexArray->addBuffer(this->normalBuffer, position);
+			if (position > -1 && this->normalBuffer != nullptr) currentVertexArray->addBuffer(this->normalBuffer, position);
 
 			vertexArrays[currentShader] = currentVertexArray;
 
@@ -110,7 +116,7 @@ void Mesh::render(GLenum type) {
 
 		if (this->indexBuffer != nullptr) {
 			this->indexBuffer->bind();
-			glDrawElements(type, this->vertexBuffer->getCount(), GL_UNSIGNED_INT, 0);
+			glDrawElements(type, this->indexBuffer->getCount(), this->indexBuffer->getType(), 0);
 			this->indexBuffer->unbind();
 		} else {
 			glDrawArrays(type, 0, this->vertexBuffer->getCount());
@@ -169,7 +175,7 @@ void Mesh::render(GLenum type) {
 
 		if (this->indexBuffer != nullptr) {
 			this->indexBuffer->bind();
-			glDrawElements(type, this->vertexBuffer->getCount(), GL_UNSIGNED_INT, 0);
+			glDrawElements(type, this->indexBuffer->getCount(), this->indexBuffer->getType(), 0);
 			this->indexBuffer->unbind();
 		} else {
 			glDrawArrays(type, 0, this->vertexBuffer->getCount());

@@ -12,6 +12,7 @@ namespace IscEngine {
 
 			unsigned int id;
 			unsigned int count;
+			GLenum type;
 
 		public:
 
@@ -23,6 +24,7 @@ namespace IscEngine {
 			void unbind();
 
 			unsigned int getCount() { return this->count; }
+			GLenum getType() { return this->type; }
 
 	};
 

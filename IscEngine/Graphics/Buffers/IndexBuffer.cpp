@@ -4,6 +4,7 @@ using namespace IscEngine;
 IndexBuffer::IndexBuffer(vector<unsigned short> data) {
 
 	this->count = data.size();
+	this->type = GL_UNSIGNED_SHORT;
 
 	glGenBuffers(1, &this->id);
 	this->bind();
@@ -15,6 +16,7 @@ IndexBuffer::IndexBuffer(vector<unsigned short> data) {
 IndexBuffer::IndexBuffer(vector<unsigned int> data) {
 
 	this->count = data.size();
+	this->type = GL_UNSIGNED_INT;
 
 	glGenBuffers(1, &this->id);
 	this->bind();
