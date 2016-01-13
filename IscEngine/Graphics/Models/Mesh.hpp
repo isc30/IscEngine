@@ -18,6 +18,7 @@ namespace IscEngine {
 		private:
 			
 			std::map<Shader*, VertexArray*> vertexArrays; // Each Shader has different Attribute positions :'(
+			VertexArray* getCachedVertexArray();
 
 			Buffer* vertexBuffer; // 0
 			IndexBuffer* indexBuffer;
@@ -27,25 +28,28 @@ namespace IscEngine {
 
 		public:
 
-			Mesh(vector<float> vertices);
-			Mesh(vector<vec3> vertices);
+			Mesh(const vector<float>& vertices);
+			Mesh(const vector<vec3>& vertices);
 			Mesh(Buffer* vertexBuffer);
 			~Mesh();
 
-			void addIndexes(vector<unsigned short> indexes);
-			void addIndexes(vector<unsigned int> indexes);
+			void addIndexes(const vector<unsigned short>& indexes);
+			void addIndexes(const vector<unsigned int>& indexes);
 			void addIndexBuffer(IndexBuffer* indexBuffer);
 
-			void addNormals(vector<float> normals);
+			void addNormals(const vector<float>& normals);
+			void addNormals(const vector<vec3>& normals);
 			void addNormalBuffer(Buffer* normalBuffer);
 
-			void addTextureCoords(vector<float> textureCoords);
-			void addTextureBuffer(Buffer* textureBuffer);
+			void addUVs(const vector<float>& textureCoords);
+			void addUVs(const vector<vec2>& textureCoords);
+			void addUVBuffer(Buffer* textureBuffer);
 
-			void addColors(vector<float> colors);
+			void addColors(const vector<float>& colors);
+			void addColors(const vector<vec3>& colors);
 			void addColorBuffer(Buffer* colorBuffer);
 
-			void render(GLenum type);
+			void render(const GLenum& type);
 
 	};
 

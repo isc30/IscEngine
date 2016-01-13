@@ -9,6 +9,5 @@ uniform mat4 V;
 uniform mat4 P;
 
 void main() {
-	mat4 MVP = P * V * M;
-	gl_Position = MVP * vec4(vertexPosition_modelspace, 1);
+	gl_Position = P * V * M * vec4(vertexPosition_modelspace, 1);
 }

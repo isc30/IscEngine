@@ -12,7 +12,7 @@ VertexArray::VertexArray() {
 
 VertexArray::~VertexArray() {
 
-	for (Buffer* buffer : this->buffers) delete buffer;
+	for (Buffer*& buffer : this->buffers) delete buffer;
 	glDeleteVertexArrays(1, &this->id);
 
 }
@@ -24,7 +24,6 @@ void VertexArray::addBuffer(Buffer* buffer, unsigned int index) {
 	
 	glEnableVertexAttribArray(index);
 	glVertexAttribPointer(index, buffer->getComponentCount(), GL_FLOAT, GL_FALSE, 0, 0);
-	//glDisableVertexAttribArray(index);
 
 	buffer->unbind();
 	this->unbind();
