@@ -28,7 +28,7 @@ namespace IscEngine {
 			void setupOpenGL();
 
 		public:
-
+			
 			Engine();
 			~Engine();
 

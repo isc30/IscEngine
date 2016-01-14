@@ -1,26 +1,16 @@
 #include "TestScene.hpp"
 
-using namespace IscEngine;
-using namespace IscEngine::Scenes;
-
-#include "../Utils/Log.hpp"
-#include "../Graphics/Buffers/Buffers.hpp"
-#include "../Graphics/Models/Mesh.hpp"
+#include "../Graphics/Models/Loaders/ObjLoader.hpp"
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Views/Modelview.hpp"
 
-#include "../Graphics/Models/Loaders/ObjLoader.hpp"
+using namespace IscEngine;
+using namespace IscEngine::Scenes;
 
 Camera camera;
 
 mat4 P;
 mat4 V;
-
-/////////////////////////////////
-
-Mesh* mesh[2];
-
-/////////////////////////////////
 
 bool rotatingCamera = false;
 bool shadows = true;
@@ -29,7 +19,7 @@ GLuint textureId[2];
 GLuint depthTexture;
 GLuint FramebufferName;
 
-int mapsize = 1;
+int mapsize = 5;
 float separation = 5.f;
 
 TestScene::TestScene(Window* window) : Scene(window) {
@@ -166,6 +156,8 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		Log::cout << "Error framebuffer: " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); // End framebuffer
+
+	cout << "Fin carga Escena" << endl;
 
 }
 
@@ -374,7 +366,8 @@ void TestScene::render() {
 TestScene::~TestScene() {
 
 	cout << "Destructor TESTscene" << endl;
-	//delete &shader;
-	//delete &shShadowMap;
+
+	delete mesh[0]; mesh[0] = nullptr;
+	delete mesh[1]; mesh[1] = nullptr;
 
 }

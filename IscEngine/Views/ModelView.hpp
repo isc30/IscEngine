@@ -1,7 +1,6 @@
-#ifndef MODELVIEW_H
-#define MODELVIEW_H
+#pragma once
 
-#include <GLM/glm.hpp>
+#include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 using namespace glm;
 
@@ -17,5 +16,3 @@ mat4 getModelView(vec3 position = vec3(0.0f, 0.0f, 0.0f), vec3 rotation = vec3(0
 	return translate(position) * rotationMatrix * glm::scale(scale);
 
 }
-
-#endif

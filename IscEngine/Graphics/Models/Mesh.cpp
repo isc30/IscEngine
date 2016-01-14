@@ -40,14 +40,14 @@ Mesh::Mesh(Buffer* vertexBuffer) {
 }
 
 Mesh::~Mesh() {
-
+	
 	this->vertexArrays.clear();
 
-	delete this->vertexBuffer;
-	delete this->indexBuffer;
-	delete this->normalBuffer;
-	delete this->textureBuffer;
-	delete this->colorBuffer;
+	delete this->vertexBuffer; this->vertexBuffer = nullptr;
+	delete this->indexBuffer; this->indexBuffer = nullptr;
+	delete this->normalBuffer; this->normalBuffer = nullptr;
+	delete this->textureBuffer; this->textureBuffer = nullptr;
+	delete this->colorBuffer; this->colorBuffer = nullptr;
 
 }
 

@@ -14,8 +14,8 @@ Engine::Engine() {
 
 Engine::~Engine() {
 
-	if (this->currentScene != nullptr) delete this->currentScene;
-	delete this->window;
+	delete this->currentScene; this->currentScene = nullptr;
+	delete this->window; this->window = nullptr;
 
 }
 
@@ -96,24 +96,6 @@ void Engine::loop() {
 
 	while (this->window->isOpen()) {
 
-		SceneEvent sceneEvent;
-		while (this->currentScene->pollEvent(sceneEvent)) {
-
-			if (sceneEvent.type == SceneEventType::SCENE_END) {
-
-				if (sceneEvent.data != nullptr) {
-					this->setScene((Scene*)sceneEvent.data);
-				} else {
-					delete currentScene;
-					currentScene = nullptr;
-					window->close();
-					break;
-				}
-
-			}
-
-		}
-
 		sf::Event windowEvent;
 		while (this->window->pollEvent(windowEvent)) {
 
@@ -141,11 +123,27 @@ void Engine::loop() {
 
 			}
 
-			this->currentScene->processEvent(windowEvent);
+			if (this->currentScene != nullptr) this->currentScene->processEvent(windowEvent);
 
 		}
 
-		if (this->window->isOpen()) this->currentScene->loop();
+		SceneEvent sceneEvent;
+		while (this->currentScene != nullptr && this->currentScene->pollEvent(sceneEvent)) {
+
+			if (sceneEvent.type == SceneEventType::SCENE_END) {
+
+				if (sceneEvent.data != nullptr) {
+					this->setScene((Scene*)sceneEvent.data);
+				} else {
+					delete this->currentScene; this->currentScene = nullptr;
+					window->close();
+				}
+
+			}
+
+		}
+
+		if (this->currentScene != nullptr) this->currentScene->loop();
 
 	}
 
@@ -159,7 +157,7 @@ void Engine::run() {
 
 void Engine::setScene(Scene* scene) {
 
-	delete this->currentScene;
+	if (this->currentScene == nullptr) delete this->currentScene; this->currentScene = nullptr;
 	this->currentScene = scene;
 
 }

@@ -1,10 +1,11 @@
 #pragma once
 
 #include "../Engine.hpp"
-#include "../Graphics/Shaders/Base/Shader.hpp"
-#include "Base/Scene.hpp"
 
-#include <GLM/gtx/vector_angle.hpp>
+#include "Base/Scene.hpp"
+#include "../Utils/Log.hpp"
+#include "../Graphics/Shaders/Base/Shader.hpp"
+#include "../Graphics/Models/Mesh.hpp"
 
 namespace IscEngine { namespace Scenes {
 
@@ -15,6 +16,7 @@ namespace IscEngine { namespace Scenes {
 			uint fpsCount;
 			sf::Time fpsTime;
 			Shader shader, shShadowMap;
+			Mesh* mesh[2];
 
 		public:
 
