@@ -44,7 +44,6 @@ namespace IscEngine {
 			template <class T> void setUniform(const char* uniform, T value0, T value1, T value2, T value3);
 			void setUniformMatrix(const char* uniform, float* value);
 			template <class T> void setUniformArray(const char* uniform, uint size, T* pointer);
-			template <class T> void setUniformVector(const char* uniform, vector<T>* vector);
 
 	};
 

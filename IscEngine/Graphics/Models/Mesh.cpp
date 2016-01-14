@@ -143,11 +143,11 @@ void Mesh::addColorBuffer(Buffer* colorBuffer) {
 
 }
 
-VertexArray* Mesh::cacheVertexArray(Shader* currentShader = Shader::currentShader) {
+VertexArray* Mesh::cacheVertexArray(Shader* currentShader) {
 	
 	if (this->vertexArrays.find(currentShader) == this->vertexArrays.end()) {
 
-		Log::cout << "Creating VAO for shader " << currentShader->getId() << std::endl;
+		Log::cout << "  + Creating VAO for shader " << currentShader->getId() << std::endl;
 
 		int position;
 		VertexArray* currentVertexArray = new VertexArray();

@@ -48,7 +48,7 @@ namespace IscEngine {
 			void addColors(const vector<vec3>& colors);
 			void addColorBuffer(Buffer* colorBuffer);
 
-			VertexArray* cacheVertexArray(Shader* currentShader);
+			VertexArray* cacheVertexArray(Shader* currentShader = Shader::currentShader);
 			void render(const unsigned int type);
 
 	};

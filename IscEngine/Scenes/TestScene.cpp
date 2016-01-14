@@ -4,7 +4,6 @@ using namespace IscEngine;
 using namespace IscEngine::Scenes;
 
 #include "../Utils/Log.hpp"
-#include "../Graphics/Shaders/Base/Shader.hpp"
 #include "../Graphics/Buffers/Buffers.hpp"
 #include "../Graphics/Models/Mesh.hpp"
 #include "../Views/Cameras/Base/Camera.hpp"
@@ -30,10 +29,8 @@ GLuint textureId[2];
 GLuint depthTexture;
 GLuint FramebufferName;
 
-int mapsize = 5;
+int mapsize = 1;
 float separation = 5.f;
-
-Shader shader, shShadowMap;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -182,7 +179,8 @@ void TestScene::processEvent(const sf::Event& event) {
 
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Space) shadows = !shadows;
-			if (event.key.code == sf::Keyboard::B) this->endScene(this);
+			if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
+			if (event.key.code == sf::Keyboard::N) this->endScene();
 			break;
 
 	}

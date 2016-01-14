@@ -14,7 +14,7 @@ Engine::Engine() {
 
 Engine::~Engine() {
 
-	delete this->currentScene;
+	if (this->currentScene != nullptr) delete this->currentScene;
 	delete this->window;
 
 }
@@ -99,13 +99,16 @@ void Engine::loop() {
 		SceneEvent sceneEvent;
 		while (this->currentScene->pollEvent(sceneEvent)) {
 
-			switch (sceneEvent.type) {
+			if (sceneEvent.type == SceneEventType::SCENE_END) {
 
-				case SceneEventType::SCENE_END:
-					//this->setScene((Scene*) sceneEvent.data);
-					delete this->currentScene;
-					cin.get();
+				if (sceneEvent.data != nullptr) {
+					this->setScene((Scene*)sceneEvent.data);
+				} else {
+					delete currentScene;
+					currentScene = nullptr;
+					window->close();
 					break;
+				}
 
 			}
 
@@ -142,7 +145,7 @@ void Engine::loop() {
 
 		}
 
-		this->currentScene->loop();
+		if (this->window->isOpen()) this->currentScene->loop();
 
 	}
 

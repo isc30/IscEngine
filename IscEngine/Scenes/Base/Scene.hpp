@@ -53,7 +53,7 @@ namespace IscEngine {
 			virtual void update() = 0;
 			virtual void render() = 0;
 
-			virtual void endScene(Scene* scene);
+			virtual void endScene(Scene* scene = nullptr);
 
 	};
 

@@ -1,7 +1,9 @@
 #pragma once
 
 #include "../Engine.hpp"
+#include "../Graphics/Shaders/Base/Shader.hpp"
 #include "Base/Scene.hpp"
+
 #include <GLM/gtx/vector_angle.hpp>
 
 namespace IscEngine { namespace Scenes {
@@ -12,7 +14,7 @@ namespace IscEngine { namespace Scenes {
 
 			uint fpsCount;
 			sf::Time fpsTime;
-			//Shader shader, shShadowMap;
+			Shader shader, shShadowMap;
 
 		public:
 
