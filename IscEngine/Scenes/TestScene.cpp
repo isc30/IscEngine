@@ -19,7 +19,7 @@ GLuint textureId[2];
 GLuint depthTexture;
 GLuint FramebufferName;
 
-int mapsize = 5;
+int mapsize = 4;
 float separation = 5.f;
 
 TestScene::TestScene(Window* window) : Scene(window) {
