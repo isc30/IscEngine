@@ -13,7 +13,7 @@ mat4 P;
 mat4 V;
 
 bool rotatingCamera = false;
-bool shadows = true;
+bool shadows = false;
 
 GLuint textureId[2];
 GLuint depthTexture;
