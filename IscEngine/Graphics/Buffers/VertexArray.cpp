@@ -17,7 +17,7 @@ VertexArray::~VertexArray() {
 
 }
 
-void VertexArray::addBuffer(Buffer* buffer, unsigned int index) {
+void VertexArray::addBuffer(Buffer* buffer, const unsigned int index) {
 
 	this->bind();
 	buffer->bind();
@@ -32,13 +32,13 @@ void VertexArray::addBuffer(Buffer* buffer, unsigned int index) {
 
 }
 
-void VertexArray::bind() {
+void VertexArray::bind() const {
 
 	glBindVertexArray(this->id);
 
 }
 
-void VertexArray::unbind() {
+void VertexArray::unbind() const {
 
 	glBindVertexArray(0);
 

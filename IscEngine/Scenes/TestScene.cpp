@@ -12,8 +12,6 @@ using namespace IscEngine::Scenes;
 
 #include "../Graphics/Models/Loaders/ObjLoader.hpp"
 
-Shader* shader;
-Shader* shShadowMap;
 Camera camera;
 
 mat4 P;
@@ -26,6 +24,7 @@ Mesh* mesh[2];
 /////////////////////////////////
 
 bool rotatingCamera = false;
+bool shadows = true;
 
 GLuint textureId[2];
 GLuint depthTexture;
@@ -34,16 +33,18 @@ GLuint FramebufferName;
 int mapsize = 5;
 float separation = 5.f;
 
+Shader shader, shShadowMap;
+
 TestScene::TestScene(Window* window) : Scene(window) {
 
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-	shader = new Shader();
-	shader->loadFromFiles(RESOURCE_PATH + "ShadowMapping_SimpleVersion.vertexshader", RESOURCE_PATH + "ShadowMapping_SimpleVersion.fragmentshader");
+	//shader = Shader();
+	shader.loadFromFiles(RESOURCE_PATH + "ShadowMapping_SimpleVersion.vertexshader", RESOURCE_PATH + "ShadowMapping_SimpleVersion.fragmentshader");
 
-	shShadowMap = new Shader();
-	shShadowMap->loadFromFiles(RESOURCE_PATH + "shShadowMap.vsh", RESOURCE_PATH + "shShadowMap.fsh");
+	//shShadowMap = Shader();
+	shShadowMap.loadFromFiles(RESOURCE_PATH + "shShadowMap.vsh", RESOURCE_PATH + "shShadowMap.fsh");
 
 	camera.setPosition(vec3(mapsize * separation / 2 - 3, 10.5, mapsize * separation / 2 - 3));
 	camera.lookAt(vec3(0, 0, 0));
@@ -57,7 +58,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	loadModel(RESOURCE_PATH + "katarina.fbx", objIndices, objVertices, objUvs, objNormals);
 
-	Log::cout << "Vertices: " << objVertices.size() * mapsize * mapsize << endl;
+	Log::cout << "Vertices: " << ((objVertices.size() > objIndices.size()) ? objVertices.size() : objIndices.size() * mapsize * mapsize) << endl;
 
 	mesh[0] = new Mesh(objVertices);
 	if (objIndices.size() > 0) mesh[0]->addIndexes(objIndices);
@@ -171,12 +172,17 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 }
 
-void TestScene::processEvent(sf::Event event) {
+void TestScene::processEvent(const sf::Event& event) {
 
 	switch (event.type) {
 
 		case sf::Event::MouseButtonPressed:
 			sf::Mouse::setPosition(sf::Vector2i(this->window->getSize().x / 2, this->window->getSize().y / 2), *this->window);
+			break;
+
+		case sf::Event::KeyPressed:
+			if (event.key.code == sf::Keyboard::Space) shadows = !shadows;
+			if (event.key.code == sf::Keyboard::B) this->endScene(this);
 			break;
 
 	}
@@ -245,82 +251,91 @@ bool moveRight = false;
 float pos = 20;
 
 void TestScene::render() {
-	
-	// Render to texture
-	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
-	glViewport(0, 0, 2048, 2048);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	shShadowMap->bind();
+	mat4 depthBiasVP;
 
-	float size = 30;
-	glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -size * 10, size * 10);
-	//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50000.0f);
-	glm::mat4 depthViewMatrix = glm::lookAt(vec3(pos, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	if (shadows) {
 
-	if (moveRight) pos += 5 * deltaTime.asSeconds(); else pos -= 5 * deltaTime.asSeconds();
-	if (moveRight && pos > 20) moveRight = !moveRight;
-	if (!moveRight && pos < -20) moveRight = !moveRight;
+		// Render to texture
+		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+		glViewport(0, 0, 2048, 2048);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	shShadowMap->setUniformMatrix("V", &depthViewMatrix[0][0]);
-	shShadowMap->setUniformMatrix("P", &depthProjectionMatrix[0][0]);
+		shShadowMap.bind();
+		Shader::currentShader = &shShadowMap;
 
-	mat4 model(1.f);
-	model = glm::translate(vec3(0, 2, 0));
-	model = glm::scale(model, vec3(5, 5, 5));
-	shShadowMap->setUniformMatrix("M", &model[0][0]);
-	mesh[1]->render(GL_TRIANGLES);
+		float size = 30;
+		glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -size * 10, size * 10);
+		//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50000.0f);
+		glm::mat4 depthViewMatrix = glm::lookAt(vec3(pos, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
-	for (int i = 0; i < mapsize; i++) {
-		for (int j = 0; j < mapsize; j++) {
-			mat4 model(1.f);
-			model = glm::translate(model, vec3(i * separation, 2.0f, j * separation));
-			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
-			//model = glm::scale(model, vec3(i * 0.2f, i * 0.2f, i * 0.2f));
-			shShadowMap->setUniformMatrix("M", &model[0][0]);
-			mesh[0]->render(GL_TRIANGLES);
+		if (moveRight) pos += 5 * deltaTime.asSeconds(); else pos -= 5 * deltaTime.asSeconds();
+		if (moveRight && pos > 20) moveRight = !moveRight;
+		if (!moveRight && pos < -20) moveRight = !moveRight;
+
+		shShadowMap.setUniformMatrix("V", &depthViewMatrix[0][0]);
+		shShadowMap.setUniformMatrix("P", &depthProjectionMatrix[0][0]);
+
+		mat4 model(1.f);
+		model = glm::translate(vec3(0, 2, 0));
+		model = glm::scale(model, vec3(5, 5, 5));
+		shShadowMap.setUniformMatrix("M", &model[0][0]);
+		mesh[1]->render(GL_TRIANGLES);
+
+		for (int i = 0; i < mapsize; i++) {
+			for (int j = 0; j < mapsize; j++) {
+				mat4 model(1.f);
+				model = glm::translate(model, vec3(i * separation, 2.0f, j * separation));
+				model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
+				//model = glm::scale(model, vec3(i * 0.2f, i * 0.2f, i * 0.2f));
+				shShadowMap.setUniformMatrix("M", &model[0][0]);
+				mesh[0]->render(GL_TRIANGLES);
+			}
 		}
+
+		shShadowMap.unbind();
+
+		glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
+		glm::mat4 biasMatrix(
+			0.5, 0.0, 0.0, 0.0,
+			0.0, 0.5, 0.0, 0.0,
+			0.0, 0.0, 0.5, 0.0,
+			0.5, 0.5, 0.5, 1.0
+		);
+		depthBiasVP = biasMatrix * depthVP;
+
 	}
 
-	shShadowMap->unbind();
-
-	glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
-	glm::mat4 biasMatrix(
-		0.5, 0.0, 0.0, 0.0,
-		0.0, 0.5, 0.0, 0.0,
-		0.0, 0.0, 0.5, 0.0,
-		0.5, 0.5, 0.5, 1.0
-	);
-	glm::mat4 depthBiasVP = biasMatrix * depthVP;
-	
 	////////////////////////////////////////////////////////
 	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	shader->bind();
-	shader->setUniformMatrix("V", &V[0][0]);
-	shader->setUniformMatrix("P", &P[0][0]);
+	shader.bind();
+	Shader::currentShader = &shader;
+
+	shader.setUniformMatrix("V", &V[0][0]);
+	shader.setUniformMatrix("P", &P[0][0]);
 	vec3 cameraPosition = camera.getPosition();
-	shader->setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	shader.setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textureId[1]);
-	shader->setUniform("myTextureSampler", 0);
+	shader.setUniform("myTextureSampler", 0);
 
 	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, depthTexture);
-	shader->setUniform("shadowMap", 1);
+	shader.setUniform("shadowMap", 1);
 
-	shader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
+	if (shadows) shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
 
 	mat4 model2(1.f);
 	model2 = glm::translate(vec3(8, 2, 8));
 	model2 = glm::scale(model2, vec3(5, 5, 5));
-	shader->setUniformMatrix("M", &model2[0][0]);
+	shader.setUniformMatrix("M", &model2[0][0]);
 	mesh[1]->render(GL_TRIANGLES);
 
 	glActiveTexture(GL_TEXTURE0);
@@ -332,7 +347,7 @@ void TestScene::render() {
 			model = glm::translate(model, vec3(i * separation, 2.0f, j * separation));
 			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
 			//model = glm::scale(model, vec3(i * 0.2f, i * 0.2f, i * 0.2f));
-			shader->setUniformMatrix("M", &model[0][0]);
+			shader.setUniformMatrix("M", &model[0][0]);
 			mesh[0]->render(GL_TRIANGLES);
 		}
 	}
@@ -345,7 +360,7 @@ void TestScene::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 
-	shader->unbind();
+	shader.unbind();
 	//*/
 
 	window->pushGLStates();
@@ -355,5 +370,13 @@ void TestScene::render() {
 	window->popGLStates();
 
 	window->display();
+
+}
+
+TestScene::~TestScene() {
+
+	cout << "Destructor TESTscene" << endl;
+	//delete &shader;
+	//delete &shShadowMap;
 
 }

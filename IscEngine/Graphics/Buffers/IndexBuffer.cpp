@@ -1,7 +1,7 @@
 #include "IndexBuffer.hpp"
 using namespace IscEngine;
 
-IndexBuffer::IndexBuffer(vector<unsigned short> data) {
+IndexBuffer::IndexBuffer(const vector<unsigned short>& data) {
 
 	this->count = data.size();
 	this->type = GL_UNSIGNED_SHORT;
@@ -13,7 +13,7 @@ IndexBuffer::IndexBuffer(vector<unsigned short> data) {
 
 }
 
-IndexBuffer::IndexBuffer(vector<unsigned int> data) {
+IndexBuffer::IndexBuffer(const vector<unsigned int>& data) {
 
 	this->count = data.size();
 	this->type = GL_UNSIGNED_INT;
@@ -31,13 +31,25 @@ IndexBuffer::~IndexBuffer() {
 
 }
 
-void IndexBuffer::bind() {
+const unsigned int IndexBuffer::getCount() const {
+	
+	return this->count;
+
+}
+
+const unsigned int IndexBuffer::getType() const {
+	
+	return this->type;
+
+}
+
+void IndexBuffer::bind() const {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->id);
 
 }
 
-void IndexBuffer::unbind() {
+void IndexBuffer::unbind() const {
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 

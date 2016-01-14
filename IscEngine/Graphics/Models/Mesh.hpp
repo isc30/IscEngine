@@ -17,8 +17,7 @@ namespace IscEngine {
 
 		private:
 			
-			std::map<Shader*, VertexArray*> vertexArrays; // Each Shader has different Attribute positions :'(
-			VertexArray* getCachedVertexArray();
+			map<Shader*, VertexArray*> vertexArrays; // Each Shader has different Attribute positions :'(
 
 			Buffer* vertexBuffer; // 0
 			IndexBuffer* indexBuffer;
@@ -49,7 +48,8 @@ namespace IscEngine {
 			void addColors(const vector<vec3>& colors);
 			void addColorBuffer(Buffer* colorBuffer);
 
-			void render(const GLenum& type);
+			VertexArray* cacheVertexArray(Shader* currentShader);
+			void render(const unsigned int type);
 
 	};
 

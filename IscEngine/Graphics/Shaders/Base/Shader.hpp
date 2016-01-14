@@ -16,31 +16,35 @@ namespace IscEngine {
 
 		private:
 
-			GLuint id;
+			unsigned int id;
 
 		public:
+			
+			// Static
+			static Shader* currentShader;
 
+			// Dynamic
 			Shader();
 			~Shader();
 
-			GLuint getId();
+			const unsigned int getId() const;
 
-			void bind();
-			void unbind();
+			void bind() const;
+			void unbind() const;
 
-			bool loadFromFiles(string vertexShader, string fragmentShader);
-			bool loadFromStrings(string vertexShader, string fragmentShader);
+			const bool loadFromFiles(const string& vertexShader, const string& fragmentShader);
+			const bool loadFromStrings(const char* vertexShader, const char* fragmentShader);
 
-			int getUniformLocation(string uniform);
-			int getAttributeLocation(string attribute);
+			const int getUniformLocation(const char* uniform) const;
+			const int getAttributeLocation(const char* attribute) const;
 
-			template <class T> void setUniform(string uniform, T value0);
-			template <class T> void setUniform(string uniform, T value0, T value1);
-			template <class T> void setUniform(string uniform, T value0, T value1, T value2);
-			template <class T> void setUniform(string uniform, T value0, T value1, T value2, T value3);
-			void setUniformMatrix(string uniform, float* value);
-			template <class T> void setUniformArray(string uniform, uint size, T* pointer);
-			template <class T> void setUniformVector(string uniform, std::vector<T>* vector);
+			template <class T> void setUniform(const char* uniform, T value0);
+			template <class T> void setUniform(const char* uniform, T value0, T value1);
+			template <class T> void setUniform(const char* uniform, T value0, T value1, T value2);
+			template <class T> void setUniform(const char* uniform, T value0, T value1, T value2, T value3);
+			void setUniformMatrix(const char* uniform, float* value);
+			template <class T> void setUniformArray(const char* uniform, uint size, T* pointer);
+			template <class T> void setUniformVector(const char* uniform, vector<T>* vector);
 
 	};
 

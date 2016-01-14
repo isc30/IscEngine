@@ -10,20 +10,20 @@ namespace IscEngine {
 
 		private:
 
-			GLuint id;
-			GLuint count;
-			GLuint componentCount;
+			unsigned int id;
+			unsigned int count;
+			unsigned int componentCount;
 
 		public:
 
-			Buffer(vector<float> data, unsigned int componentCount);
+			Buffer(const vector<float>& data, const unsigned int componentCount);
 			~Buffer();
 
-			void bind();
-			void unbind();
+			const unsigned int getCount() const;
+			const unsigned int getComponentCount() const;
 
-			GLuint getCount() { return this->count; }
-			GLuint getComponentCount() { return this->componentCount; }
+			void bind() const;
+			void unbind() const;
 
 	};
 

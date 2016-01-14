@@ -7,13 +7,19 @@ Scene::Scene(Window* window) {
 
 }
 
-void Scene::pushEvent(SceneEvent sceneEvent) {
+Scene::~Scene() {
+
+	cout << "Destructor scene" << endl;
+
+}
+
+void Scene::pushEvent(const SceneEvent& sceneEvent) {
 
 	this->sceneEventQueue.push(sceneEvent);
 
 }
 
-bool Scene::pollEvent(SceneEvent& sceneEvent) {
+const bool Scene::pollEvent(SceneEvent& sceneEvent) {
 
 	if (this->sceneEventQueue.empty()) return false;
 
@@ -53,5 +59,7 @@ void Scene::endScene(Scene* scene) {
 	SceneEvent sceneEvent;
 	sceneEvent.type = SCENE_END;
 	sceneEvent.data = (void*)scene;
+
+	this->pushEvent(sceneEvent);
 
 }

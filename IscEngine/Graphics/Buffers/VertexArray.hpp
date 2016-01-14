@@ -19,10 +19,10 @@ namespace IscEngine {
 			VertexArray();
 			~VertexArray();
 
-			void addBuffer(Buffer* buffer, unsigned int index);
+			void addBuffer(Buffer* buffer, const unsigned int index);
 
-			void bind();
-			void unbind();
+			void bind() const;
+			void unbind() const;
 
 	};
 

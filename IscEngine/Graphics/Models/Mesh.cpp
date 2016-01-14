@@ -1,5 +1,4 @@
 #include "Mesh.hpp"
-#include "../Shaders/ShaderManager.hpp"
 #include "../../Utils/Log.hpp"
 using namespace IscEngine;
 
@@ -144,12 +143,11 @@ void Mesh::addColorBuffer(Buffer* colorBuffer) {
 
 }
 
-VertexArray* Mesh::getCachedVertexArray() {
-
-	Shader* currentShader = ShaderManager::currentShader;
+VertexArray* Mesh::cacheVertexArray(Shader* currentShader = Shader::currentShader) {
+	
 	if (this->vertexArrays.find(currentShader) == this->vertexArrays.end()) {
 
-		Log::cout << "Creating VAO " << currentShader->getId() << std::endl;
+		Log::cout << "Creating VAO for shader " << currentShader->getId() << std::endl;
 
 		int position;
 		VertexArray* currentVertexArray = new VertexArray();
@@ -171,13 +169,13 @@ VertexArray* Mesh::getCachedVertexArray() {
 
 }
 
-void Mesh::render(const GLenum& type) {
+void Mesh::render(const unsigned int type) {
 
-	Shader* currentShader = ShaderManager::currentShader;
+	Shader* currentShader = Shader::currentShader;
 
 	if (GLEW_ARB_vertex_array_object) {
 		
-		VertexArray* currentVertexArray = getCachedVertexArray();
+		VertexArray* currentVertexArray = cacheVertexArray();
 
 		// Render
 		currentVertexArray->bind();

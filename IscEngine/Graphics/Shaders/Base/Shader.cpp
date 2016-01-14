@@ -1,7 +1,9 @@
 #include "Shader.hpp"
-#include "../ShaderManager.hpp"
 #include "../../../Utils/Log.hpp"
 using namespace IscEngine;
+
+// Initialize static variables
+Shader* Shader::currentShader = nullptr;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Default constructor
@@ -19,13 +21,14 @@ Shader::Shader() {
 // Destructor
 Shader::~Shader() {
 
+	Log::cout << "Borrando shader " << this->id << endl;
 	glDeleteProgram(this->id);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Returns the id
-GLuint Shader::getId() {
+const unsigned int Shader::getId() const {
 
 	return this->id;
 
@@ -33,41 +36,39 @@ GLuint Shader::getId() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Binds the shader
-void Shader::bind() {
+void Shader::bind() const {
 
 	glUseProgram(this->id);
-	ShaderManager::currentShader = this;
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Unbinds the shader
-void Shader::unbind() {
+void Shader::unbind() const {
 
 	glUseProgram(0);
-	ShaderManager::currentShader = nullptr;
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Returns shader uniform location
-int Shader::getUniformLocation(string uniform) {
+const int Shader::getUniformLocation(const char* uniform) const {
 
-	return glGetUniformLocation(this->id, uniform.c_str());
+	return glGetUniformLocation(this->id, uniform);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Returns shader attribute location
-int Shader::getAttributeLocation(string attribute) {
+const int Shader::getAttributeLocation(const char* attribute) const {
 
-	return glGetAttribLocation(this->id, attribute.c_str());
+	return glGetAttribLocation(this->id, attribute);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(string uniform, T value0) {
+template <class T> void Shader::setUniform(const char* uniform, T value0) {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -75,13 +76,13 @@ template <class T> void Shader::setUniform(string uniform, T value0) {
 	if (typeid(T) == typeid(double)) glUniform1d(uniformLocation, value0);
 	else if (typeid(T) == typeid(float)) glUniform1f(uniformLocation, value0);
 	else if (typeid(T) == typeid(int)) glUniform1i(uniformLocation, value0);
-	else if (typeid(T) == typeid(uint)) glUniform1ui(uniformLocation, value0);
+	else if (typeid(T) == typeid(unsigned int)) glUniform1ui(uniformLocation, value0);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(string uniform, T value0, T value1) {
+template <class T> void Shader::setUniform(const char* uniform, T value0, T value1) {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -110,7 +111,7 @@ template <class T> void Shader::setUniform(string uniform, T value0, T value1) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(string uniform, T value0, T value1, T value2) {
+template <class T> void Shader::setUniform(const char* uniform, T value0, T value1, T value2) {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -118,13 +119,13 @@ template <class T> void Shader::setUniform(string uniform, T value0, T value1, T
 	if (typeid(T) == typeid(double)) glUniform3d(uniformLocation, value0, value1, value2);
 	else if (typeid(T) == typeid(float)) glUniform3f(uniformLocation, value0, value1, value2);
 	else if (typeid(T) == typeid(int)) glUniform3i(uniformLocation, value0, value1, value2);
-	else if (typeid(T) == typeid(uint)) glUniform3ui(uniformLocation, value0, value1, value2);
+	else if (typeid(T) == typeid(unsigned int)) glUniform3ui(uniformLocation, value0, value1, value2);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(string uniform, T value0, T value1, T value2, T value3) {
+template <class T> void Shader::setUniform(const char* uniform, T value0, T value1, T value2, T value3) {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -153,7 +154,7 @@ template <class T> void Shader::setUniform(string uniform, T value0, T value1, T
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform matrix
-void Shader::setUniformMatrix(string uniform, float* value) {
+void Shader::setUniformMatrix(const char* uniform, float* value) {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -161,7 +162,7 @@ void Shader::setUniformMatrix(string uniform, float* value) {
 
 }
 
-template <class T> void Shader::setUniformArray(string uniform, uint size, T* pointer) {
+template <class T> void Shader::setUniformArray(const char* uniform, uint size, T* pointer) {
 
 	if (uniform == "") return;
 	GLuint uniformLocation = this->getUniformLocation(uniform);
@@ -169,13 +170,13 @@ template <class T> void Shader::setUniformArray(string uniform, uint size, T* po
 	if (typeid(T) == typeid(double)) glUniform3dv(uniformLocation, size, (const GLdouble*)pointer);
 	else if (typeid(T) == typeid(float)) glUniform3fv(uniformLocation, size, (const GLfloat*) pointer);
 	else if (typeid(T) == typeid(int)) glUniform3iv(uniformLocation, size, (const GLint*) pointer);
-	else if (typeid(T) == typeid(uint)) glUniform3uiv(uniformLocation, size, (const GLuint*) pointer);
+	else if (typeid(T) == typeid(unsigned int)) glUniform3uiv(uniformLocation, size, (const GLuint*) pointer);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Loads shader from a String and returns if success
-bool Shader::loadFromStrings(string vertexShader, string fragmentShader) {
+const bool Shader::loadFromStrings(const char* vertexShader, const char* fragmentShader) {
 
 	// Support to vertex + fragment shader
 	// Geometry shader not supported
@@ -186,8 +187,7 @@ bool Shader::loadFromStrings(string vertexShader, string fragmentShader) {
 	GLint result = GL_FALSE;
 
 	// Compile vertex Shader
-	const char * vertexShaderPointer = vertexShader.c_str();
-	glShaderSource(vertexShaderId, 1, &vertexShaderPointer, NULL);
+	glShaderSource(vertexShaderId, 1, &vertexShader, NULL);
 	glCompileShader(vertexShaderId);
 
 	#ifdef DEBUG
@@ -196,8 +196,7 @@ bool Shader::loadFromStrings(string vertexShader, string fragmentShader) {
 	#endif
 
 	// Compile fragment Shader
-	const char * fragmentShaderPointer = fragmentShader.c_str();
-	glShaderSource(fragmentShaderId, 1, &fragmentShaderPointer, NULL);
+	glShaderSource(fragmentShaderId, 1, &fragmentShader, NULL);
 	glCompileShader(fragmentShaderId);
 
 	#ifdef DEBUG
@@ -239,7 +238,7 @@ bool Shader::loadFromStrings(string vertexShader, string fragmentShader) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Loads shader from files and returns if success
-bool Shader::loadFromFiles(string vertexShader, string fragmentShader) {
+const bool Shader::loadFromFiles(const string& vertexShader, const string& fragmentShader) {
 
 	string vertexShaderCode;
 	ifstream vertexShaderFile(vertexShader);
@@ -261,6 +260,6 @@ bool Shader::loadFromFiles(string vertexShader, string fragmentShader) {
 		fragmentShaderFile.close();
 	}
 
-	return this->loadFromStrings(vertexShaderCode, fragmentShaderCode);
+	return this->loadFromStrings(vertexShaderCode.c_str(), fragmentShaderCode.c_str());
 
 }

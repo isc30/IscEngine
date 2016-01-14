@@ -12,12 +12,14 @@ namespace IscEngine { namespace Scenes {
 
 			uint fpsCount;
 			sf::Time fpsTime;
+			//Shader shader, shShadowMap;
 
 		public:
 
 			TestScene(Window* window);
+			~TestScene();
 
-			void processEvent(sf::Event event);
+			void processEvent(const sf::Event& event);
 
 			void update();
 			void processInput();

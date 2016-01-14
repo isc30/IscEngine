@@ -15,10 +15,10 @@ namespace IscEngine {
 
 		public:
 				
-			Window(sf::VideoMode size, string title, unsigned int style, sf::ContextSettings contextSettings);
+			Window(const sf::VideoMode& size, const string& title, const unsigned int style, const sf::ContextSettings& contextSettings);
 
-			void setFocus(bool focus) { this->focus = focus; }
-			bool isFocused() { return this->focus; }
+			const bool isFocused() const;
+			void setFocus(const bool focus);
 
 	};
 

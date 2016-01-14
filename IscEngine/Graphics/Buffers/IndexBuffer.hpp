@@ -12,19 +12,19 @@ namespace IscEngine {
 
 			unsigned int id;
 			unsigned int count;
-			GLenum type;
+			unsigned int type;
 
 		public:
 
-			IndexBuffer(vector<unsigned short> data);
-			IndexBuffer(vector<unsigned int> data);
+			IndexBuffer(const vector<unsigned short>& data);
+			IndexBuffer(const vector<unsigned int>& data);
 			~IndexBuffer();
 
-			void bind();
-			void unbind();
+			const unsigned int getCount() const;
+			const unsigned int getType() const;
 
-			unsigned int getCount() { return this->count; }
-			GLenum getType() { return this->type; }
+			void bind() const;
+			void unbind() const;
 
 	};
 

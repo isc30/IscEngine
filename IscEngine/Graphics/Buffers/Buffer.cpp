@@ -1,7 +1,7 @@
 #include "Buffer.hpp"
 using namespace IscEngine;
 
-Buffer::Buffer(vector<float> data, unsigned int componentCount) {
+Buffer::Buffer(const vector<float>& data, const unsigned int componentCount) {
 
 	this->count = data.size();
 	this->componentCount = componentCount;
@@ -20,13 +20,25 @@ Buffer::~Buffer() {
 
 }
 
-void Buffer::bind() {
+const unsigned int Buffer::getCount() const {
+
+	return this->count;
+
+}
+
+const unsigned int Buffer::getComponentCount() const {
+
+	return this->componentCount;
+
+}
+
+void Buffer::bind() const {
 
 	glBindBuffer(GL_ARRAY_BUFFER, this->id);
 
 }
 
-void Buffer::unbind() {
+void Buffer::unbind() const {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 

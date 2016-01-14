@@ -42,11 +42,12 @@ namespace IscEngine {
 		public:
 
 			Scene(Window* window);
+			virtual ~Scene();
 
-			virtual void processEvent(sf::Event event) = 0;
+			virtual void processEvent(const sf::Event& event) = 0;
 
-			void pushEvent(SceneEvent sceneEvent);
-			bool pollEvent(SceneEvent& sceneEvent);
+			void pushEvent(const SceneEvent& sceneEvent);
+			const bool pollEvent(SceneEvent& sceneEvent);
 
 			void loop();
 			virtual void update() = 0;

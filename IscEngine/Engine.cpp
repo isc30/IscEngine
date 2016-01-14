@@ -6,6 +6,10 @@ using namespace IscEngine;
 
 Engine::Engine() {
 
+	Log::cout << endl;
+	Log::cout << " IscEngine" << endl;
+	Log::cout << " -----------------------" << endl << endl;
+
 }
 
 Engine::~Engine() {
@@ -15,17 +19,14 @@ Engine::~Engine() {
 
 }
 
-Window* Engine::getWindow() {
+Window* Engine::getWindow() const {
 
 	return this->window;
 
 }
 
-void Engine::create(string title, uint width, uint height, uint style) {
+void Engine::create(const string title, const uint width, const uint height, const uint style) {
 
-	Log::cout << endl;
-	Log::cout << " IscEngine" << endl;
-	Log::cout << " -----------------------" << endl << endl;
 	Log::cout << " Creating context..." << endl << endl;
 
 	sf::ContextSettings contextSettings;
@@ -101,7 +102,9 @@ void Engine::loop() {
 			switch (sceneEvent.type) {
 
 				case SceneEventType::SCENE_END:
-					this->setScene((Scene*) sceneEvent.data);
+					//this->setScene((Scene*) sceneEvent.data);
+					delete this->currentScene;
+					cin.get();
 					break;
 
 			}

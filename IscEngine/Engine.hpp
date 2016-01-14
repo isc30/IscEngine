@@ -32,11 +32,11 @@ namespace IscEngine {
 			Engine();
 			~Engine();
 
-			void create(string title, uint width, uint height, uint style);
+			void create(const string title, const uint width, const uint height, const uint style);
 			void setScene(Scene* scene);
 			void run();
 
-			Window* getWindow();
+			Window* getWindow() const;
 
 	};
 
