@@ -6,12 +6,12 @@ using namespace IscEngine;
 Shader* Shader::currentShader = nullptr;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Default constructor
+// Constructor
 Shader::Shader() {
 
 	this->id = 0;
 
-	// Fix for template generation
+	// Fix to force template generation
 	this->setUniform("", 0.f, 0.f, 0.f);
 	this->setUniform("", 0);
 
@@ -27,26 +27,20 @@ Shader::~Shader() {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Returns the id
-const unsigned int Shader::getId() const {
-
-	return this->id;
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
 // Binds the shader
-void Shader::bind() const {
+void Shader::bind(Shader& shader) {
 
-	glUseProgram(this->id);
+	glUseProgram(shader.id);
+	Shader::currentShader = &shader;
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Unbinds the shader
-void Shader::unbind() const {
+void Shader::unbind() {
 
 	glUseProgram(0);
+	Shader::currentShader = nullptr;
 
 }
 
@@ -162,7 +156,7 @@ void Shader::setUniformMatrix(const char* uniform, float* value) {
 
 }
 
-template <class T> void Shader::setUniformArray(const char* uniform, uint size, T* pointer) {
+/*template <class T> void Shader::setUniformArray(const char* uniform, uint size, T* pointer) {
 
 	if (uniform == "") return;
 	GLuint uniformLocation = this->getUniformLocation(uniform);
@@ -172,10 +166,10 @@ template <class T> void Shader::setUniformArray(const char* uniform, uint size, 
 	else if (typeid(T) == typeid(int)) glUniform3iv(uniformLocation, size, (const GLint*) pointer);
 	else if (typeid(T) == typeid(unsigned int)) glUniform3uiv(uniformLocation, size, (const GLuint*) pointer);
 
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Loads shader from a String and returns if success
+/// Loads shader from a String and returns if success
 const bool Shader::loadFromStrings(const char* vertexShader, const char* fragmentShader) {
 
 	// Support to vertex + fragment shader

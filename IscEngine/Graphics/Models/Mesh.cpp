@@ -147,7 +147,7 @@ VertexArray* Mesh::cacheVertexArray(Shader* currentShader) {
 	
 	if (this->vertexArrays.find(currentShader) == this->vertexArrays.end()) {
 
-		Log::cout << "  + Creating VAO for shader " << currentShader->getId() << std::endl;
+		Log::cout << "  + Creating VAO for shader" << std::endl;
 
 		int position;
 		VertexArray* currentVertexArray = new VertexArray();

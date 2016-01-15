@@ -12,7 +12,7 @@ VertexArray::VertexArray() {
 
 VertexArray::~VertexArray() {
 
-	for (Buffer*& buffer : this->buffers) delete buffer;
+	for (Buffer*& buffer : this->buffers) { delete buffer; buffer = nullptr; }
 	glDeleteVertexArrays(1, &this->id);
 
 }

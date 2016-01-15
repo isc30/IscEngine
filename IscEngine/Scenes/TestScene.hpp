@@ -3,9 +3,10 @@
 #include "../Engine.hpp"
 
 #include "Base/Scene.hpp"
-#include "../Utils/Log.hpp"
 #include "../Graphics/Shaders/Base/Shader.hpp"
 #include "../Graphics/Models/Mesh.hpp"
+#include "../Graphics/Buffers/FrameBuffer.hpp"
+#include "../Utils/Log.hpp"
 
 namespace IscEngine { namespace Scenes {
 
@@ -17,6 +18,7 @@ namespace IscEngine { namespace Scenes {
 			sf::Time fpsTime;
 			Shader shader, shShadowMap;
 			Mesh* mesh[2];
+			FrameBuffer shadowFrameBuffer;
 
 		public:
 

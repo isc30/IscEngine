@@ -1,11 +1,12 @@
 #include "TestScene.hpp"
 
-#include "../Graphics/Models/Loaders/ObjLoader.hpp"
-#include "../Views/Cameras/Base/Camera.hpp"
-#include "../Views/Modelview.hpp"
-
 using namespace IscEngine;
 using namespace IscEngine::Scenes;
+
+#include "../Graphics/Models/Loaders/ObjLoader.hpp"
+#include "../Views/Cameras/Base/Camera.hpp"
+#include "../Graphics/Buffers/FrameBuffer.hpp"
+#include "../Views/Modelview.hpp"
 
 Camera camera;
 
@@ -17,7 +18,6 @@ bool shadows = false;
 
 GLuint textureId[2];
 GLuint depthTexture;
-GLuint FramebufferName;
 
 int mapsize = 4;
 float separation = 5.f;
@@ -132,9 +132,9 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	///////////////////////////////////////////////////////
 
-	FramebufferName = 0;
-	glGenFramebuffers(1, &FramebufferName);
-	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	FrameBuffer::bind(shadowFrameBuffer);
+	/*glGenFramebuffers(1, &FramebufferName);
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);*/
 
 	// Depth texture. Slower than a depth buffer, but you can sample it later in your shader
 	glGenTextures(1, &depthTexture);
@@ -144,6 +144,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	// Function for testing shadow
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
@@ -155,7 +156,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		Log::cout << "Error framebuffer: " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
 
-	glBindFramebuffer(GL_FRAMEBUFFER, 0); // End framebuffer
+	FrameBuffer::unbind();
 
 	cout << "Fin carga Escena" << endl;
 
@@ -247,12 +248,11 @@ void TestScene::render() {
 	if (shadows) {
 
 		// Render to texture
-		glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+		FrameBuffer::bind(shadowFrameBuffer);
 		glViewport(0, 0, 2048, 2048);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		shShadowMap.bind();
-		Shader::currentShader = &shShadowMap;
+		Shader::bind(shShadowMap);
 
 		float size = 30;
 		glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -size * 10, size * 10);
@@ -283,7 +283,7 @@ void TestScene::render() {
 			}
 		}
 
-		shShadowMap.unbind();
+		Shader::unbind();
 
 		glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
 		glm::mat4 biasMatrix(
@@ -298,12 +298,11 @@ void TestScene::render() {
 
 	////////////////////////////////////////////////////////
 	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	FrameBuffer::unbind();
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	shader.bind();
-	Shader::currentShader = &shader;
+	Shader::bind(shader);
 
 	shader.setUniformMatrix("V", &V[0][0]);
 	shader.setUniformMatrix("P", &P[0][0]);
