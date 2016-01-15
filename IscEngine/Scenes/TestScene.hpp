@@ -13,7 +13,7 @@ namespace IscEngine { namespace Scenes {
 
 		private:
 
-			uint fpsCount;
+			unsigned int fpsCount;
 			sf::Time fpsTime;
 			Shader shader, shShadowMap;
 			Mesh* mesh[2];

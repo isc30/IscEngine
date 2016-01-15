@@ -42,7 +42,7 @@ namespace IscEngine {
 		public:
 
 			Scene(Window* window);
-			virtual ~Scene();
+			virtual ~Scene() {};
 
 			virtual void processEvent(const sf::Event& event) = 0;
 

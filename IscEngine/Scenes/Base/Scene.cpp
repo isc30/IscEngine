@@ -7,12 +7,6 @@ Scene::Scene(Window* window) {
 
 }
 
-Scene::~Scene() {
-
-	cout << "Destructor scene" << endl;
-
-}
-
 void Scene::pushEvent(const SceneEvent& sceneEvent) {
 
 	this->sceneEventQueue.push(sceneEvent);

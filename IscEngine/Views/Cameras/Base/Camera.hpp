@@ -25,17 +25,17 @@ class Camera {
 		
 		Camera();
 
-		vec3 getPosition();
-		void setPosition(vec3 position);
+		const vec3 getPosition() const;
+		void setPosition(const vec3 position);
 
-		vec2 getRotation();
-		void setRotation(vec2 rotation);
+		const vec2 getRotation() const;
+		void setRotation(const vec2 rotation);
 
-		vec3 getDirection();
-		void setDirection(vec3 direction);
+		const vec3 getDirection() const;
+		void setDirection(const vec3 direction);
 
-		mat4 getView();
+		const mat4 getView() const;
 
-		void lookAt(vec3 point);
+		void lookAt(const vec3 point);
 
 };

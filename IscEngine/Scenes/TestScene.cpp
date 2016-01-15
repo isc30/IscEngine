@@ -170,9 +170,9 @@ void TestScene::processEvent(const sf::Event& event) {
 			break;
 
 		case sf::Event::KeyPressed:
+			if (event.key.code == sf::Keyboard::Escape) this->endScene();
 			if (event.key.code == sf::Keyboard::Space) shadows = !shadows;
 			if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
-			if (event.key.code == sf::Keyboard::N) this->endScene();
 			break;
 
 	}
@@ -274,10 +274,10 @@ void TestScene::render() {
 
 		for (int i = 0; i < mapsize; i++) {
 			for (int j = 0; j < mapsize; j++) {
-				mat4 model(1.f);
-				model = glm::translate(model, vec3(i * separation, 2.0f, j * separation));
-				model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
-				//model = glm::scale(model, vec3(i * 0.2f, i * 0.2f, i * 0.2f));
+
+				mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation),
+										  vec3(0, radians(i * 25.f + j * 25.f), 0));
+
 				shShadowMap.setUniformMatrix("M", &model[0][0]);
 				mesh[0]->render(GL_TRIANGLES);
 			}
@@ -333,10 +333,10 @@ void TestScene::render() {
 
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
-			mat4 model(1.f);
-			model = glm::translate(model, vec3(i * separation, 2.0f, j * separation));
-			model = glm::rotate(model, radians(i * 25.f + j * 25.f), glm::vec3(0, 1, 0));
-			//model = glm::scale(model, vec3(i * 0.2f, i * 0.2f, i * 0.2f));
+
+			mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation),
+									  vec3(0, radians(i * 25.f + j * 25.f), 0));
+
 			shader.setUniformMatrix("M", &model[0][0]);
 			mesh[0]->render(GL_TRIANGLES);
 		}

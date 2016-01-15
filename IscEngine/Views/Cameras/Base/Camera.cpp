@@ -14,7 +14,7 @@ Camera::Camera() {
 
 //////////////////////////////////////////////////////////////////////
 // Returns current position of the camera
-vec3 Camera::getPosition(){
+const vec3 Camera::getPosition() const {
 
 	return this->position;
 
@@ -22,7 +22,7 @@ vec3 Camera::getPosition(){
 
 //////////////////////////////////////////////////////////////////////
 // Sets a new position for the camera
-void Camera::setPosition(vec3 position){
+void Camera::setPosition(const vec3 position){
 	
 	this->position = position;
 
@@ -32,7 +32,7 @@ void Camera::setPosition(vec3 position){
 
 //////////////////////////////////////////////////////////////////////
 // Returns current rotation of the camera
-vec2 Camera::getRotation(){
+const vec2 Camera::getRotation() const {
 	
 	return this->rotation;
 
@@ -40,7 +40,7 @@ vec2 Camera::getRotation(){
 
 //////////////////////////////////////////////////////////////////////
 // Sets a new rotation for the camera
-void Camera::setRotation(vec2 rotation){
+void Camera::setRotation(const vec2 rotation){
 	
 	this->rotation = rotation;
 
@@ -51,7 +51,7 @@ void Camera::setRotation(vec2 rotation){
 
 //////////////////////////////////////////////////////////////////////
 // Returns current direction of the camera
-vec3 Camera::getDirection() {
+const vec3 Camera::getDirection() const {
 
 	return this->direction;
 
@@ -59,7 +59,7 @@ vec3 Camera::getDirection() {
 
 //////////////////////////////////////////////////////////////////////
 // Returns current direction of the camera
-void Camera::setDirection(vec3 direction) {
+void Camera::setDirection(const vec3 direction) {
 
 	this->direction = direction;
 
@@ -70,7 +70,7 @@ void Camera::setDirection(vec3 direction) {
 
 //////////////////////////////////////////////////////////////////////
 // Returns current view matrix of the camera
-mat4 Camera::getView() {
+const mat4 Camera::getView() const {
 
 	return this->view;
 
@@ -79,7 +79,7 @@ mat4 Camera::getView() {
 
 //////////////////////////////////////////////////////////////////////
 // Forces camera to look at a point
-void Camera::lookAt(vec3 point) {
+void Camera::lookAt(const vec3 point) {
 
 	this->view = glm::lookAt(this->position, point, vec3(0, 1, 0));
 	this->direction = glm::normalize(point - this->position);

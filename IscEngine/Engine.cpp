@@ -47,6 +47,7 @@ void Engine::create(const string title, const uint width, const uint height, con
 
 	if (contextSettings.majorVersion < 2 || (contextSettings.majorVersion == 2 && contextSettings.minorVersion < 1)) {
 		Log::cout << std::endl << "  ## No compatible graphics card found" << std::endl;
+		return;
 	}
 
 	Log::cout << endl;
@@ -117,10 +118,6 @@ void Engine::loop() {
 					this->window->setFocus(false);
 					break;
 
-				case sf::Event::KeyPressed:
-					if (windowEvent.key.code == sf::Keyboard::Escape) this->window->close();
-					break;
-
 			}
 
 			if (this->currentScene != nullptr) this->currentScene->processEvent(windowEvent);
@@ -157,7 +154,7 @@ void Engine::run() {
 
 void Engine::setScene(Scene* scene) {
 
-	if (this->currentScene == nullptr) delete this->currentScene; this->currentScene = nullptr;
+	delete this->currentScene; this->currentScene = nullptr;
 	this->currentScene = scene;
 
 }
