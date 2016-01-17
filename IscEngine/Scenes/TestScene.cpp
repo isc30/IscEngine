@@ -76,16 +76,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		glGenTextures(1, &textureGl);
 		glBindTexture(GL_TEXTURE_2D, textureGl);
 
-		glTexImage2D(
-			GL_TEXTURE_2D,
-			0, //mip-map level
-			GL_RGBA, //We want the internal texture to have RGBA components
-			image.getSize().x, image.getSize().y, // size of texture
-			0, //border (0=no border, 1=border)
-			GL_RGBA, //format of the external texture data
-			GL_UNSIGNED_BYTE,
-			image.getPixelsPtr() //pointer to array of pixel data
-		);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -107,6 +98,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	} else {
 
 		glGenTextures(1, &textureGl);
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, textureGl);
 
 		glTexImage2D(
@@ -313,7 +305,7 @@ void TestScene::render() {
 	shader.setUniformMatrix("P", &P[0][0]);
 	vec3 cameraPosition = camera.getPosition();
 	shader.setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	
+
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, textureId[1]);
