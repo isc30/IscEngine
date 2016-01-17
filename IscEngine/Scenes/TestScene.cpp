@@ -132,7 +132,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	///////////////////////////////////////////////////////
 
-	FrameBuffer::bind(shadowFrameBuffer);
+	FrameBuffer::bind(&shadowFrameBuffer);
 	/*glGenFramebuffers(1, &FramebufferName);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);*/
 
@@ -248,11 +248,11 @@ void TestScene::render() {
 	if (shadows) {
 
 		// Render to texture
-		FrameBuffer::bind(shadowFrameBuffer);
+		FrameBuffer::bind(&shadowFrameBuffer);
 		glViewport(0, 0, 2048, 2048);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		Shader::bind(shShadowMap);
+		Shader::bind(&shShadowMap);
 
 		float size = 30;
 		glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -size * 10, size * 10);
@@ -302,7 +302,7 @@ void TestScene::render() {
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
-	Shader::bind(shader);
+	Shader::bind(&shader);
 
 	shader.setUniformMatrix("V", &V[0][0]);
 	shader.setUniformMatrix("P", &P[0][0]);
@@ -349,7 +349,7 @@ void TestScene::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 
-	shader.unbind();
+	Shader::unbind();
 	//*/
 
 	window->pushGLStates();

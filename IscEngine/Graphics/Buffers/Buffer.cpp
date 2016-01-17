@@ -1,44 +1,56 @@
 #include "Buffer.hpp"
 using namespace IscEngine;
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
 Buffer::Buffer(const vector<float>& data, const unsigned int componentCount) {
 
-	this->count = data.size();
+	this->size = data.size();
 	this->componentCount = componentCount;
 
 	glGenBuffers(1, &this->id);
 
-	this->bind();
-	glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(float), &data[0], GL_STATIC_DRAW);
-	this->unbind();
+	Buffer::bind(this);
+	glBufferData(GL_ARRAY_BUFFER, this->size * sizeof(float), &data[0], GL_STATIC_DRAW);
+	Buffer::unbind();
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Destructor
 Buffer::~Buffer() {
 
 	glDeleteBuffers(1, &this->id);
 
 }
 
-const unsigned int Buffer::getCount() const {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Returns buffer size
+unsigned int Buffer::getSize() const {
 
-	return this->count;
+	return this->size;
 
 }
 
-const unsigned int Buffer::getComponentCount() const {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Returns Buffer component count
+unsigned int Buffer::getComponentCount() const {
 
 	return this->componentCount;
 
 }
 
-void Buffer::bind() const {
-
-	glBindBuffer(GL_ARRAY_BUFFER, this->id);
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Binds the Buffer
+void Buffer::bind(const Buffer* const buffer) {
+	
+	glBindBuffer(GL_ARRAY_BUFFER, buffer->id);
 
 }
 
-void Buffer::unbind() const {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Unbinds the Buffer
+void Buffer::unbind() {
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 

@@ -1,11 +1,11 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <vector>
 using namespace std;
 
 namespace IscEngine {
 
+	// OpenGL FrameBuffer Wrapper
 	class FrameBuffer {
 
 		private:
@@ -15,13 +15,17 @@ namespace IscEngine {
 
 		public:
 
-			FrameBuffer(/*Texture*/);
-			~FrameBuffer();
-
-			//const Texture getTexture() const;
-
-			static void bind(const FrameBuffer& frameBuffer);
+			// Binds the FrameBuffer
+			static void bind(const FrameBuffer* const frameBuffer);
+			// Unbinds the FrameBuffer
 			static void unbind();
+
+			//////////////////////////////////////////////////////////////////////////////////////////////
+
+			// Creates the FrameBuffer
+			FrameBuffer(); // TODO: pass a Texture*
+			// Destroys the FrameBuffer
+			~FrameBuffer();
 
 	};
 

@@ -2,6 +2,8 @@
 #include "../../Utils/Log.hpp"
 using namespace IscEngine;
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
 FrameBuffer::FrameBuffer() {
 	
 	glGenFramebuffers(1, &this->id);
@@ -18,18 +20,24 @@ FrameBuffer::FrameBuffer() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Destructor
 FrameBuffer::~FrameBuffer() {
 
 	glDeleteFramebuffers(1, &this->id);
 
 }
 
-void FrameBuffer::bind(const FrameBuffer& frameBuffer) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Binds the FrameBuffer
+void FrameBuffer::bind(const FrameBuffer* const frameBuffer) {
 
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer.id);
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->id);
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Unbinds the FrameBuffer
 void FrameBuffer::unbind() {
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);

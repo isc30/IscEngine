@@ -176,19 +176,18 @@ void Mesh::render(const unsigned int type) {
 	if (GLEW_ARB_vertex_array_object) {
 		
 		VertexArray* currentVertexArray = cacheVertexArray();
-
-		// Render
-		currentVertexArray->bind();
+		
+		VertexArray::bind(currentVertexArray);
 
 		if (this->indexBuffer != nullptr) {
-			this->indexBuffer->bind();
-			glDrawElements(type, this->indexBuffer->getCount(), this->indexBuffer->getType(), 0);
-			this->indexBuffer->unbind();
+			IndexBuffer::bind(this->indexBuffer);
+			glDrawElements(type, this->indexBuffer->getSize(), this->indexBuffer->getType(), 0);
+			IndexBuffer::unbind();
 		} else {
-			glDrawArrays(type, 0, this->vertexBuffer->getCount());
+			glDrawArrays(type, 0, this->vertexBuffer->getSize());
 		}
 
-		currentVertexArray->unbind();
+		VertexArray::unbind();
 
 	} else {
 
@@ -197,7 +196,7 @@ void Mesh::render(const unsigned int type) {
 		attributeLocation[0] = currentShader->getAttributeLocation("vertexPosition_modelspace");
 		if (attributeLocation[0] > -1 && this->vertexBuffer != nullptr) {
 			glEnableVertexAttribArray(attributeLocation[0]);
-			this->vertexBuffer->bind();
+			Buffer::bind(this->vertexBuffer);
 			glVertexAttribPointer(
 				attributeLocation[0],  // The attribute we want to configure
 				this->vertexBuffer->getComponentCount(),                            // size
@@ -205,14 +204,14 @@ void Mesh::render(const unsigned int type) {
 				GL_FALSE,                     // normalized?
 				0,                            // stride
 				(void*) 0                      // array buffer offset
-				);
-			this->vertexBuffer->unbind();
+			);
+			Buffer::unbind();
 		}
 
 		attributeLocation[1] = currentShader->getAttributeLocation("vertexUV");
 		if (attributeLocation[1] > -1 && this->textureBuffer != nullptr) {
 			glEnableVertexAttribArray(attributeLocation[1]);
-			this->textureBuffer->bind();
+			Buffer::bind(this->textureBuffer);
 			glVertexAttribPointer(
 				attributeLocation[1],  // The attribute we want to configure
 				this->textureBuffer->getComponentCount(),                            // size
@@ -220,14 +219,14 @@ void Mesh::render(const unsigned int type) {
 				GL_FALSE,                     // normalized?
 				0,                            // stride
 				(void*) 0                      // array buffer offset
-				);
-			this->textureBuffer->unbind();
+			);
+			Buffer::unbind();
 		}
 
 		attributeLocation[2] = currentShader->getAttributeLocation("vertexNormal_modelspace");
 		if (attributeLocation[2] > -1 && this->normalBuffer != nullptr) {
 			glEnableVertexAttribArray(attributeLocation[2]);
-			this->normalBuffer->bind();
+			Buffer::bind(this->normalBuffer);
 			glVertexAttribPointer(
 				attributeLocation[2],  // The attribute we want to configure
 				this->normalBuffer->getComponentCount(),                            // size
@@ -235,16 +234,16 @@ void Mesh::render(const unsigned int type) {
 				GL_FALSE,                     // normalized?
 				0,                            // stride
 				(void*) 0                      // array buffer offset
-				);
-			this->normalBuffer->unbind();
+			);
+			Buffer::unbind();
 		}
 
 		if (this->indexBuffer != nullptr) {
-			this->indexBuffer->bind();
-			glDrawElements(type, this->indexBuffer->getCount(), this->indexBuffer->getType(), 0);
-			this->indexBuffer->unbind();
+			IndexBuffer::bind(this->indexBuffer);
+			glDrawElements(type, this->indexBuffer->getSize(), this->indexBuffer->getType(), 0);
+			IndexBuffer::unbind();
 		} else {
-			glDrawArrays(type, 0, this->vertexBuffer->getCount());
+			glDrawArrays(type, 0, this->vertexBuffer->getSize());
 		}
 
 		if (attributeLocation[0] > -1 && this->vertexBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[0]);

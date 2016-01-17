@@ -17,28 +17,28 @@ VertexArray::~VertexArray() {
 
 }
 
-void VertexArray::addBuffer(Buffer* buffer, const unsigned int index) {
+void VertexArray::addBuffer(Buffer* const buffer, const unsigned int index) {
 
-	this->bind();
-	buffer->bind();
+	VertexArray::bind(this);
+	Buffer::bind(buffer);
 	
 	glEnableVertexAttribArray(index);
 	glVertexAttribPointer(index, buffer->getComponentCount(), GL_FLOAT, GL_FALSE, 0, 0);
 
-	buffer->unbind();
-	this->unbind();
+	Buffer::unbind();
+	VertexArray::unbind();
 
 	this->buffers.push_back(buffer);
 
 }
 
-void VertexArray::bind() const {
+void VertexArray::bind(const VertexArray* const vertexArray) {
 
-	glBindVertexArray(this->id);
+	glBindVertexArray(vertexArray->id);
 
 }
 
-void VertexArray::unbind() const {
+void VertexArray::unbind() {
 
 	glBindVertexArray(0);
 
