@@ -2,6 +2,22 @@
 using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Binds the IndexBuffer
+void IndexBuffer::bind(const IndexBuffer* const indexBuffer) {
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->id);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Unbinds the IndexBuffer
+void IndexBuffer::unbind() {
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 IndexBuffer::IndexBuffer(const vector<unsigned short>& data) {
 
@@ -50,21 +66,5 @@ unsigned int IndexBuffer::getSize() const {
 unsigned int IndexBuffer::getType() const {
 	
 	return this->type;
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Binds the IndexBuffer
-void IndexBuffer::bind(const IndexBuffer* const indexBuffer) {
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer->id);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Unbinds the IndexBuffer
-void IndexBuffer::unbind() {
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 }

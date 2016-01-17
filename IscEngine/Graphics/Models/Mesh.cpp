@@ -2,6 +2,8 @@
 #include "../../Utils/Log.hpp"
 using namespace IscEngine;
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
 Mesh::Mesh(const vector<vec3>& vertices) {
 
 	vector<float> vertexVector;
@@ -14,31 +16,37 @@ Mesh::Mesh(const vector<vec3>& vertices) {
 	this->vertexBuffer = new Buffer(vertexVector, 3);
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
-	this->textureBuffer = nullptr;
+	this->UVBuffer = nullptr;
 	this->colorBuffer = nullptr;
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
 Mesh::Mesh(const vector<float>& vertices) {
 
 	this->vertexBuffer = new Buffer(vertices, 3);
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
-	this->textureBuffer = nullptr;
+	this->UVBuffer = nullptr;
 	this->colorBuffer = nullptr;
 
 }
 
-Mesh::Mesh(Buffer* vertexBuffer) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
+Mesh::Mesh(Buffer* const vertexBuffer) {
 
 	this->vertexBuffer = vertexBuffer;
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
-	this->textureBuffer = nullptr;
+	this->UVBuffer = nullptr;
 	this->colorBuffer = nullptr;
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Destructor
 Mesh::~Mesh() {
 	
 	this->vertexArrays.clear();
@@ -46,35 +54,45 @@ Mesh::~Mesh() {
 	delete this->vertexBuffer; this->vertexBuffer = nullptr;
 	delete this->indexBuffer; this->indexBuffer = nullptr;
 	delete this->normalBuffer; this->normalBuffer = nullptr;
-	delete this->textureBuffer; this->textureBuffer = nullptr;
+	delete this->UVBuffer; this->UVBuffer = nullptr;
 	delete this->colorBuffer; this->colorBuffer = nullptr;
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the vertex indices
 void Mesh::addIndexes(const vector<unsigned short>& indexes) {
 
 	this->indexBuffer = new IndexBuffer(indexes);
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the vertex indices
 void Mesh::addIndexes(const vector<unsigned int>& indexes) {
 
 	this->indexBuffer = new IndexBuffer(indexes);
 
 }
 
-void Mesh::addIndexBuffer(IndexBuffer* indexBuffer) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the IndexBuffer
+void Mesh::addIndexBuffer(IndexBuffer* const indexBuffer) {
 
 	this->indexBuffer = indexBuffer;
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the normals
 void Mesh::addNormals(const vector<float>& normals) {
 
 	this->normalBuffer = new Buffer(normals, 3);
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the normals
 void Mesh::addNormals(const vector<vec3>& normals) {
 
 	vector<float> normalVector;
@@ -88,18 +106,24 @@ void Mesh::addNormals(const vector<vec3>& normals) {
 
 }
 
-void Mesh::addNormalBuffer(Buffer* normalBuffer) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the normal Buffer
+void Mesh::addNormalBuffer(Buffer* const normalBuffer) {
 
 	this->normalBuffer = normalBuffer;
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the UVs
 void Mesh::addUVs(const vector<float>& textureCoords) {
 
-	this->textureBuffer = new Buffer(textureCoords, 2);
+	this->UVBuffer = new Buffer(textureCoords, 2);
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the UVs
 void Mesh::addUVs(const vector<vec2>& textureCoords) {
 
 	vector<float> UVs;
@@ -108,22 +132,28 @@ void Mesh::addUVs(const vector<vec2>& textureCoords) {
 		UVs.push_back(vertice.y);
 	}
 
-	this->textureBuffer = new Buffer(UVs, 2);
+	this->UVBuffer = new Buffer(UVs, 2);
 
 }
 
-void Mesh::addUVBuffer(Buffer* textureBuffer) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the UV Buffer
+void Mesh::addUVBuffer(Buffer* const textureBuffer) {
 
-	this->textureBuffer = textureBuffer;
+	this->UVBuffer = textureBuffer;
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the colors
 void Mesh::addColors(const vector<float>& colors) {
 
 	this->colorBuffer = new Buffer(colors, 3);
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the colors
 void Mesh::addColors(const vector<vec3>& colors) {
 
 	vector<float> colorVector;
@@ -137,13 +167,17 @@ void Mesh::addColors(const vector<vec3>& colors) {
 
 }
 
-void Mesh::addColorBuffer(Buffer* colorBuffer) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the color Buffer
+void Mesh::addColorBuffer(Buffer* const colorBuffer) {
 
 	this->colorBuffer = colorBuffer;
 
 }
 
-VertexArray* Mesh::cacheVertexArray(Shader* currentShader) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Returns the VAO for the Shader if exists. If not, creates and returns it
+VertexArray* Mesh::cacheVertexArray(Shader* const currentShader) {
 	
 	if (this->vertexArrays.find(currentShader) == this->vertexArrays.end()) {
 
@@ -154,7 +188,7 @@ VertexArray* Mesh::cacheVertexArray(Shader* currentShader) {
 		position = currentShader->getAttributeLocation("vertexPosition_modelspace");
 		if (position > -1 && this->vertexBuffer != nullptr) currentVertexArray->addBuffer(this->vertexBuffer, position);
 		position = currentShader->getAttributeLocation("vertexUV");
-		if (position > -1 && this->textureBuffer != nullptr) currentVertexArray->addBuffer(this->textureBuffer, position);
+		if (position > -1 && this->UVBuffer != nullptr) currentVertexArray->addBuffer(this->UVBuffer, position);
 		position = currentShader->getAttributeLocation("vertexNormal_modelspace");
 		if (position > -1 && this->normalBuffer != nullptr) currentVertexArray->addBuffer(this->normalBuffer, position);
 
@@ -169,6 +203,8 @@ VertexArray* Mesh::cacheVertexArray(Shader* currentShader) {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Renders the Mesh
 void Mesh::render(const unsigned int type) {
 
 	Shader* currentShader = Shader::currentShader;
@@ -198,27 +234,27 @@ void Mesh::render(const unsigned int type) {
 			glEnableVertexAttribArray(attributeLocation[0]);
 			Buffer::bind(this->vertexBuffer);
 			glVertexAttribPointer(
-				attributeLocation[0],  // The attribute we want to configure
-				this->vertexBuffer->getComponentCount(),                            // size
-				GL_FLOAT,                     // type
-				GL_FALSE,                     // normalized?
-				0,                            // stride
-				(void*) 0                      // array buffer offset
+				attributeLocation[0],
+				this->vertexBuffer->getComponentCount(),
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)0
 			);
 			Buffer::unbind();
 		}
 
 		attributeLocation[1] = currentShader->getAttributeLocation("vertexUV");
-		if (attributeLocation[1] > -1 && this->textureBuffer != nullptr) {
+		if (attributeLocation[1] > -1 && this->UVBuffer != nullptr) {
 			glEnableVertexAttribArray(attributeLocation[1]);
-			Buffer::bind(this->textureBuffer);
+			Buffer::bind(this->UVBuffer);
 			glVertexAttribPointer(
-				attributeLocation[1],  // The attribute we want to configure
-				this->textureBuffer->getComponentCount(),                            // size
-				GL_FLOAT,                     // type
-				GL_FALSE,                     // normalized?
-				0,                            // stride
-				(void*) 0                      // array buffer offset
+				attributeLocation[1],
+				this->UVBuffer->getComponentCount(),
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)0
 			);
 			Buffer::unbind();
 		}
@@ -228,12 +264,12 @@ void Mesh::render(const unsigned int type) {
 			glEnableVertexAttribArray(attributeLocation[2]);
 			Buffer::bind(this->normalBuffer);
 			glVertexAttribPointer(
-				attributeLocation[2],  // The attribute we want to configure
-				this->normalBuffer->getComponentCount(),                            // size
-				GL_FLOAT,                     // type
-				GL_FALSE,                     // normalized?
-				0,                            // stride
-				(void*) 0                      // array buffer offset
+				attributeLocation[2],
+				this->normalBuffer->getComponentCount(),
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)0
 			);
 			Buffer::unbind();
 		}
@@ -247,7 +283,7 @@ void Mesh::render(const unsigned int type) {
 		}
 
 		if (attributeLocation[0] > -1 && this->vertexBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[0]);
-		if (attributeLocation[1] > -1 && this->textureBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[1]);
+		if (attributeLocation[1] > -1 && this->UVBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[1]);
 		if (attributeLocation[2] > -1 && this->normalBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[2]);
 
 	}

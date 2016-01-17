@@ -29,7 +29,7 @@ namespace IscEngine {
 			// Destroys the VertexArray
 			~VertexArray();
 
-			// Adds a Buffer with a index
+			// Adds a Buffer in a index
 			void addBuffer(Buffer* const buffer, const unsigned int index);
 
 	};

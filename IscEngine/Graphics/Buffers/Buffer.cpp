@@ -2,6 +2,22 @@
 using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Binds the Buffer
+void Buffer::bind(const Buffer* const buffer) {
+
+	glBindBuffer(GL_ARRAY_BUFFER, buffer->id);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Unbinds the Buffer
+void Buffer::unbind() {
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 Buffer::Buffer(const vector<float>& data, const unsigned int componentCount) {
 
@@ -37,21 +53,5 @@ unsigned int Buffer::getSize() const {
 unsigned int Buffer::getComponentCount() const {
 
 	return this->componentCount;
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Binds the Buffer
-void Buffer::bind(const Buffer* const buffer) {
-	
-	glBindBuffer(GL_ARRAY_BUFFER, buffer->id);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Unbinds the Buffer
-void Buffer::unbind() {
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 }

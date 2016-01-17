@@ -71,7 +71,7 @@ int Shader::getAttributeLocation(const char* const attribute) const {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0) {
+template <class T> void Shader::setUniform(const char* const uniform, const T value0) const {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -85,7 +85,7 @@ template <class T> void Shader::setUniform(const char* const uniform, const T va
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1) {
+template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1) const {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -99,7 +99,7 @@ template <class T> void Shader::setUniform(const char* const uniform, const T va
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1, const T value2) {
+template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1, const T value2) const {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -113,7 +113,7 @@ template <class T> void Shader::setUniform(const char* const uniform, const T va
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1, const T value2, const T value3) {
+template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1, const T value2, const T value3) const {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -127,7 +127,7 @@ template <class T> void Shader::setUniform(const char* const uniform, const T va
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform matrix
-void Shader::setUniformMatrix(const char* const uniform, const float* const value) {
+void Shader::setUniformMatrix(const char* const uniform, const float* const value) const {
 
 	if (uniform == "") return;
 	int uniformLocation = this->getUniformLocation(uniform);
@@ -137,7 +137,7 @@ void Shader::setUniformMatrix(const char* const uniform, const float* const valu
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform array
-template <class T> void Shader::setUniformArray(const char* const uniform, const unsigned int size, const T* const pointer) {
+template <class T> void Shader::setUniformArray(const char* const uniform, const unsigned int size, const T* const pointer) const {
 
 	if (uniform == "") return;
 	unsigned int uniformLocation = this->getUniformLocation(uniform);

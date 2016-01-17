@@ -40,17 +40,17 @@ namespace IscEngine {
 			int getAttributeLocation(const char* const attribute) const;
 
 			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0);
+			template <class T> void setUniform(const char* const uniform, const T value0) const;
 			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0, const T value1);
+			template <class T> void setUniform(const char* const uniform, const T value0, const T value1) const;
 			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0, const T value1, const T value2);
+			template <class T> void setUniform(const char* const uniform, const T value0, const T value1, const T value2) const;
 			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0, const T value1, const T value2, const T value3);
+			template <class T> void setUniform(const char* const uniform, const T value0, const T value1, const T value2, const T value3) const;
 			// Sets a shader uniform array
-			template <class T> void setUniformArray(const char* const uniform, const unsigned int size, const T* const pointer);
+			template <class T> void setUniformArray(const char* const uniform, const unsigned int size, const T* const pointer) const;
 			// Sets a shader uniform matrix
-			void setUniformMatrix(const char* const uniform, const float* const value);
+			void setUniformMatrix(const char* const uniform, const float* const value) const;
 
 	};
 

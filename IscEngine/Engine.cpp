@@ -4,6 +4,8 @@ using namespace IscEngine;
 
 #include <chrono>
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
 Engine::Engine() {
 
 	Log::cout << endl;
@@ -12,6 +14,8 @@ Engine::Engine() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Destructor
 Engine::~Engine() {
 
 	delete this->currentScene; this->currentScene = nullptr;
@@ -19,13 +23,17 @@ Engine::~Engine() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Returns the Window
 Window* Engine::getWindow() const {
 
 	return this->window;
 
 }
 
-void Engine::create(const string title, const uint width, const uint height, const uint style) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Creates a Window
+void Engine::create(const string& title, const unsigned int width, const unsigned int height, const unsigned int style) {
 
 	Log::cout << " Creating context..." << endl << endl;
 
@@ -56,6 +64,8 @@ void Engine::create(const string title, const uint width, const uint height, con
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Setups OpenGL (glew, ...)
 void Engine::setupOpenGL() {
 
 	Log::cout << " Initializing GLEW..." << endl << endl;
@@ -93,6 +103,8 @@ void Engine::setupOpenGL() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// GameLoop
 void Engine::loop() {
 
 	while (this->window->isOpen()) {
@@ -146,13 +158,17 @@ void Engine::loop() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Runs the GameLoop
 void Engine::run() {
 
 	this->loop();
 
 }
 
-void Engine::setScene(Scene* scene) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Changes the current Scene
+void Engine::setScene(Scene* const scene) {
 
 	delete this->currentScene; this->currentScene = nullptr;
 	this->currentScene = scene;

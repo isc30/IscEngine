@@ -1,19 +1,25 @@
 #include "Scene.hpp"
 using namespace IscEngine;
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Constructor
 Scene::Scene(Window* window) {
 
 	this->window = window;
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Push new Scene Event
 void Scene::pushEvent(const SceneEvent& sceneEvent) {
 
 	this->sceneEventQueue.push(sceneEvent);
 
 }
 
-const bool Scene::pollEvent(SceneEvent& sceneEvent) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Polls the first Scene Event
+bool Scene::pollEvent(SceneEvent& sceneEvent) {
 
 	if (this->sceneEventQueue.empty()) return false;
 
@@ -24,6 +30,8 @@ const bool Scene::pollEvent(SceneEvent& sceneEvent) {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Updates and Renders the Scene while calculating deltaTime
 void Scene::loop() {
 
 	sf::Time startTime = this->sceneClock.getElapsedTime();
@@ -48,6 +56,8 @@ void Scene::loop() {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Ends the Scene
 void Scene::endScene(Scene* scene) {
 
 	SceneEvent sceneEvent;

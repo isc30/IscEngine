@@ -3,6 +3,22 @@
 using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Binds the FrameBuffer
+void FrameBuffer::bind(const FrameBuffer* const frameBuffer) {
+
+	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->id);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Unbinds the FrameBuffer
+void FrameBuffer::unbind() {
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Constructor
 FrameBuffer::FrameBuffer() {
 	
@@ -25,21 +41,5 @@ FrameBuffer::FrameBuffer() {
 FrameBuffer::~FrameBuffer() {
 
 	glDeleteFramebuffers(1, &this->id);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Binds the FrameBuffer
-void FrameBuffer::bind(const FrameBuffer* const frameBuffer) {
-
-	glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer->id);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Unbinds the FrameBuffer
-void FrameBuffer::unbind() {
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }

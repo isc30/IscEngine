@@ -13,42 +13,61 @@ using namespace glm;
 
 namespace IscEngine {
 
+	// Mesh
 	class Mesh {
 
 		private:
 			
 			map<Shader*, VertexArray*> vertexArrays; // Each Shader has different Attribute positions :'(
 
-			Buffer* vertexBuffer; // 0
+			Buffer* vertexBuffer;
 			IndexBuffer* indexBuffer;
-			Buffer* normalBuffer; // 1
-			Buffer* textureBuffer; // 2
-			Buffer* colorBuffer; // 3
+			Buffer* normalBuffer;
+			Buffer* UVBuffer;
+			Buffer* colorBuffer;
 
 		public:
-
+			
+			// Creates the Mesh
 			Mesh(const vector<float>& vertices);
+			// Creates the Mesh
 			Mesh(const vector<vec3>& vertices);
-			Mesh(Buffer* vertexBuffer);
+			// Creates the Mesh
+			Mesh(Buffer* const vertexBuffer);
+			// Destroys the Mesh
 			~Mesh();
 
+			// Adds the vertex indices
 			void addIndexes(const vector<unsigned short>& indexes);
+			// Adds the vertex indices
 			void addIndexes(const vector<unsigned int>& indexes);
-			void addIndexBuffer(IndexBuffer* indexBuffer);
+			// Adds the IndexBuffer
+			void addIndexBuffer(IndexBuffer* const indexBuffer);
 
+			// Adds the normals
 			void addNormals(const vector<float>& normals);
+			// Adds the normals
 			void addNormals(const vector<vec3>& normals);
-			void addNormalBuffer(Buffer* normalBuffer);
+			// Adds the normal Buffer
+			void addNormalBuffer(Buffer* const normalBuffer);
 
+			// Adds the UVs
 			void addUVs(const vector<float>& textureCoords);
+			// Adds the UVs
 			void addUVs(const vector<vec2>& textureCoords);
-			void addUVBuffer(Buffer* textureBuffer);
+			// Adds the UV Buffer
+			void addUVBuffer(Buffer* const textureBuffer);
 
+			// Adds the Colors
 			void addColors(const vector<float>& colors);
+			// Adds the Colors
 			void addColors(const vector<vec3>& colors);
-			void addColorBuffer(Buffer* colorBuffer);
+			// Adds the Color Buffer
+			void addColorBuffer(Buffer* const colorBuffer);
 
-			VertexArray* cacheVertexArray(Shader* currentShader = Shader::currentShader);
+			// Returns the VAO for the Shader if exists. If not, creates and returns it
+			VertexArray* cacheVertexArray(Shader* const currentShader = Shader::currentShader);
+			// Renders the Mesh
 			void render(const unsigned int type);
 
 	};

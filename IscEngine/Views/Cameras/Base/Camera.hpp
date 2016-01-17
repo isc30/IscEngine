@@ -7,35 +7,52 @@ using namespace std;
 #include <glm/gtx/transform.hpp>
 using namespace glm;
 
-class Camera {
+namespace IscEngine {
 
-	protected:
-		
+	// Camera
+	class Camera {
+
+		protected:
+
 		vec3 position;
 		vec2 rotation;
 		vec3 direction;
 
-		mat4 view; // Camera view matrix for shader
+		mat4 view; // Camera view matrix
 
+		// Updates current rotation of the camera based on direction
 		void updateRotation();
+		// Updates current direction of the camera based on rotation
 		void updateDirection();
+		// Updates camera view matrix based on position + direction
 		void updateView();
 
-	public:
-		
+		public:
+
+			// Creates the Camera
 		Camera();
 
-		const vec3 getPosition() const;
-		void setPosition(const vec3 position);
+		// Returns current position of the camera
+		vec3 getPosition() const;
+		// Sets a new position for the camera
+		void setPosition(const vec3& position);
 
-		const vec2 getRotation() const;
-		void setRotation(const vec2 rotation);
+		// Returns current rotation of the camera
+		vec2 getRotation() const;
+		// Sets a new rotation for the camera
+		void setRotation(const vec2& rotation);
 
-		const vec3 getDirection() const;
-		void setDirection(const vec3 direction);
+		// Returns current direction of the camera
+		vec3 getDirection() const;
+		// Sets a new direction for the camera
+		void setDirection(const vec3& direction);
 
-		const mat4 getView() const;
+		// Returns current view matrix of the camera
+		mat4 getView() const;
 
-		void lookAt(const vec3 point);
+		// Forces camera to look at a point
+		void lookAt(const vec3& point);
 
-};
+	};
+
+}

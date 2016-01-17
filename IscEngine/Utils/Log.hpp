@@ -1,12 +1,13 @@
 #pragma once
 
 #include <iostream>
-#include <fstream> // Files
+#include <fstream>
 #include <chrono>
 #include <ctime>
 
 namespace IscEngine {
 
+	// Logs data to console and file
 	class Log {
 
 		private:
@@ -15,10 +16,12 @@ namespace IscEngine {
 
 		public:
 			
-			// Static
+			// New definition of "cout"
 			static Log cout;
+			
+			//////////////////////////////////////////////////////////////////////////////////////////////
 
-			// Dynamic
+			// Creates the Log, deletes the file content and writes the current time
 			Log(std::string fileName) {
 
 				logFilename = fileName;
@@ -31,8 +34,8 @@ namespace IscEngine {
 
 			}
 
-			template <typename T>
-			Log& operator << (const T& t) {
+			// << operator overload (data)
+			template <typename T> Log& operator << (const T& t) {
 
 				std::cout << t;
 				std::ofstream outFile;
@@ -44,6 +47,7 @@ namespace IscEngine {
 
 			}
 
+			// << operator overload (function, adds support for std::endl)
 			Log& operator << (std::ostream&(*f)(std::ostream&)) {
 
 				std::cout << f;

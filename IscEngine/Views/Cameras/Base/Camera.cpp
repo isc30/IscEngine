@@ -1,4 +1,5 @@
 #include "Camera.hpp"
+using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////
 // Default constructor
@@ -14,7 +15,7 @@ Camera::Camera() {
 
 //////////////////////////////////////////////////////////////////////
 // Returns current position of the camera
-const vec3 Camera::getPosition() const {
+vec3 Camera::getPosition() const {
 
 	return this->position;
 
@@ -22,7 +23,7 @@ const vec3 Camera::getPosition() const {
 
 //////////////////////////////////////////////////////////////////////
 // Sets a new position for the camera
-void Camera::setPosition(const vec3 position){
+void Camera::setPosition(const vec3& position){
 	
 	this->position = position;
 
@@ -32,7 +33,7 @@ void Camera::setPosition(const vec3 position){
 
 //////////////////////////////////////////////////////////////////////
 // Returns current rotation of the camera
-const vec2 Camera::getRotation() const {
+vec2 Camera::getRotation() const {
 	
 	return this->rotation;
 
@@ -40,7 +41,7 @@ const vec2 Camera::getRotation() const {
 
 //////////////////////////////////////////////////////////////////////
 // Sets a new rotation for the camera
-void Camera::setRotation(const vec2 rotation){
+void Camera::setRotation(const vec2& rotation){
 	
 	this->rotation = rotation;
 
@@ -51,15 +52,15 @@ void Camera::setRotation(const vec2 rotation){
 
 //////////////////////////////////////////////////////////////////////
 // Returns current direction of the camera
-const vec3 Camera::getDirection() const {
+vec3 Camera::getDirection() const {
 
 	return this->direction;
 
 }
 
 //////////////////////////////////////////////////////////////////////
-// Returns current direction of the camera
-void Camera::setDirection(const vec3 direction) {
+// Sets a new direction for the camera
+void Camera::setDirection(const vec3& direction) {
 
 	this->direction = direction;
 
@@ -70,7 +71,7 @@ void Camera::setDirection(const vec3 direction) {
 
 //////////////////////////////////////////////////////////////////////
 // Returns current view matrix of the camera
-const mat4 Camera::getView() const {
+mat4 Camera::getView() const {
 
 	return this->view;
 
@@ -79,7 +80,7 @@ const mat4 Camera::getView() const {
 
 //////////////////////////////////////////////////////////////////////
 // Forces camera to look at a point
-void Camera::lookAt(const vec3 point) {
+void Camera::lookAt(const vec3& point) {
 
 	this->view = glm::lookAt(this->position, point, vec3(0, 1, 0));
 	this->direction = glm::normalize(point - this->position);
@@ -115,7 +116,7 @@ void Camera::updateRotation() {
 }
 
 //////////////////////////////////////////////////////////////////////
-// Updates current direction of the camera
+// Updates current direction of the camera based on rotation
 void Camera::updateDirection() {
 
 	if (this->rotation.y > 360) this->rotation.y -= 360;
@@ -133,7 +134,7 @@ void Camera::updateDirection() {
 }
 
 //////////////////////////////////////////////////////////////////////
-// Updates camera view matrix
+// Updates camera view matrix based on position + direction
 void Camera::updateView() {
 
 	this->view = glm::lookAt(this->position, this->position + this->direction, vec3(0, 1, 0));
