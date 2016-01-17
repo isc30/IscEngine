@@ -18,7 +18,7 @@ namespace IscEngine {
 		public:
 			
 			// Binds the Buffer
-			static void bind(const Buffer* const buffer); // const pointer to const buffer
+			static void bind(const Buffer* const buffer);
 			// Unbinds the Buffer
 			static void unbind();
 
