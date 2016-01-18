@@ -1,6 +1,11 @@
 #pragma once
 
+#include <iostream>
+using namespace std;
+
 #include <SFML/Graphics.hpp>
+#include <glm/vec2.hpp>
+using namespace glm;
 #include <GL/glew.h>
 
 namespace IscEngine {
@@ -10,6 +15,7 @@ namespace IscEngine {
 		private:
 
 			unsigned int id;
+			unsigned int width, height;
 			
 		public:
 			
@@ -23,7 +29,11 @@ namespace IscEngine {
 			Texture();
 			~Texture();
 
-			bool loadFromFile(const char* const fileName);
+			unsigned int getId() const { return this->id; }
+			unsigned int getWidth() const { return this->width; }
+			unsigned int getHeight() const { return this->height; }
+
+			bool loadFromFile(const string& fileName);
 			void create(const unsigned int width, const unsigned int height, const bool color = true, const bool depth = false);
 
 	};

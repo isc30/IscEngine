@@ -29,7 +29,7 @@ namespace IscEngine {
 
 		public:
 
-			// Creates the Camera
+		// Creates the Camera
 		Camera();
 
 		// Returns current position of the camera

@@ -7,6 +7,8 @@ using namespace IscEngine::Scenes;
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
+#include "../Graphics/Textures/Texture.hpp"
+#include "../Graphics/Shaders/PostProcess.hpp"
 
 Camera camera;
 
@@ -16,8 +18,7 @@ mat4 V;
 bool rotatingCamera = false;
 bool shadows = false;
 
-GLuint textureId[2];
-GLuint depthTexture;
+Texture* textures[3];
 
 int mapsize = 1;
 float separation = 5.f;
@@ -57,99 +58,32 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	objUvs.clear();
 	objNormals.clear();
 
-	loadModel(RESOURCE_PATH + "floor_maya.fbx", objIndices, objVertices, objUvs, objNormals);
+	loadModel(RESOURCE_PATH + "katarina.fbx", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[1] = new Mesh(objVertices);
 	if (objIndices.size() > 0) mesh[1]->addIndexes(objIndices);
 	if (objNormals.size() > 0) mesh[1]->addNormals(objNormals);
 	if (objUvs.size() > 0) mesh[1]->addUVs(objUvs);
 
-	GLuint textureGl;
-	sf::Image image;
-
-	if (!image.loadFromFile(RESOURCE_PATH + "katarina_base_diffuse.png")) {
-
+	textures[0] = new Texture();
+	if (!textures[0]->loadFromFile(RESOURCE_PATH + "katarina_base_diffuse.png")) {
 		Log::cout << "Texture loading error" << std::endl;
-
-	} else {
-
-		glGenTextures(1, &textureGl);
-		glBindTexture(GL_TEXTURE_2D, textureGl);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		textureId[0] = textureGl;
-
 	}
 
-	textureGl;
-	image;
-
-	if (!image.loadFromFile(RESOURCE_PATH + "textura.png")) {
-
+	textures[1] = new Texture();
+	if (!textures[1]->loadFromFile(RESOURCE_PATH + "textura.png")) {
 		Log::cout << "Texture loading error" << std::endl;
-
-	} else {
-
-		glGenTextures(1, &textureGl);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureGl);
-
-		glTexImage2D(
-			GL_TEXTURE_2D,
-			0, //mip-map level
-			GL_RGBA, //We want the internal texture to have RGBA components
-			image.getSize().x, image.getSize().y, // size of texture
-			0, //border (0=no border, 1=border)
-			GL_RGBA, //format of the external texture data
-			GL_UNSIGNED_BYTE,
-			image.getPixelsPtr() //pointer to array of pixel data
-			);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glGenerateMipmap(GL_TEXTURE_2D);
-
-		textureId[1] = textureGl;
-
 	}
 
 	///////////////////////////////////////////////////////
 
-	FrameBuffer::bind(&shadowFrameBuffer);
-	/*glGenFramebuffers(1, &FramebufferName);
-	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);*/
+	shadowFrameBuffer = new FrameBuffer(2048, 2048, false, true);
+	postProcessFrameBuffer = new FrameBuffer(this->window->getSize().x, this->window->getSize().y);
 
-	// Depth texture. Slower than a depth buffer, but you can sample it later in your shader
-	glGenTextures(1, &depthTexture);
-	glBindTexture(GL_TEXTURE_2D, depthTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, 2048, 2048, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	// Function for testing shadow
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_R_TO_TEXTURE);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTexture, 0);
-
-	// We dont want color, only depth
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		Log::cout << "Error framebuffer: " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
-
-	FrameBuffer::unbind();
-
+	if (!postProcessShader.loadFromFiles(RESOURCE_PATH + "postProcess.vsh", RESOURCE_PATH + "postProcess.fsh")) {
+		Log::cout << "ERROR POSTPROCESS SHADER" << endl;
+	}
+	
 	cout << "Fin carga Escena" << endl;
 
 }
@@ -233,6 +167,8 @@ void TestScene::processInput() {
 bool moveRight = false;
 float pos = 20;
 
+float wat = 0;
+
 void TestScene::render() {
 
 	mat4 depthBiasVP;
@@ -240,8 +176,8 @@ void TestScene::render() {
 	if (shadows) {
 
 		// Render to texture
-		FrameBuffer::bind(&shadowFrameBuffer);
-		glViewport(0, 0, 2048, 2048);
+		FrameBuffer::bind(shadowFrameBuffer);
+		glViewport(0, 0, shadowFrameBuffer->getTexture()->getWidth(), shadowFrameBuffer->getTexture()->getHeight());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glDisable(GL_CULL_FACE);
@@ -261,11 +197,10 @@ void TestScene::render() {
 		shShadowMap.setUniformMatrix("V", &depthViewMatrix[0][0]);
 		shShadowMap.setUniformMatrix("P", &depthProjectionMatrix[0][0]);
 
-		/*mat4 model(1.f);
-		model = glm::translate(vec3(0, 2, 0));
-		model = glm::scale(model, vec3(5, 5, 5));
+		mat4 model(1.f);
+		model = glm::translate(vec3(2, 6.85, 2));
 		shShadowMap.setUniformMatrix("M", &model[0][0]);
-		mesh[1]->render(GL_TRIANGLES);*/
+		mesh[1]->render(GL_TRIANGLES);
 
 		for (int i = 0; i < mapsize; i++) {
 			for (int j = 0; j < mapsize; j++) {
@@ -294,6 +229,7 @@ void TestScene::render() {
 	////////////////////////////////////////////////////////
 	
 	FrameBuffer::unbind();
+	FrameBuffer::bind(postProcessFrameBuffer);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -305,27 +241,21 @@ void TestScene::render() {
 	shader.setUniformMatrix("P", &P[0][0]);
 	vec3 cameraPosition = camera.getPosition();
 	shader.setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, textureId[1]);
+	
+	Texture::bind(textures[0], GL_TEXTURE0);
 	shader.setUniform("myTextureSampler", 0);
 
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, depthTexture);
+	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE1);
 	shader.setUniform("shadowMap", 1);
 
 	if (shadows) shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
 
-	//mat4 model2(1.f);
-	//model2 = glm::translate(vec3(8, 2, 8));
-	//model2 = glm::scale(model2, vec3(5, 5, 5));
-	//shader.setUniformMatrix("M", &model2[0][0]);
-	//mesh[1]->render(GL_TRIANGLES);
+	mat4 model2(1.f);
+	model2 = glm::translate(vec3(2, 6.85, 2));
+	shader.setUniformMatrix("M", &model2[0][0]);
+	mesh[1]->render(GL_TRIANGLES);
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textureId[1]);
+	Texture::bind(textures[1], GL_TEXTURE0);
 
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
@@ -338,13 +268,8 @@ void TestScene::render() {
 		}
 	}
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
-
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
+	Texture::unbind(GL_TEXTURE0);
+	Texture::unbind(GL_TEXTURE1);
 
 	Shader::unbind();
 	//*/
@@ -354,6 +279,19 @@ void TestScene::render() {
 	a.setFillColor(sf::Color::Red);
 	window->draw(a);
 	window->popGLStates();
+
+	FrameBuffer::unbind();
+	glViewport(0, 0, window->getSize().x, window->getSize().y);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	Shader::bind(&postProcessShader);
+	postProcessShader.setUniform("renderedTexture", 0);
+	wat += 0.01f;
+	postProcessShader.setUniform("time", wat); //(float)deltaTime.asMicroseconds()
+	
+	PostProcess::render(postProcessFrameBuffer->getTexture());
+
+	Shader::unbind();
 
 	window->display();
 
