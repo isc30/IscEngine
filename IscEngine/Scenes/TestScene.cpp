@@ -7,7 +7,6 @@ using namespace IscEngine::Scenes;
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
-#include "../Graphics/Textures/Texture.hpp"
 #include "../Graphics/Shaders/PostProcess.hpp"
 
 Camera camera;
@@ -17,8 +16,6 @@ mat4 V;
 
 bool rotatingCamera = false;
 bool shadows = false;
-
-Texture* textures[3];
 
 int mapsize = 1;
 float separation = 5.f;
@@ -228,13 +225,13 @@ void TestScene::render() {
 
 	////////////////////////////////////////////////////////
 	
-	FrameBuffer::unbind();
+	//FrameBuffer::unbind();
 	FrameBuffer::bind(postProcessFrameBuffer);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_CULL_FACE);
-
+	
 	Shader::bind(&shader);
 
 	shader.setUniformMatrix("V", &V[0][0]);
@@ -242,11 +239,11 @@ void TestScene::render() {
 	vec3 cameraPosition = camera.getPosition();
 	shader.setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	
-	Texture::bind(textures[0], GL_TEXTURE0);
-	shader.setUniform("myTextureSampler", 0);
+	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE0);
+	shader.setUniform("shadowMap", 0);
 
-	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE1);
-	shader.setUniform("shadowMap", 1);
+	Texture::bind(textures[0], GL_TEXTURE1);
+	shader.setUniform("myTextureSampler", 1);
 
 	if (shadows) shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
 
@@ -255,7 +252,7 @@ void TestScene::render() {
 	shader.setUniformMatrix("M", &model2[0][0]);
 	mesh[1]->render(GL_TRIANGLES);
 
-	Texture::bind(textures[1], GL_TEXTURE0);
+	Texture::bind(textures[1], GL_TEXTURE1);
 
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
@@ -268,8 +265,8 @@ void TestScene::render() {
 		}
 	}
 
-	Texture::unbind(GL_TEXTURE0);
 	Texture::unbind(GL_TEXTURE1);
+	Texture::unbind(GL_TEXTURE0);
 
 	Shader::unbind();
 	//*/
@@ -286,8 +283,7 @@ void TestScene::render() {
 
 	Shader::bind(&postProcessShader);
 	postProcessShader.setUniform("renderedTexture", 0);
-	wat += 0.01f;
-	postProcessShader.setUniform("time", wat); //(float)deltaTime.asMicroseconds()
+	postProcessShader.setUniform("time", wat += 10 * deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
 	
 	PostProcess::render(postProcessFrameBuffer->getTexture());
 
@@ -303,5 +299,12 @@ TestScene::~TestScene() {
 
 	delete mesh[0]; mesh[0] = nullptr;
 	delete mesh[1]; mesh[1] = nullptr;
+
+	delete textures[0]; textures[0] = nullptr;
+	delete textures[1]; textures[1] = nullptr;
+	delete textures[2]; textures[2] = nullptr;
+
+	delete shadowFrameBuffer; shadowFrameBuffer = nullptr;
+	delete postProcessFrameBuffer; postProcessFrameBuffer = nullptr;
 
 }

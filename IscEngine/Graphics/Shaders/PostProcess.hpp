@@ -9,7 +9,7 @@ namespace IscEngine {
 	class PostProcess {
 
 		private:
-			
+
 			static Mesh* quad;
 
 		public:

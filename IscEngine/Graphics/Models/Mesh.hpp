@@ -27,7 +27,7 @@ namespace IscEngine {
 			Buffer* colorBuffer;
 
 		public:
-			
+
 			// Creates the Mesh
 			Mesh(const vector<float>& vertices);
 			// Creates the Mesh

@@ -6,6 +6,7 @@
 #include "../Graphics/Shaders/Base/Shader.hpp"
 #include "../Graphics/Models/Mesh.hpp"
 #include "../Graphics/Buffers/FrameBuffer.hpp"
+#include "../Graphics/Textures/Texture.hpp"
 #include "../Utils/Log.hpp"
 
 namespace IscEngine { namespace Scenes {
@@ -18,6 +19,7 @@ namespace IscEngine { namespace Scenes {
 			sf::Time fpsTime;
 			Shader shader, shShadowMap, postProcessShader;
 			Mesh* mesh[2];
+			Texture* textures[3];
 			FrameBuffer* shadowFrameBuffer, *postProcessFrameBuffer;
 
 		public:
