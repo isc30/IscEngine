@@ -29,6 +29,8 @@ namespace IscEngine {
 			void loop();
 			// Setups OpenGL (glew, ...)
 			void setupOpenGL();
+			// Initializes static content of the IscEngine
+			void initializeStaticContent();
 
 		public:
 			

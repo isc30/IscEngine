@@ -14,6 +14,7 @@ namespace IscEngine {
 
 		public:
 			
+			static void initializeStatic();
 			static void render(Texture* const texture);
 
 	};

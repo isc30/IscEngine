@@ -15,7 +15,7 @@ mat4 P;
 mat4 V;
 
 bool rotatingCamera = false;
-bool shadows = false;
+bool shadows = true;
 
 int mapsize = 1;
 float separation = 5.f;
@@ -95,8 +95,7 @@ void TestScene::processEvent(const sf::Event& event) {
 
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Escape) this->endScene();
-			if (event.key.code == sf::Keyboard::Space) shadows = !shadows;
-			if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
+			//if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
 			break;
 
 	}
@@ -185,11 +184,13 @@ void TestScene::render() {
 		float viewDistance = 150;
 		glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -viewDistance, viewDistance);
 		//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50000.0f);
-		glm::mat4 depthViewMatrix = glm::lookAt(vec3(pos, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+		glm::mat4 depthViewMatrix = glm::lookAt(vec3(-4.15f, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
 
-		if (moveRight) pos += 5 * deltaTime.asSeconds(); else pos -= 5 * deltaTime.asSeconds();
+		/*if (moveRight) pos += 5 * deltaTime.asSeconds(); else pos -= 5 * deltaTime.asSeconds();
 		if (moveRight && pos > 20) moveRight = !moveRight;
 		if (!moveRight && pos < -20) moveRight = !moveRight;
+
+		Log::cout << pos << endl;*/
 
 		shShadowMap.setUniformMatrix("V", &depthViewMatrix[0][0]);
 		shShadowMap.setUniformMatrix("P", &depthProjectionMatrix[0][0]);
@@ -225,7 +226,6 @@ void TestScene::render() {
 
 	////////////////////////////////////////////////////////
 	
-	//FrameBuffer::unbind();
 	FrameBuffer::bind(postProcessFrameBuffer);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -245,7 +245,10 @@ void TestScene::render() {
 	Texture::bind(textures[0], GL_TEXTURE1);
 	shader.setUniform("myTextureSampler", 1);
 
-	if (shadows) shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
+	if (shadows) {
+		shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
+		shadows = false;
+	}
 
 	mat4 model2(1.f);
 	model2 = glm::translate(vec3(2, 6.85, 2));
@@ -269,7 +272,6 @@ void TestScene::render() {
 	Texture::unbind(GL_TEXTURE0);
 
 	Shader::unbind();
-	//*/
 
 	window->pushGLStates();
 	sf::CircleShape a(50.f);
@@ -283,7 +285,7 @@ void TestScene::render() {
 
 	Shader::bind(&postProcessShader);
 	postProcessShader.setUniform("renderedTexture", 0);
-	postProcessShader.setUniform("time", wat += 10 * deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
+	postProcessShader.setUniform("time", wat += 5 * deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
 	
 	PostProcess::render(postProcessFrameBuffer->getTexture());
 

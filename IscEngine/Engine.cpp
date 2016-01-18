@@ -1,4 +1,5 @@
 #include "Engine.hpp"
+#include "Graphics\Shaders\PostProcess.hpp"
 #include "Utils\Log.hpp"
 using namespace IscEngine;
 
@@ -61,6 +62,7 @@ void Engine::create(const string& title, const unsigned int width, const unsigne
 	Log::cout << endl;
 
 	this->setupOpenGL();
+	this->initializeStaticContent();
 
 }
 
@@ -100,6 +102,14 @@ void Engine::setupOpenGL() {
 	/* Transparency
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Initializes static content of the IscEngine
+void Engine::initializeStaticContent() {
+
+	PostProcess::initializeStatic();
 
 }
 

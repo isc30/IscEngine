@@ -13,7 +13,7 @@ void main() {
 	// Material properties
 	vec3 MaterialDiffuseColor = texture2D(myTextureSampler, UV).rgb;
 
-	float bias = 0.0005;
+	float bias = 0.0015;
 
 	float visibility = 1.0;
 	int iterations = 4;

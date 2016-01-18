@@ -69,4 +69,6 @@ bool loadModel(
 
 	// The "scene" pointer will be deleted automatically by "importer"
 
+	return true;
+
 }
