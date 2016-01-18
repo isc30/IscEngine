@@ -25,11 +25,9 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-	//shader = Shader();
-	shader.loadFromFiles(RESOURCE_PATH + "ShadowMapping_SimpleVersion.vertexshader", RESOURCE_PATH + "ShadowMapping_SimpleVersion.fragmentshader");
-
-	//shShadowMap = Shader();
-	shShadowMap.loadFromFiles(RESOURCE_PATH + "shShadowMap.vsh", RESOURCE_PATH + "shShadowMap.fsh");
+	shader.loadFromFiles(RESOURCE_PATH + "Shaders/defaultShadowShader.vsh", RESOURCE_PATH + "Shaders/defaultShadowShader.fsh");
+	shShadowMap.loadFromFiles(RESOURCE_PATH + "Shaders/shadowMapper.vsh", RESOURCE_PATH + "Shaders/shadowMapper.fsh");
+	postProcessShader.loadFromFiles(RESOURCE_PATH + "Shaders/postProcess.vsh", RESOURCE_PATH + "Shaders/postProcess.fsh");
 
 	camera.setPosition(vec3(mapsize * separation / 2 - 3, 10.5, mapsize * separation / 2 - 3));
 	camera.lookAt(vec3(0, 0, 0));
@@ -41,9 +39,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	std::vector<glm::vec2> objUvs;
 	std::vector<glm::vec3> objNormals;
 
-	loadModel(RESOURCE_PATH + "map.fbx", objIndices, objVertices, objUvs, objNormals);
-
-	Log::cout << "Vertices: " << ((objVertices.size() > objIndices.size()) ? objVertices.size() : objIndices.size() * mapsize * mapsize) << endl;
+	loadModel(RESOURCE_PATH + "Models/map.fbx", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[0] = new Mesh(objVertices);
 	if (objIndices.size() > 0) mesh[0]->addIndexes(objIndices);
@@ -55,7 +51,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	objUvs.clear();
 	objNormals.clear();
 
-	loadModel(RESOURCE_PATH + "katarina.fbx", objIndices, objVertices, objUvs, objNormals);
+	loadModel(RESOURCE_PATH + "Models/katarina.fbx", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[1] = new Mesh(objVertices);
 	if (objIndices.size() > 0) mesh[1]->addIndexes(objIndices);
@@ -63,12 +59,12 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	if (objUvs.size() > 0) mesh[1]->addUVs(objUvs);
 
 	textures[0] = new Texture();
-	if (!textures[0]->loadFromFile(RESOURCE_PATH + "katarina_base_diffuse.png")) {
+	if (!textures[0]->loadFromFile(RESOURCE_PATH + "Textures/katarina_base_diffuse.png")) {
 		Log::cout << "Texture loading error" << std::endl;
 	}
 
 	textures[1] = new Texture();
-	if (!textures[1]->loadFromFile(RESOURCE_PATH + "textura.png")) {
+	if (!textures[1]->loadFromFile(RESOURCE_PATH + "Textures/textura.png")) {
 		Log::cout << "Texture loading error" << std::endl;
 	}
 
@@ -76,10 +72,6 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	shadowFrameBuffer = new FrameBuffer(2048, 2048, false, true);
 	postProcessFrameBuffer = new FrameBuffer(this->window->getSize().x, this->window->getSize().y);
-
-	if (!postProcessShader.loadFromFiles(RESOURCE_PATH + "postProcess.vsh", RESOURCE_PATH + "postProcess.fsh")) {
-		Log::cout << "ERROR POSTPROCESS SHADER" << endl;
-	}
 	
 	cout << "Fin carga Escena" << endl;
 
