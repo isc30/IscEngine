@@ -8,6 +8,7 @@ attribute vec3 vertexNormal_modelspace;
 // Output data ; will be interpolated for each fragment.
 varying vec2 UV;
 varying vec4 ShadowCoord;
+varying vec3 vertexPosition_worldspace;
 
 // Values that stay constant for the whole mesh.
 uniform mat4 M;
@@ -21,6 +22,7 @@ void main(){
 
 	// Output position of the vertex, in clip space : MVP * position
 	gl_Position =  MVP * vec4(vertexPosition_modelspace, 1);
+	vertexPosition_worldspace = (M * vec4(vertexPosition_modelspace, 1)).xyz;
 	
 	ShadowCoord = DepthBiasVP * M * vec4(vertexPosition_modelspace, 1);
 	
