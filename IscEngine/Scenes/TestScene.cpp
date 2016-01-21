@@ -25,7 +25,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-	shader.loadFromFiles(RESOURCE_PATH + "Shaders/defaultShadowShader.vsh", RESOURCE_PATH + "Shaders/defaultShadowShader.fsh");
+	shader.loadFromFiles(RESOURCE_PATH + "Shaders/shader.vsh", RESOURCE_PATH + "Shaders/shader.fsh");
 	shShadowMap.loadFromFiles(RESOURCE_PATH + "Shaders/shadowMapper.vsh", RESOURCE_PATH + "Shaders/shadowMapper.fsh");
 	postProcessShader.loadFromFiles(RESOURCE_PATH + "Shaders/postProcess.vsh", RESOURCE_PATH + "Shaders/postProcess.fsh");
 
@@ -157,6 +157,15 @@ float pos = 20;
 
 float wat = 0;
 
+struct LightSource {
+
+	vec3 position_worldspace;
+	//vec3 direction_cameraspace;
+	vec3 color;
+	float power;
+
+};
+
 void TestScene::render() {
 
 	mat4 depthBiasVP;
@@ -241,6 +250,14 @@ void TestScene::render() {
 		shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
 		shadows = false;
 	}
+	
+	shader.setUniform("lights[0].position_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	shader.setUniform("lights[0].color", 1.f, 0.f, 0.f);
+	shader.setUniform("lights[0].power", 100.f);
+
+	shader.setUniform("lights[1].position_worldspace", 1.f, 0.f, 73.f);
+	shader.setUniform("lights[1].color", 0.f, 0.f, 1.f);
+	shader.setUniform("lights[1].power", 100.f);
 
 	mat4 model2(1.f);
 	model2 = glm::translate(vec3(2, 6.85, 2));

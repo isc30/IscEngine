@@ -12,50 +12,60 @@ uniform sampler2D myTextureSampler;
 uniform mat4 MV;
 uniform vec3 LightPosition_worldspace;
 
-void main(){
+uniform mat4 M;
+uniform mat4 V;
+uniform mat4 P;
 
-	// Light emission properties
-	// You probably want to put them as uniforms
-	vec3 LightColor = vec3(1,0,1);
-	float LightPower = 50.0f;
+struct LightSource {
+
+	vec3 position_worldspace;
+	//vec3 direction_cameraspace;
+	vec3 color;
+	float power;
+
+};
+uniform LightSource lights[2];
+
+struct LightResult {
+
+	vec3 diffuse;
+	vec3 specular;
+
+};
+
+void main(){
 	
 	// Material properties
-	vec3 MaterialDiffuseColor = texture2D( myTextureSampler, UV ).rgb;
-	vec3 MaterialAmbientColor = vec3(0.4,0.4,0.4) * MaterialDiffuseColor;
-	vec3 MaterialSpecularColor = vec3(0.1,0.1,0.1);
+	vec3 MaterialDiffuseColor = texture2D(myTextureSampler, UV).rgb;
+	vec3 MaterialAmbientColor = vec3(0.4, 0.4, 0.4) * MaterialDiffuseColor;
+	vec3 MaterialSpecularColor = vec3(0.1, 0.1, 0.1);
 
-	// Distance to the light
-	float distance = length( LightPosition_worldspace - Position_worldspace );
+	LightResult results[2];
+	vec3 finalColor = vec3(0.f, 0.f, 0.f);
 
-	// Normal of the computed fragment, in camera space
-	vec3 n = normalize( Normal_cameraspace );
-	// Direction of the light (from the fragment to the light)
-	vec3 l = normalize( LightDirection_cameraspace );
-	// Cosine of the angle between the normal and the light direction, 
-	// clamped above 0
-	//  - light is at the vertical of the triangle -> 1
-	//  - light is perpendicular to the triangle -> 0
-	//  - light is behind the triangle -> 0
-	float cosTheta = clamp( dot( n,l ), 0,1 );
-	
-	// Eye vector (towards the camera)
-	vec3 E = normalize(EyeDirection_cameraspace);
-	// Direction in which the triangle reflects the light
-	vec3 R = reflect(-l,n);
-	// Cosine of the angle between the Eye vector and the Reflect vector,
-	// clamped to 0
-	//  - Looking into the reflection -> 1
-	//  - Looking elsewhere -> < 1
-	float cosAlpha = clamp( dot( E,R ), 0,1 );
-	
-	gl_FragColor.rgb = 
-		// Ambient : simulates indirect lighting
-		MaterialAmbientColor +
-		// Diffuse : "color" of the object
-		MaterialDiffuseColor * LightColor * LightPower * cosTheta / (distance*distance) +
-		// Specular : reflective highlight, like a mirror
-		MaterialSpecularColor * LightColor * LightPower * pow(cosAlpha,5) / (distance*distance);
+	for (int i = 0; i < 2; i++) {
+		
+		vec3 lightPosition_cameraspace = (V * M * vec4(lights[i].position_worldspace, 1)).xyz;
+		float distance = length(lights[i].position_worldspace - Position_worldspace);
+		vec3 n = normalize(Normal_cameraspace);
+		vec3 l = normalize(lightPosition_cameraspace + EyeDirection_cameraspace);
+		float cosTheta = clamp(dot(n, l), 0, 1);
 
+		vec3 E = normalize(EyeDirection_cameraspace);
+		vec3 R = reflect(-l, n);
+		float cosAlpha = clamp(dot(E, R), 0, 1);
+
+		results[i].diffuse = vec3(lights[i].color * lights[i].power * cosTheta / (distance * distance));
+		results[i].specular = vec3(lights[i].color * lights[i].power * pow(cosAlpha, 5) / (distance * distance));
+
+		finalColor += 
+			MaterialAmbientColor +
+			MaterialDiffuseColor * results[i].diffuse +
+			MaterialSpecularColor * results[i].specular;
+		
+	}
+
+	gl_FragColor.rgb = finalColor;
 	gl_FragColor.a = 1.0;
 
 }

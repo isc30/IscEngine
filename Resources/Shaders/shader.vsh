@@ -18,8 +18,18 @@ uniform mat4 V;
 uniform mat4 P;
 uniform vec3 LightPosition_worldspace;
 
+struct LightSource {
+
+	vec3 position_worldspace;
+	//vec3 direction_cameraspace;
+	vec3 color;
+	float power;
+
+};
+uniform LightSource lights[2];
+
 void main(){
-	
+
 	mat4 MVP = P * V * M;
 
 	// Output position of the vertex, in clip space : MVP * position
@@ -34,7 +44,7 @@ void main(){
 	EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
 	// Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
-	vec3 LightPosition_cameraspace = ( V * vec4(LightPosition_worldspace, 1)).xyz;
+	vec3 LightPosition_cameraspace = ( V * M * vec4(LightPosition_worldspace, 1)).xyz;
 	LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;
 	
 	// Normal of the the vertex, in camera space
@@ -42,5 +52,6 @@ void main(){
 	
 	// UV of the vertex. No special space for this one.
 	UV = vertexUV;
+
 }
 
