@@ -25,7 +25,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-	shader.loadFromFiles(RESOURCE_PATH + "Shaders/shader.vsh", RESOURCE_PATH + "Shaders/shader.fsh");
+	shader.loadFromFiles(RESOURCE_PATH + "Shaders/defaultShadowShader.vsh", RESOURCE_PATH + "Shaders/defaultShadowShader.fsh");
 	shShadowMap.loadFromFiles(RESOURCE_PATH + "Shaders/shadowMapper.vsh", RESOURCE_PATH + "Shaders/shadowMapper.fsh");
 	postProcessShader.loadFromFiles(RESOURCE_PATH + "Shaders/postProcess.vsh", RESOURCE_PATH + "Shaders/postProcess.fsh");
 
@@ -294,7 +294,8 @@ void TestScene::render() {
 
 	Shader::bind(&postProcessShader);
 	postProcessShader.setUniform("renderedTexture", 0);
-	postProcessShader.setUniform("time", wat += 5 * deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
+	postProcessShader.setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
+	//postProcessShader.setUniform("textureSize", window->getSize().x, window->getSize().y);
 	
 	PostProcess::render(postProcessFrameBuffer->getTexture());
 

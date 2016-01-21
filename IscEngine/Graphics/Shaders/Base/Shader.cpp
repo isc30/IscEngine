@@ -30,6 +30,8 @@ Shader::Shader() {
 
 	this->setUniformArray("", 2, (void*)0);
 
+	this->setUniform("", (unsigned int)0, (unsigned int)0);
+
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////

@@ -1,6 +1,6 @@
 #version 120
 
-precision mediump float;
+precision lowp float;
 
 varying vec2 UV;
 varying vec4 ShadowCoord;
@@ -30,7 +30,7 @@ vec2 poissonDisk[16] = vec2[](
    vec2(0.14383161, -0.14100790) 
 );
 
-vec2 getPoison(float i) {
+/*vec2 getPoison(float i) {
 	
 	int index = int(mod(i, 16));
 	float size = 1250.f;
@@ -53,22 +53,15 @@ vec2 getPoison(float i) {
 	else if (index == 15) return vec2( 0.19984126, 0.78641367 ) / size;
 	else return vec2( 0.14383161, -0.14100790 ) / size;
 
-}
+}*/
 
 void main() {
-	
-	// Material properties
-	vec3 MaterialDiffuseColor = texture2D(myTextureSampler, UV).rgb;
-
-	float bias = 0.001;
 
 	float visibility = 1.0;
 	for (int i = 0; i < ITERATIONS; i++){
-		vec2 poisson = poissonDisk[i] / 1250.f; // getPoison(i)
-		visibility -= 0.2 / ITERATIONS * (1.0 - shadow2D(shadowMap, vec3(ShadowCoord.xy + poisson, (ShadowCoord.z - bias) / ShadowCoord.w)).r);
+		visibility -= 0.2 / ITERATIONS * (1.0 - shadow2D(shadowMap, vec3(ShadowCoord.xy + poissonDisk[i] / 1250.f, (ShadowCoord.z - 0.001) / ShadowCoord.w)).r);
 	}
 
-	gl_FragColor.rgb = visibility * MaterialDiffuseColor;
-	gl_FragColor.a = 1.f;
+	gl_FragColor = vec4(visibility * texture2D(myTextureSampler, UV).rgb, 1.f);
 
 }
