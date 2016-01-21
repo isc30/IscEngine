@@ -238,7 +238,7 @@ void TestScene::render() {
 	shader.setUniformMatrix("V", &V[0][0]);
 	shader.setUniformMatrix("P", &P[0][0]);
 	vec3 cameraPosition = camera.getPosition();
-	shader.setUniform("LightPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	shader.setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	
 	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE0);
 	shader.setUniform("shadowMap", 0);

@@ -6,16 +6,24 @@
 
 namespace IscEngine {
 
+	// PostProcess
 	class PostProcess {
 
 		private:
-
-			static Mesh* quad;
+			
+			static Mesh* quad; // Simple quad that covers the screen
 
 		public:
-			
+
+			// Initializes the static variables of the class
 			static void initializeStatic();
-			static void render(Texture* const texture);
+			// Renders the Texture covering all the screen
+			static void render(const Texture* const texture);
+
+			//////////////////////////////////////////////////////////////////////////////////////////////
+
+			// No constructor
+			PostProcess() = delete;
 
 	};
 

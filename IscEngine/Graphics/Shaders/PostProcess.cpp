@@ -1,16 +1,30 @@
 #include "PostProcess.hpp"
 using namespace IscEngine;
 
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Static Content
+//////////////////////////////////////////////////////////////////////////////////////////////
+
 Mesh* PostProcess::quad = nullptr;
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Initializes the static variables of the class
 void PostProcess::initializeStatic() {
 
-	PostProcess::quad = new Mesh(vector<vec3>({vec3(-1,-1,0),vec3(1,-1,0),vec3(-1,1,0),vec3(-1,1,0),vec3(1,-1,0),vec3(1,1,0)}));
+	PostProcess::quad = new Mesh(vector<vec3>({
+		vec3(-1,-1,0),
+		vec3(1,-1,0),
+		vec3(-1,1,0),
+		vec3(-1,1,0),
+		vec3(1,-1,0),
+		vec3(1,1,0)}
+	));
 
 }
 
-void PostProcess::render(Texture* const texture) {
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Renders the Texture covering all the screen
+void PostProcess::render(const Texture* const texture) {
 
 	Texture::bind(texture);
 	PostProcess::quad->render(GL_TRIANGLES);

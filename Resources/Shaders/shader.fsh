@@ -38,34 +38,34 @@ void main(){
 	// Material properties
 	vec3 MaterialDiffuseColor = texture2D(myTextureSampler, UV).rgb;
 	vec3 MaterialAmbientColor = vec3(0.4, 0.4, 0.4) * MaterialDiffuseColor;
-	vec3 MaterialSpecularColor = vec3(0.1, 0.1, 0.1);
-
-	LightResult results[2];
-	vec3 finalColor = vec3(0.f, 0.f, 0.f);
+	vec3 MaterialSpecularColor = vec3(0.4, 0.4, 0.4);
+	
+	LightResult finalColor;
+	finalColor.diffuse = vec3(0,0,0);
+	finalColor.specular = vec3(0,0,0);
 
 	for (int i = 0; i < 2; i++) {
-		
+
 		vec3 lightPosition_cameraspace = (V * M * vec4(lights[i].position_worldspace, 1)).xyz;
 		float distance = length(lights[i].position_worldspace - Position_worldspace);
 		vec3 n = normalize(Normal_cameraspace);
 		vec3 l = normalize(lightPosition_cameraspace + EyeDirection_cameraspace);
-		float cosTheta = clamp(dot(n, l), 0, 1);
+		float cosTheta = abs(dot(n, l));
 
 		vec3 E = normalize(EyeDirection_cameraspace);
 		vec3 R = reflect(-l, n);
-		float cosAlpha = clamp(dot(E, R), 0, 1);
+		float cosAlpha = abs(dot(E, R));
 
-		results[i].diffuse = vec3(lights[i].color * lights[i].power * cosTheta / (distance * distance));
-		results[i].specular = vec3(lights[i].color * lights[i].power * pow(cosAlpha, 5) / (distance * distance));
-
-		finalColor += 
-			MaterialAmbientColor +
-			MaterialDiffuseColor * results[i].diffuse +
-			MaterialSpecularColor * results[i].specular;
+		finalColor.diffuse += vec3(lights[i].color * lights[i].power * cosTheta / (distance * distance));
+		finalColor.specular += vec3(lights[i].color * lights[i].power * pow(cosAlpha, 5) / (distance * distance));
 		
 	}
 
-	gl_FragColor.rgb = finalColor;
-	gl_FragColor.a = 1.0;
+	gl_FragColor.rgb = MaterialAmbientColor + MaterialDiffuseColor * finalColor.diffuse + MaterialSpecularColor * finalColor.specular;
+	gl_FragColor.a = 1.f;
+
+	/* GAMMA CORRECTION
+	vec3 gamma = vec3(1.f / 1.2f);
+    gl_FragColor.rgb = pow(gl_FragColor.rgb, gamma);*/
 
 }
