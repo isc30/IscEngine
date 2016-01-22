@@ -17,8 +17,8 @@ namespace IscEngine {
 
 			// Initializes the static variables of the class
 			static void initializeStatic();
-			// Renders the Texture covering all the screen
-			static void render(const Texture* const texture);
+			// Renders a texturizable quad covering all the screen
+			static void render();
 
 			//////////////////////////////////////////////////////////////////////////////////////////////
 

@@ -23,11 +23,9 @@ void PostProcess::initializeStatic() {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Renders the Texture covering all the screen
-void PostProcess::render(const Texture* const texture) {
+// Renders a texturizable quad covering all the screen
+void PostProcess::render() {
 
-	Texture::bind(texture);
 	PostProcess::quad->render(GL_TRIANGLES);
-	Texture::unbind();
 
 }

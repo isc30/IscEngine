@@ -25,6 +25,7 @@ Shader::Shader() {
 
 	// Fix to force template generation
 	this->setUniform("", 0.f, 0.f, 0.f);
+	this->setUniform("", 0.0, 0.0, 0.0);
 	this->setUniform("", 0);
 	this->setUniform("", 0.f);
 

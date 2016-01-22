@@ -25,7 +25,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-	shader.loadFromFiles(RESOURCE_PATH + "Shaders/defaultShadowShader.vsh", RESOURCE_PATH + "Shaders/defaultShadowShader.fsh");
+	shader.loadFromFiles(RESOURCE_PATH + "Shaders/shader.vsh", RESOURCE_PATH + "Shaders/shader.fsh");
 	shShadowMap.loadFromFiles(RESOURCE_PATH + "Shaders/shadowMapper.vsh", RESOURCE_PATH + "Shaders/shadowMapper.fsh");
 	postProcessShader.loadFromFiles(RESOURCE_PATH + "Shaders/postProcess.vsh", RESOURCE_PATH + "Shaders/postProcess.fsh");
 
@@ -39,7 +39,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	std::vector<glm::vec2> objUvs;
 	std::vector<glm::vec3> objNormals;
 
-	loadModel(RESOURCE_PATH + "Models/map.fbx", objIndices, objVertices, objUvs, objNormals);
+	loadModel(RESOURCE_PATH + "Models/mapa_pruebas.obj", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[0] = new Mesh(objVertices);
 	if (objIndices.size() > 0) mesh[0]->addIndexes(objIndices);
@@ -142,7 +142,7 @@ void TestScene::processInput() {
 
 	}
 
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))) {
+	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) && window->isFocused()) {
 
 		camera.setPosition(vec3(camera.getPosition().x - camera.getDirection().x * 20 * deltaTime.asSeconds(),
 								camera.getPosition().y - camera.getDirection().y * 20 * deltaTime.asSeconds(),
@@ -223,6 +223,8 @@ void TestScene::render() {
 		);
 		depthBiasVP = biasMatrix * depthVP;
 
+		glEnable(GL_CULL_FACE);
+
 	}
 
 	////////////////////////////////////////////////////////
@@ -230,8 +232,6 @@ void TestScene::render() {
 	FrameBuffer::bind(postProcessFrameBuffer);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	glEnable(GL_CULL_FACE);
 	
 	Shader::bind(&shader);
 
@@ -250,14 +250,14 @@ void TestScene::render() {
 		shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
 		shadows = false;
 	}
-	
+
 	shader.setUniform("lights[0].position_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	shader.setUniform("lights[0].color", 1.f, 0.f, 0.f);
-	shader.setUniform("lights[0].power", 100.f);
+	shader.setUniform("lights[0].power", 8.f);
 
-	shader.setUniform("lights[1].position_worldspace", 1.f, 0.f, 73.f);
+	shader.setUniform("lights[1].position_worldspace", 17.f, 4.f, -53.f);
 	shader.setUniform("lights[1].color", 0.f, 0.f, 1.f);
-	shader.setUniform("lights[1].power", 100.f);
+	shader.setUniform("lights[1].power", 10.f);
 
 	mat4 model2(1.f);
 	model2 = glm::translate(vec3(2, 6.85, 2));
@@ -297,7 +297,9 @@ void TestScene::render() {
 	postProcessShader.setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
 	//postProcessShader.setUniform("textureSize", window->getSize().x, window->getSize().y);
 	
-	PostProcess::render(postProcessFrameBuffer->getTexture());
+	Texture::bind(postProcessFrameBuffer->getTexture());
+	PostProcess::render();
+	Texture::unbind();
 
 	Shader::unbind();
 
@@ -306,8 +308,6 @@ void TestScene::render() {
 }
 
 TestScene::~TestScene() {
-
-	cout << "Destructor TESTscene" << endl;
 
 	delete mesh[0]; mesh[0] = nullptr;
 	delete mesh[1]; mesh[1] = nullptr;

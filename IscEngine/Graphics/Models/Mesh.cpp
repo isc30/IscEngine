@@ -205,7 +205,7 @@ VertexArray* Mesh::cacheVertexArray(Shader* const currentShader) {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Renders the Mesh
-void Mesh::render(const unsigned int type) {
+void Mesh::render(const unsigned int type) { // WIREFRAME: GL_LINE_LOOP
 
 	Shader* currentShader = Shader::currentShader;
 

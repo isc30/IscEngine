@@ -8,7 +8,7 @@ attribute vec3 vertexNormal_modelspace;
 // Output data ; will be interpolated for each fragment.
 varying vec2 UV;
 varying vec3 Position_worldspace;
-varying vec3 Normal_cameraspace;
+varying vec3 Normal_worldspace;
 varying vec3 EyeDirection_cameraspace;
 varying vec3 LightDirection_cameraspace;
 
@@ -16,7 +16,6 @@ varying vec3 LightDirection_cameraspace;
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
-uniform vec3 LightPosition_worldspace;
 
 struct LightSource {
 
@@ -48,8 +47,8 @@ void main(){
 	LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;*/
 	
 	// Normal of the the vertex, in camera space
-	Normal_cameraspace = ( V * M * vec4(vertexNormal_modelspace,0)).xyz; // Only correct if ModelMatrix does not scale the model ! Use its inverse transpose if not.
-	
+	Normal_worldspace = (M * vec4(vertexNormal_modelspace,0)).xyz;
+
 	// UV of the vertex. No special space for this one.
 	UV = vertexUV;
 
