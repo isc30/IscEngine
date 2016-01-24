@@ -8,6 +8,7 @@ using namespace IscEngine::Scenes;
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
 #include "../Graphics/Shaders/PostProcess.hpp"
+#include "../World/Entities/StaticEntity.hpp"
 
 Camera camera;
 
@@ -17,8 +18,10 @@ mat4 V;
 bool rotatingCamera = false;
 bool shadows = true;
 
-int mapsize = 10;
+int mapsize = 1;
 float separation = 5.f;
+
+vector<StaticEntity*> entities;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -57,6 +60,30 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	if (objIndices.size() > 0) mesh[1]->addIndexes(objIndices);
 	if (objNormals.size() > 0) mesh[1]->addNormals(objNormals);
 	if (objUvs.size() > 0) mesh[1]->addUVs(objUvs);
+
+	objIndices.clear();
+	objVertices.clear();
+	objUvs.clear();
+	objNormals.clear();
+
+	loadModel(RESOURCE_PATH + "Models/katarina_low.obj", objIndices, objVertices, objUvs, objNormals);
+
+	mesh[2] = new Mesh(objVertices);
+	if (objIndices.size() > 0) mesh[2]->addIndexes(objIndices);
+	if (objNormals.size() > 0) mesh[2]->addNormals(objNormals);
+	if (objUvs.size() > 0) mesh[2]->addUVs(objUvs);
+
+	// Create StaticEntities
+	for (int i = 0; i < mapsize; i++) {
+		for (int j = 0; j < mapsize; j++) {
+			StaticEntity* entity = new StaticEntity();
+			entity->setMesh(mesh[1]);
+			entity->setLowPolyMesh(mesh[2]);
+			//entity->setPosition(vec3(i * separation, 2.0f, j * separation)); // Fails
+			//entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
+			entities.push_back(entity);
+		}
+	}
 
 	textures[0] = new Texture();
 	if (!textures[0]->loadFromFile(RESOURCE_PATH + "Textures/katarina_base_diffuse.png")) {
@@ -262,24 +289,10 @@ void TestScene::render() {
 	mesh[0]->render(GL_TRIANGLES);
 
 	Texture::bind(textures[0], GL_TEXTURE1);
-
-	for (int i = 0; i < mapsize; i++) {
-		for (int j = 0; j < mapsize; j++) {
-
-			mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation), vec3(0, radians(i * 25.f + j * 25.f), 0));
-
-			// Perspective Culling :')
-			vec4 model_cameraspace = P * V * model * vec4(0, 0, 0, 1);
-			if (model_cameraspace.z >= 0.f && model_cameraspace.z <= 1000.0f &&
-				model_cameraspace.x / model_cameraspace.w >= -1.f && model_cameraspace.x / model_cameraspace.w <= 1.f &&
-				model_cameraspace.y / model_cameraspace.w >= -1.f && model_cameraspace.y / model_cameraspace.w <= 1.f) {
-
-				shShadowMap.setUniformMatrix("M", &model[0][0]);
-				mesh[1]->render(GL_TRIANGLES);
-
-			}
-
-		}
+	
+	mat4 VP = P * V;
+	for (auto entity : entities) {
+		entity->render(VP);
 	}
 
 	Texture::unbind(GL_TEXTURE1);

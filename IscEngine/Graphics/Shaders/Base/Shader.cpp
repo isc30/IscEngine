@@ -207,15 +207,33 @@ void Shader::setUniformMatrix(const char* const uniform, const float* const valu
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform array
-template <class T> void Shader::setUniformArray(const char* const uniform, const unsigned int size, const T* const pointer) const {
+void Shader::setUniformArray(const char* const uniform, const unsigned int size, const double* const pointer) const {
 
-	if (uniform == "") return;
-	unsigned int uniformLocation = this->getUniformLocation(uniform);
+	glUniform3dv(this->getUniformLocation(uniform), size, pointer);
 
-	if (typeid(T) == typeid(double)) glUniform3dv(uniformLocation, size, (const double*)pointer);
-	else if (typeid(T) == typeid(float)) glUniform3fv(uniformLocation, size, (const float*) pointer);
-	else if (typeid(T) == typeid(int)) glUniform3iv(uniformLocation, size, (const int*) pointer);
-	else if (typeid(T) == typeid(unsigned int)) glUniform3uiv(uniformLocation, size, (const unsigned int*)pointer);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform array
+void Shader::setUniformArray(const char* const uniform, const unsigned int size, const float* const pointer) const {
+
+	glUniform3fv(this->getUniformLocation(uniform), size, pointer);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform array
+void Shader::setUniformArray(const char* const uniform, const unsigned int size, const int* const pointer) const {
+
+	glUniform3iv(this->getUniformLocation(uniform), size, pointer);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform array
+void Shader::setUniformArray(const char* const uniform, const unsigned int size, const unsigned int* const pointer) const {
+
+	glUniform3uiv(this->getUniformLocation(uniform), size, pointer);
 
 }
 

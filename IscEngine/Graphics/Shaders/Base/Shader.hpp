@@ -60,7 +60,10 @@ namespace IscEngine {
 			void setUniform(const char* const uniform, const unsigned int value0, const unsigned int value1, const unsigned int value2, const unsigned int value3) const;
 
 			// Sets a shader uniform array
-			template <class T> void setUniformArray(const char* const uniform, const unsigned int size, const T* const pointer) const;
+			void setUniformArray(const char* const uniform, const unsigned int size, const double* const pointer) const;
+			void setUniformArray(const char* const uniform, const unsigned int size, const float* const pointer) const;
+			void setUniformArray(const char* const uniform, const unsigned int size, const int* const pointer) const;
+			void setUniformArray(const char* const uniform, const unsigned int size, const unsigned int* const pointer) const;
 
 			// Sets a shader uniform matrix
 			void setUniformMatrix(const char* const uniform, const float* const value) const;
