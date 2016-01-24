@@ -9,6 +9,8 @@ using namespace IscEngine;
 // Constructor
 Engine::Engine() {
 
+	this->currentScene = nullptr;
+
 	Log::cout << endl;
 	Log::cout << " IscEngine" << endl;
 	Log::cout << " -----------------------" << endl << endl;

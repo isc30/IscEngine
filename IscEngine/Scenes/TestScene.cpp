@@ -17,7 +17,7 @@ mat4 V;
 bool rotatingCamera = false;
 bool shadows = true;
 
-int mapsize = 1;
+int mapsize = 10;
 float separation = 5.f;
 
 TestScene::TestScene(Window* window) : Scene(window) {
@@ -51,7 +51,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	objUvs.clear();
 	objNormals.clear();
 
-	loadModel(RESOURCE_PATH + "Models/katarina.fbx", objIndices, objVertices, objUvs, objNormals);
+	loadModel(RESOURCE_PATH + "Models/katarina.obj", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[1] = new Mesh(objVertices);
 	if (objIndices.size() > 0) mesh[1]->addIndexes(objIndices);
@@ -177,7 +177,7 @@ void TestScene::render() {
 		glViewport(0, 0, shadowFrameBuffer->getTexture()->getWidth(), shadowFrameBuffer->getTexture()->getHeight());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glDisable(GL_CULL_FACE);
+		//glDisable(GL_CULL_FACE);
 
 		Shader::bind(&shShadowMap);
 
@@ -196,19 +196,17 @@ void TestScene::render() {
 		shShadowMap.setUniformMatrix("V", &depthViewMatrix[0][0]);
 		shShadowMap.setUniformMatrix("P", &depthProjectionMatrix[0][0]);
 
-		mat4 model(1.f);
-		model = glm::translate(vec3(2, 6.85, 2));
+		mat4 model = ModelView::getModelView(vec3(0, 0, 0));
 		shShadowMap.setUniformMatrix("M", &model[0][0]);
-		mesh[1]->render(GL_TRIANGLES);
+		mesh[0]->render(GL_TRIANGLES);
 
 		for (int i = 0; i < mapsize; i++) {
 			for (int j = 0; j < mapsize; j++) {
 
-				mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation),
-										  vec3(0, radians(i * 25.f + j * 25.f), 0));
-
+				mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation), vec3(0, radians(i * 25.f + j * 25.f), 0));
 				shShadowMap.setUniformMatrix("M", &model[0][0]);
-				mesh[0]->render(GL_TRIANGLES);
+				mesh[1]->render(GL_TRIANGLES);
+
 			}
 		}
 
@@ -223,7 +221,7 @@ void TestScene::render() {
 		);
 		depthBiasVP = biasMatrix * depthVP;
 
-		glEnable(GL_CULL_FACE);
+		//glEnable(GL_CULL_FACE);
 
 	}
 
@@ -243,7 +241,7 @@ void TestScene::render() {
 	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE0);
 	shader.setUniform("shadowMap", 0);
 
-	Texture::bind(textures[0], GL_TEXTURE1);
+	Texture::bind(textures[1], GL_TEXTURE1);
 	shader.setUniform("myTextureSampler", 1);
 
 	if (shadows) {
@@ -259,21 +257,28 @@ void TestScene::render() {
 	shader.setUniform("lights[1].color", 0.f, 0.f, 1.f);
 	shader.setUniform("lights[1].power", 10.f);
 
-	mat4 model2(1.f);
-	model2 = glm::translate(vec3(2, 6.85, 2));
-	shader.setUniformMatrix("M", &model2[0][0]);
-	mesh[1]->render(GL_TRIANGLES);
+	mat4 model = ModelView::getModelView(vec3(0, 0, 0));
+	shShadowMap.setUniformMatrix("M", &model[0][0]);
+	mesh[0]->render(GL_TRIANGLES);
 
-	Texture::bind(textures[1], GL_TEXTURE1);
+	Texture::bind(textures[0], GL_TEXTURE1);
 
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
 
-			mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation),
-									  vec3(0, radians(i * 25.f + j * 25.f), 0));
+			mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation), vec3(0, radians(i * 25.f + j * 25.f), 0));
 
-			shader.setUniformMatrix("M", &model[0][0]);
-			mesh[0]->render(GL_TRIANGLES);
+			// Perspective Culling :')
+			vec4 model_cameraspace = P * V * model * vec4(0, 0, 0, 1);
+			if (model_cameraspace.z >= 0.f && model_cameraspace.z <= 1000.0f &&
+				model_cameraspace.x / model_cameraspace.w >= -1.f && model_cameraspace.x / model_cameraspace.w <= 1.f &&
+				model_cameraspace.y / model_cameraspace.w >= -1.f && model_cameraspace.y / model_cameraspace.w <= 1.f) {
+
+				shShadowMap.setUniformMatrix("M", &model[0][0]);
+				mesh[1]->render(GL_TRIANGLES);
+
+			}
+
 		}
 	}
 

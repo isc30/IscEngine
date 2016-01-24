@@ -23,16 +23,6 @@ Shader::Shader() {
 
 	this->id = 0;
 
-	// Fix to force template generation
-	this->setUniform("", 0.f, 0.f, 0.f);
-	this->setUniform("", 0.0, 0.0, 0.0);
-	this->setUniform("", 0);
-	this->setUniform("", 0.f);
-
-	this->setUniformArray("", 2, (void*)0);
-
-	this->setUniform("", (unsigned int)0, (unsigned int)0);
-
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -80,67 +70,137 @@ int Shader::getAttributeLocation(const char* const attribute) const {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0) const {
-
-	if (uniform == "") return;
-	int uniformLocation = this->getUniformLocation(uniform);
+void Shader::setUniform(const char* const uniform, const double value0) const {
 	
-	if (typeid(T) == typeid(double)) glUniform1d(uniformLocation, (double)value0);
-	else if (typeid(T) == typeid(float)) glUniform1f(uniformLocation, (float)value0);
-	else if (typeid(T) == typeid(int)) glUniform1i(uniformLocation, (int)value0);
-	else if (typeid(T) == typeid(unsigned int)) glUniform1ui(uniformLocation, (unsigned int)value0);
+	glUniform1d(this->getUniformLocation(uniform), value0);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1) const {
+void Shader::setUniform(const char* const uniform, const float value0) const {
 
-	if (uniform == "") return;
-	int uniformLocation = this->getUniformLocation(uniform);
-
-	if (typeid(T) == typeid(double)) glUniform2d(uniformLocation, (double)value0, (double)value1);
-	else if (typeid(T) == typeid(float)) glUniform2f(uniformLocation, (float)value0, (float)value1);
-	else if (typeid(T) == typeid(int)) glUniform2i(uniformLocation, (int)value0, (int)value1);
-	else if (typeid(T) == typeid(unsigned int)) glUniform2ui(uniformLocation, (unsigned int)value0, (unsigned int)value1);
+	glUniform1f(this->getUniformLocation(uniform), value0);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1, const T value2) const {
+void Shader::setUniform(const char* const uniform, const int value0) const {
 
-	if (uniform == "") return;
-	int uniformLocation = this->getUniformLocation(uniform);
-
-	if (typeid(T) == typeid(double)) glUniform3d(uniformLocation, (double)value0, (double)value1, (double)value2);
-	else if (typeid(T) == typeid(float)) glUniform3f(uniformLocation, (float)value0, (float)value1, (float)value2);
-	else if (typeid(T) == typeid(int)) glUniform3i(uniformLocation, (int)value0, (int)value1, (int)value2);
-	else if (typeid(T) == typeid(unsigned int)) glUniform3ui(uniformLocation, (unsigned int)value0, (unsigned int)value1, (unsigned int)value2);
+	glUniform1i(this->getUniformLocation(uniform), value0);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform value
-template <class T> void Shader::setUniform(const char* const uniform, const T value0, const T value1, const T value2, const T value3) const {
+void Shader::setUniform(const char* const uniform, const unsigned int value0) const {
 
-	if (uniform == "") return;
-	int uniformLocation = this->getUniformLocation(uniform);
+	glUniform1ui(this->getUniformLocation(uniform), value0);
 
-	if (typeid(T) == typeid(double)) glUniform4d(uniformLocation, (double)value0, (double)value1, (double)value2, (double)value3);
-	else if (typeid(T) == typeid(float)) glUniform4f(uniformLocation, (float)value0, (float)value1, (float)value2, (float)value3);
-	else if (typeid(T) == typeid(int)) glUniform4i(uniformLocation, (int)value0, (int)value1, (int)value2, (int)value3);
-	else if (typeid(T) == typeid(unsigned int)) glUniform4ui(uniformLocation, (unsigned int)value0, (unsigned int)value1, (unsigned int)value2, (unsigned int)value3);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const double value0, const double value1) const {
+
+	glUniform2d(this->getUniformLocation(uniform), value0, value1);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const float value0, const float value1) const {
+
+	glUniform2f(this->getUniformLocation(uniform), value0, value1);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const int value0, const int value1) const {
+
+	glUniform2i(this->getUniformLocation(uniform), value0, value1);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const unsigned int value0, const unsigned int value1) const {
+
+	glUniform2ui(this->getUniformLocation(uniform), value0, value1);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const double value0, const double value1, const double value2) const {
+
+	glUniform3d(this->getUniformLocation(uniform), value0, value1, value2);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const float value0, const float value1, const float value2) const {
+
+	glUniform3f(this->getUniformLocation(uniform), value0, value1, value2);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const int value0, const int value1, const int value2) const {
+
+	glUniform3i(this->getUniformLocation(uniform), value0, value1, value2);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const unsigned int value0, const unsigned int value1, const unsigned int value2) const {
+
+	glUniform3ui(this->getUniformLocation(uniform), value0, value1, value2);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const double value0, const double value1, const double value2, const double value3) const {
+
+	glUniform4d(this->getUniformLocation(uniform), value0, value1, value2, value3);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const float value0, const float value1, const float value2, const float value3) const {
+
+	glUniform4f(this->getUniformLocation(uniform), value0, value1, value2, value3);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const int value0, const int value1, const int value2, const int value3) const {
+
+	glUniform4i(this->getUniformLocation(uniform), value0, value1, value2, value3);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Sets a shader uniform value
+void Shader::setUniform(const char* const uniform, const unsigned int value0, const unsigned int value1, const unsigned int value2, const unsigned int value3) const {
+
+	glUniform4ui(this->getUniformLocation(uniform), value0, value1, value2, value3);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Sets a shader uniform matrix
 void Shader::setUniformMatrix(const char* const uniform, const float* const value) const {
-
-	if (uniform == "") return;
-	int uniformLocation = this->getUniformLocation(uniform);
-	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, value);
+	
+	glUniformMatrix4fv(this->getUniformLocation(uniform), 1, GL_FALSE, value);
 
 }
 

@@ -70,7 +70,7 @@ void main(){
 	gl_FragColor.a = 1.f;
 
 	// GAMMA CORRECTION
-	vec3 gamma = vec3(1.5f);
+	vec3 gamma = vec3(1/1.5f);
     gl_FragColor.rgb = pow(gl_FragColor.rgb, gamma);
 
 }

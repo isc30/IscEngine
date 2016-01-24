@@ -16,7 +16,7 @@ bool loadModel(
 
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_Triangulate);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes);
 	if (!scene) {
 		fprintf(stderr, importer.GetErrorString());
 		getchar();

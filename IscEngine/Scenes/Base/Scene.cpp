@@ -41,17 +41,13 @@ void Scene::loop() {
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	// Custom fps limiter
-
 	/*
-	float fps = 144;
-
+	this->realDeltaTime = this->sceneClock.getElapsedTime() - startTime;
+	float fps = 146;
 	if ((this->sceneClock.getElapsedTime() - startTime).asSeconds() < 1 / fps) {
-
 		sf::sleep(sf::seconds(1 / fps - (this->sceneClock.getElapsedTime() - startTime).asSeconds()));
-
-	}
-	*/
-
+	}*/
+	
 	this->deltaTime = this->sceneClock.getElapsedTime() - startTime;
 
 }

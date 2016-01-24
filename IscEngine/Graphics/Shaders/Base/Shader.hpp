@@ -39,16 +39,29 @@ namespace IscEngine {
 			// Returns shader attribute location
 			int getAttributeLocation(const char* const attribute) const;
 
-			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0) const;
-			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0, const T value1) const;
-			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0, const T value1, const T value2) const;
-			// Sets a shader uniform value
-			template <class T> void setUniform(const char* const uniform, const T value0, const T value1, const T value2, const T value3) const;
+			void setUniform(const char* const uniform, const double value0) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const float value0) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const int value0) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const unsigned int value0) const; // Sets a shader uniform value
+			
+			void setUniform(const char* const uniform, const double value0, const double value1) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const float value0, const float value1) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const int value0, const int value1) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const unsigned int value0, const unsigned int value1) const; // Sets a shader uniform value
+			
+			void setUniform(const char* const uniform, const double value0, const double value1, const double value2) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const float value0, const float value1, const float value2) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const int value0, const int value1, const int value2) const; // Sets a shader uniform value
+			void setUniform(const char* const uniform, const unsigned int value0, const unsigned int value1, const unsigned int value2) const; // Sets a shader uniform value
+			
+			void setUniform(const char* const uniform, const double value0, const double value1, const double value2, const double value3) const;
+			void setUniform(const char* const uniform, const float value0, const float value1, const float value2, const float value3) const;
+			void setUniform(const char* const uniform, const int value0, const int value1, const int value2, const int value3) const;
+			void setUniform(const char* const uniform, const unsigned int value0, const unsigned int value1, const unsigned int value2, const unsigned int value3) const;
+
 			// Sets a shader uniform array
 			template <class T> void setUniformArray(const char* const uniform, const unsigned int size, const T* const pointer) const;
+
 			// Sets a shader uniform matrix
 			void setUniformMatrix(const char* const uniform, const float* const value) const;
 
