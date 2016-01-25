@@ -2,24 +2,24 @@
 
 #include "Entity.hpp"
 #include "../../Graphics/Models/Mesh.hpp"
+#include "../../Views/Cameras/Base/Camera.hpp"
+
+#include <map>
+using namespace std;
 
 namespace IscEngine {
 
 	class StaticEntity : public Entity {
 
 		private:
-
-			Mesh* mesh;
-			Mesh* lowPolyMesh;
-			float lodDistance;
+			
+			map<float, Mesh*> meshes;
 
 		public:
 			
-			StaticEntity();
-
-			void setMesh(Mesh* const mesh);
-			void setLowPolyMesh(Mesh* const lowPolyMesh);
-			void setLodDistance(const float lodDistance);
+			StaticEntity(Mesh* const mesh);
+			
+			void addMesh(const float distance, Mesh* const mesh);
 			void render(mat4& VP);
 
 	};

@@ -8,7 +8,6 @@ using namespace IscEngine::Scenes;
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
 #include "../Graphics/Shaders/PostProcess.hpp"
-#include "../World/Entities/StaticEntity.hpp"
 
 Camera camera;
 
@@ -18,10 +17,8 @@ mat4 V;
 bool rotatingCamera = false;
 bool shadows = true;
 
-int mapsize = 1;
+int mapsize = 50;
 float separation = 5.f;
-
-vector<StaticEntity*> entities;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -76,11 +73,10 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	// Create StaticEntities
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
-			StaticEntity* entity = new StaticEntity();
-			entity->setMesh(mesh[1]);
-			entity->setLowPolyMesh(mesh[2]);
-			//entity->setPosition(vec3(i * separation, 2.0f, j * separation)); // Fails
-			//entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
+			StaticEntity* entity = new StaticEntity(mesh[1]);
+			entity->addMesh(30, mesh[2]);
+			entity->setPosition(vec3(i * separation, 2.0f, j * separation));
+			entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
 			entities.push_back(entity);
 		}
 	}
@@ -136,6 +132,14 @@ void TestScene::update() {
 	if (window->isFocused()) processInput();
 
 	V = camera.getView();
+
+	for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
+
+		vec3 currentRotation = (*it)->getRotation();
+		currentRotation.y += radians(540.f * deltaTime.asSeconds());
+		(*it)->setRotation(currentRotation);
+
+	}
 
 }
 
@@ -291,8 +295,8 @@ void TestScene::render() {
 	Texture::bind(textures[0], GL_TEXTURE1);
 	
 	mat4 VP = P * V;
-	for (auto entity : entities) {
-		entity->render(VP);
+	for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
+		(*it)->render(VP);
 	}
 
 	Texture::unbind(GL_TEXTURE1);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GLM/glm.hpp>
+#include <glm/gtx/transform.hpp>
 using namespace glm;
 
 #include "../../Views/ModelView.hpp"
@@ -17,11 +18,12 @@ namespace IscEngine {
 
 			mat4 modelMatrix;
 
-			void updateModelMatrix(); // Fails
+			void updateModelMatrix();
 
 		public:
 			
 			Entity();
+			virtual ~Entity();
 
 			vec3 getPosition() const;	
 			void setPosition(const vec3& position);
@@ -32,7 +34,7 @@ namespace IscEngine {
 			vec3 getScale() const;
 			void setScale(const vec3& scale);
 
-			mat4 getModelMatrix() const;
+			const mat4 getModelMatrix() const;
 
 	};
 

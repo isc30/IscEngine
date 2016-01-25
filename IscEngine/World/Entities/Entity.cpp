@@ -5,9 +5,17 @@ using namespace IscEngine;
 
 Entity::Entity() {
 
-	this->position = vec3(0, 0, 0);
-	this->rotation = vec3(0, 0, 0);
-	this->scale = vec3(0, 0, 0);
+	this->position = vec3(0.f, 0.f, 0.f);
+	this->rotation = vec3(0.f, 0.f, 0.f);
+	this->scale = vec3(1.f, 1.f, 1.f);
+
+	this->updateModelMatrix();
+
+}
+
+Entity::~Entity() {
+
+
 
 }
 
@@ -45,6 +53,12 @@ void Entity::setRotation(const vec3& rotation) {
 	if (this->rotation != rotation) {
 
 		this->rotation = rotation;
+
+		float max = radians(360.f);
+		while (this->rotation.x >= max) this->rotation.x -= max;
+		while (this->rotation.y >= max) this->rotation.y -= max;
+		while (this->rotation.z >= max) this->rotation.z -= max;
+
 		this->updateModelMatrix();
 
 	}
@@ -68,7 +82,7 @@ void Entity::setScale(const vec3& scale) {
 
 }
 
-mat4 Entity::getModelMatrix() const {
+const mat4 Entity::getModelMatrix() const {
 
 	return this->modelMatrix;
 
