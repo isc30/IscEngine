@@ -61,17 +61,17 @@ Mesh::~Mesh() {
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Adds the vertex indices
-void Mesh::addIndexes(const vector<unsigned short>& indexes) {
+void Mesh::addIndices(const vector<unsigned short>& indices) {
 
-	this->indexBuffer = new IndexBuffer(indexes);
+	this->indexBuffer = new IndexBuffer(indices);
 
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Adds the vertex indices
-void Mesh::addIndexes(const vector<unsigned int>& indexes) {
+void Mesh::addIndices(const vector<unsigned int>& indices) {
 
-	this->indexBuffer = new IndexBuffer(indexes);
+	this->indexBuffer = new IndexBuffer(indices);
 
 }
 

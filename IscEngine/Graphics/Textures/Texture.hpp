@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 #include <SFML/Graphics.hpp>
@@ -20,9 +21,9 @@ namespace IscEngine {
 		public:
 			
 			// Binds the Texture in the index
-			static void bind(const Texture* const texture, const unsigned int index = GL_TEXTURE0);
+			static void bind(const Texture* const texture, const unsigned int index = GL_TEXTURE0, unsigned int type = GL_TEXTURE_2D);
 			// Unbinds the Texture
-			static void unbind(const unsigned int index = GL_TEXTURE0);
+			static void unbind(const unsigned int index = GL_TEXTURE0, unsigned int type = GL_TEXTURE_2D);
 
 			//////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -34,6 +35,7 @@ namespace IscEngine {
 			unsigned int getHeight() const { return this->height; }
 
 			bool loadFromFile(const string& fileName);
+			bool loadCubeMap(const vector<const string>& fileNames);
 			void create(const unsigned int width, const unsigned int height, const bool color = true, const bool depth = false);
 
 	};

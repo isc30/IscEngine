@@ -1,34 +1,34 @@
-#include "PostProcess.hpp"
+#include "SkyBox.hpp"
 using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Static Content
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-Mesh* PostProcess::quad = nullptr;
+Mesh* SkyBox::cube = nullptr;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Initializes the static variables of the class
-void PostProcess::initializeStatic() {
+void SkyBox::initializeStatic() {
 
-	PostProcess::quad = new Mesh(vector<vec3>({
+	SkyBox::cube = new Mesh(vector<vec3>({
 		vec3(-1, -1, 0),
 		vec3(1, -1, 0),
 		vec3(-1, 1, 0),
+		vec3(-1, 1, 0),
+		vec3(1, -1, 0),
 		vec3(1, 1, 0)
 	}));
 
-	PostProcess::quad->addIndices(vector<unsigned short>({
+	SkyBox::cube->addIndices(vector<unsigned short>({
 		0, 1, 2,
 		2, 1, 3
 	}));
 
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Renders a texturizable quad covering all the screen
-void PostProcess::render() {
+void SkyBox::render(const Texture* const front, const Texture* const back, const Texture* const right, const Texture* const left, const Texture* const up, const Texture* const down) {
 
-	PostProcess::quad->render(GL_TRIANGLES);
+
 
 }

@@ -1,5 +1,7 @@
 #version 120
 
+precision lowp float;
+
 // Interpolated values from the vertex shaders
 varying vec2 UV;
 varying vec3 Position_worldspace;
@@ -19,58 +21,44 @@ uniform mat4 P;
 struct LightSource {
 
 	vec3 position_worldspace;
-	//vec3 direction_cameraspace;
 	vec3 color;
 	float power;
 
 };
+
 uniform LightSource lights[2];
 
-struct LightResult {
+vec3 applyLight(LightSource light, vec3 surfaceColor, vec3 normal, vec3 surfacePosition, vec3 surfaceToCamera) {
 
-	vec3 diffuse;
-	vec3 specular;
+	vec3 surfaceToLight = normalize(light.position_worldspace - surfacePosition);
+	float distanceToLight = length(light.position_worldspace - surfacePosition);
+	float attenuation = 1.0 / (0.5f + 1.f / (light.power * 10) * pow(distanceToLight, 2));
 
-};
+	float diffuseCoefficient = max(0.f, dot(normal, surfaceToLight));
+	vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * light.color;
+
+	float specularCoefficient = 0.f;
+	if (diffuseCoefficient > 0.f)
+		specularCoefficient = pow(max(0.f, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), 75.f); // 80 = materialShininess
+	vec3 specular = specularCoefficient * light.color * vec3(0.3f, 0.3f, 0.3f); // * materialSpecularColor
+
+	return attenuation * (diffuse + specular);
+	
+}
 
 void main(){
 	
-	// Material properties
-	vec3 MaterialDiffuseColor = texture2D(myTextureSampler, UV).rgb;
-	vec3 MaterialAmbientColor = vec3(0.4, 0.4, 0.4) * MaterialDiffuseColor;
-	vec3 MaterialSpecularColor = vec3(0.4, 0.4, 0.4);
-	
-	LightResult finalColor;
-	finalColor.diffuse = vec3(0,0,0);
-	finalColor.specular = vec3(0,0,0);
-
+	vec3 finalColor = vec3(0, 0, 0);
 	for (int i = 0; i < 2; i++) {
-
-		vec3 normal = normalize(Normal_worldspace);
-		vec3 surfacePosition = Position_worldspace;
-		vec3 surfaceToLight = normalize(lights[i].position_worldspace - surfacePosition);
-		vec3 surfaceToCamera = normalize(cameraPosition_worldspace - surfacePosition);
-
-		float diffuseCoefficient = max(0.0, dot(normal, surfaceToLight));
-		vec3 diffuse = diffuseCoefficient * lights[i].power * lights[i].color;
-
-		float specularCoefficient = 0.0;
-		if (diffuseCoefficient > 0.0) specularCoefficient = pow(max(0.0f, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), 80.f);
-		vec3 specular = specularCoefficient * lights[i].power / 10 * lights[i].color;
-		
-		float distanceToLight = length(lights[i].position_worldspace - surfacePosition);
-		float attenuation = 1.0 / (0.2f * pow(distanceToLight, 2));
-
-		finalColor.diffuse += attenuation * diffuse;
-		finalColor.specular += attenuation * specular;
-
+		finalColor += applyLight(lights[i], texture2D(myTextureSampler, UV).rgb, normalize(Normal_worldspace), Position_worldspace, normalize(cameraPosition_worldspace - Position_worldspace));
 	}
 
-	gl_FragColor.rgb = MaterialAmbientColor + MaterialDiffuseColor * finalColor.diffuse + MaterialSpecularColor * finalColor.specular;
+	vec3 ambient = vec3(0.2f, 0.2f, 0.2f) * texture2D(myTextureSampler, UV).rgb;
+	gl_FragColor.rgb = ambient + finalColor;
 	gl_FragColor.a = 1.f;
 
-	// GAMMA CORRECTION
-	vec3 gamma = vec3(1/1.5f);
-    gl_FragColor.rgb = pow(gl_FragColor.rgb, gamma);
+	/* GAMMA CORRECTION
+	vec3 gamma = vec3(1 / 2.2f);
+    gl_FragColor.rgb = pow(gl_FragColor.rgb, gamma);*/
 
 }

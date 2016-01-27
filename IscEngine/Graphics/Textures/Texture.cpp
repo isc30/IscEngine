@@ -1,19 +1,19 @@
 #include "Texture.hpp"
 using namespace IscEngine;
 
-void Texture::bind(const Texture* const texture, const unsigned int index) {
+void Texture::bind(const Texture* const texture, const unsigned int index, unsigned int type) {
 
 	glActiveTexture(index);
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, texture->id);
+	glEnable(type);
+	glBindTexture(type, texture->id);
 
 }
 
-void Texture::unbind(const unsigned int index) {
+void Texture::unbind(const unsigned int index, unsigned int type) {
 
 	glActiveTexture(index);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
+	glBindTexture(type, 0);
+	glDisable(type);
 
 }
 
@@ -47,6 +47,32 @@ bool Texture::loadFromFile(const string& fileName) {
 
 	this->width = image.getSize().x;
 	this->height = image.getSize().y;
+
+	return true;
+
+}
+
+bool Texture::loadCubeMap(const vector<const string>& fileNames) {
+
+	// http://learnopengl.com/#!Advanced-OpenGL/Cubemaps
+
+	glGenTextures(1, &this->id);
+
+	sf::Image image;
+	for (unsigned int i = 0, size = fileNames.size(); i < size; i++) {
+
+		if (!image.loadFromFile(fileNames.at(i))) return false;
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, image.getSize().x, image.getSize().y, 0, GL_RGBA, GL_UNSIGNED_BYTE, image.getPixelsPtr());
+
+	}
+
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+	Texture::unbind(0, GL_TEXTURE_CUBE_MAP);
 
 	return true;
 

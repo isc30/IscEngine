@@ -17,7 +17,7 @@ mat4 V;
 bool rotatingCamera = false;
 bool shadows = true;
 
-int mapsize = 50;
+int mapsize = 1;
 float separation = 5.f;
 
 TestScene::TestScene(Window* window) : Scene(window) {
@@ -39,10 +39,10 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	std::vector<glm::vec2> objUvs;
 	std::vector<glm::vec3> objNormals;
 
-	loadModel(RESOURCE_PATH + "Models/mapa_pruebas.obj", objIndices, objVertices, objUvs, objNormals);
+	loadModel(RESOURCE_PATH + "Models/fbx_PuenteRomano.fbx", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[0] = new Mesh(objVertices);
-	if (objIndices.size() > 0) mesh[0]->addIndexes(objIndices);
+	if (objIndices.size() > 0) mesh[0]->addIndices(objIndices);
 	if (objNormals.size() > 0) mesh[0]->addNormals(objNormals);
 	if (objUvs.size() > 0) mesh[0]->addUVs(objUvs);
 
@@ -54,7 +54,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	loadModel(RESOURCE_PATH + "Models/katarina.obj", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[1] = new Mesh(objVertices);
-	if (objIndices.size() > 0) mesh[1]->addIndexes(objIndices);
+	if (objIndices.size() > 0) mesh[1]->addIndices(objIndices);
 	if (objNormals.size() > 0) mesh[1]->addNormals(objNormals);
 	if (objUvs.size() > 0) mesh[1]->addUVs(objUvs);
 
@@ -66,7 +66,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	loadModel(RESOURCE_PATH + "Models/katarina_low.obj", objIndices, objVertices, objUvs, objNormals);
 
 	mesh[2] = new Mesh(objVertices);
-	if (objIndices.size() > 0) mesh[2]->addIndexes(objIndices);
+	if (objIndices.size() > 0) mesh[2]->addIndices(objIndices);
 	if (objNormals.size() > 0) mesh[2]->addNormals(objNormals);
 	if (objUvs.size() > 0) mesh[2]->addUVs(objUvs);
 
@@ -75,7 +75,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		for (int j = 0; j < mapsize; j++) {
 			StaticEntity* entity = new StaticEntity(mesh[1]);
 			entity->addMesh(30, mesh[2]);
-			entity->setPosition(vec3(i * separation, 2.0f, j * separation));
+			entity->setPosition(vec3(i * separation, 18.3f, j * separation));
 			entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
 			entities.push_back(entity);
 		}
@@ -87,7 +87,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	}
 
 	textures[1] = new Texture();
-	if (!textures[1]->loadFromFile(RESOURCE_PATH + "Textures/textura.png")) {
+	if (!textures[1]->loadFromFile(RESOURCE_PATH + "Textures/PiedraRomano_Difuse.jpg")) {
 		Log::cout << "Texture loading error" << std::endl;
 	}
 
@@ -136,7 +136,7 @@ void TestScene::update() {
 	for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
 
 		vec3 currentRotation = (*it)->getRotation();
-		currentRotation.y += radians(540.f * deltaTime.asSeconds());
+		currentRotation.y += radians(45.f * deltaTime.asSeconds());
 		(*it)->setRotation(currentRotation);
 
 	}
@@ -227,22 +227,6 @@ void TestScene::render() {
 		shShadowMap.setUniformMatrix("V", &depthViewMatrix[0][0]);
 		shShadowMap.setUniformMatrix("P", &depthProjectionMatrix[0][0]);
 
-		mat4 model = ModelView::getModelView(vec3(0, 0, 0));
-		shShadowMap.setUniformMatrix("M", &model[0][0]);
-		mesh[0]->render(GL_TRIANGLES);
-
-		for (int i = 0; i < mapsize; i++) {
-			for (int j = 0; j < mapsize; j++) {
-
-				mat4 model = ModelView::getModelView(vec3(i * separation, 2.0f, j * separation), vec3(0, radians(i * 25.f + j * 25.f), 0));
-				shShadowMap.setUniformMatrix("M", &model[0][0]);
-				mesh[1]->render(GL_TRIANGLES);
-
-			}
-		}
-
-		Shader::unbind();
-
 		glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
 		glm::mat4 biasMatrix(
 			0.5, 0.0, 0.0, 0.0,
@@ -252,10 +236,23 @@ void TestScene::render() {
 		);
 		depthBiasVP = biasMatrix * depthVP;
 
+		for (int i = 0; i < 5; i++) {
+			mat4 model = ModelView::getModelView(vec3(0, 0, i * 28), vec3(0,0,0), vec3(2,2,2));
+			shShadowMap.setUniformMatrix("M", &model[0][0]);
+			mesh[0]->render(GL_TRIANGLES);
+		}
+
+		mat4 VP = depthVP;
+		for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
+			(*it)->render(VP);
+		}
+
+		Shader::unbind();
+
 		//glEnable(GL_CULL_FACE);
 
 	}
-
+	
 	////////////////////////////////////////////////////////
 	
 	FrameBuffer::bind(postProcessFrameBuffer);
@@ -282,15 +279,17 @@ void TestScene::render() {
 
 	shader.setUniform("lights[0].position_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	shader.setUniform("lights[0].color", 1.f, 0.f, 0.f);
-	shader.setUniform("lights[0].power", 8.f);
+	shader.setUniform("lights[0].power", 20.f);
 
-	shader.setUniform("lights[1].position_worldspace", 17.f, 4.f, -53.f);
+	shader.setUniform("lights[1].position_worldspace", 0.f, 20.f, 5.f);
 	shader.setUniform("lights[1].color", 0.f, 0.f, 1.f);
-	shader.setUniform("lights[1].power", 10.f);
+	shader.setUniform("lights[1].power", 50.f);
 
-	mat4 model = ModelView::getModelView(vec3(0, 0, 0));
-	shShadowMap.setUniformMatrix("M", &model[0][0]);
-	mesh[0]->render(GL_TRIANGLES);
+	for (int i = 0; i < 5; i++) {
+		mat4 model = ModelView::getModelView(vec3(0, 0, i * 28), vec3(0, 0, 0), vec3(2, 2, 2));
+		shShadowMap.setUniformMatrix("M", &model[0][0]);
+		mesh[0]->render(GL_TRIANGLES);
+	}
 
 	Texture::bind(textures[0], GL_TEXTURE1);
 	

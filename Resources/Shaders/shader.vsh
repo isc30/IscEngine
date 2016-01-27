@@ -17,16 +17,6 @@ uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
 
-struct LightSource {
-
-	vec3 position_worldspace;
-	//vec3 direction_cameraspace;
-	vec3 color;
-	float power;
-
-};
-uniform LightSource lights[2];
-
 void main(){
 
 	mat4 MVP = P * V * M;

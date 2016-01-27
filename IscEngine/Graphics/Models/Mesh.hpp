@@ -38,9 +38,9 @@ namespace IscEngine {
 			~Mesh();
 
 			// Adds the vertex indices
-			void addIndexes(const vector<unsigned short>& indexes);
+			void addIndices(const vector<unsigned short>& indices);
 			// Adds the vertex indices
-			void addIndexes(const vector<unsigned int>& indexes);
+			void addIndices(const vector<unsigned int>& indices);
 			// Adds the IndexBuffer
 			void addIndexBuffer(IndexBuffer* const indexBuffer);
 
