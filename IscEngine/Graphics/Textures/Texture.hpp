@@ -35,7 +35,7 @@ namespace IscEngine {
 			unsigned int getHeight() const { return this->height; }
 
 			bool loadFromFile(const string& fileName);
-			bool loadCubeMap(const vector<const string>& fileNames);
+			bool loadCubeMap(const vector<string>& fileNames);
 			void create(const unsigned int width, const unsigned int height, const bool color = true, const bool depth = false);
 
 	};

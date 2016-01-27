@@ -8,6 +8,7 @@ using namespace IscEngine::Scenes;
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
 #include "../Graphics/Shaders/PostProcess.hpp"
+#include "../World/SkyBox.hpp"
 
 Camera camera;
 
@@ -259,31 +260,80 @@ void TestScene::render() {
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	
+	vec3 cameraPosition = camera.getPosition();
+
+
+
+
+
+
+
+
+
+	/*Shader skyShader;
+	skyShader.loadFromFiles(RESOURCE_PATH + "Shaders/3D_basic.vsh", RESOURCE_PATH + "Shaders/3D_basic.fsh");
+
+	SkyBox skybox;
+	Texture skyboxTexture;
+
+	skyboxTexture.loadCubeMap(vector<string>({
+		RESOURCE_PATH + "Textures/SkyBox/Right.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/Left.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/Top.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/Bottom.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/Back.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/Front.jpg"
+	}));
+
+	Shader::bind(&skyShader);
+
+	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
+	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
+
+	Texture::bind(&skyboxTexture, GL_TEXTURE1, GL_TEXTURE_CUBE_MAP);
+	Shader::currentShader->setUniform("myTextureSampler", 1);
+	mat4 M = ModelView::getModelView(cameraPosition);
+	Shader::currentShader->setUniformMatrix("M", &M[0][0]);
+	skybox.render();
+	Texture::unbind(GL_TEXTURE1, GL_TEXTURE_CUBE_MAP);
+	Shader::unbind();*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 	Shader::bind(&shader);
 
-	shader.setUniformMatrix("V", &V[0][0]);
-	shader.setUniformMatrix("P", &P[0][0]);
-	vec3 cameraPosition = camera.getPosition();
-	shader.setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
+	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
+	Shader::currentShader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 	
 	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE0);
-	shader.setUniform("shadowMap", 0);
-
-	Texture::bind(textures[1], GL_TEXTURE1);
-	shader.setUniform("myTextureSampler", 1);
+	Shader::currentShader->setUniform("shadowMap", 0);
 
 	if (shadows) {
-		shader.setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
+		Shader::currentShader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
 		shadows = false;
 	}
 
-	shader.setUniform("lights[0].position_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	shader.setUniform("lights[0].color", 1.f, 0.f, 0.f);
-	shader.setUniform("lights[0].power", 20.f);
+	Shader::currentShader->setUniform("lights[0].position_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	Shader::currentShader->setUniform("lights[0].color", 1.f, 0.f, 0.f);
+	Shader::currentShader->setUniform("lights[0].power", 20.f);
 
-	shader.setUniform("lights[1].position_worldspace", 0.f, 20.f, 5.f);
-	shader.setUniform("lights[1].color", 0.f, 0.f, 1.f);
-	shader.setUniform("lights[1].power", 50.f);
+	Shader::currentShader->setUniform("lights[1].position_worldspace", 0.f, 20.f, 5.f);
+	Shader::currentShader->setUniform("lights[1].color", 0.f, 0.f, 1.f);
+	Shader::currentShader->setUniform("lights[1].power", 50.f);
+
+	Texture::bind(textures[1], GL_TEXTURE1);
+	Shader::currentShader->setUniform("myTextureSampler", 1);
 
 	for (int i = 0; i < 5; i++) {
 		mat4 model = ModelView::getModelView(vec3(0, 0, i * 28), vec3(0, 0, 0), vec3(2, 2, 2));
@@ -314,8 +364,8 @@ void TestScene::render() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	Shader::bind(&postProcessShader);
-	postProcessShader.setUniform("renderedTexture", 0);
-	postProcessShader.setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
+	Shader::currentShader->setUniform("renderedTexture", 0);
+	Shader::currentShader->setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
 	//postProcessShader.setUniform("textureSize", window->getSize().x, window->getSize().y);
 	
 	Texture::bind(postProcessFrameBuffer->getTexture());

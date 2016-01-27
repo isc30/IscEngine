@@ -211,7 +211,7 @@ void Mesh::render(const unsigned int type) { // WIREFRAME: GL_LINE_LOOP
 
 	if (GLEW_ARB_vertex_array_object) {
 		
-		VertexArray* currentVertexArray = cacheVertexArray();
+		VertexArray* currentVertexArray = cacheVertexArray(currentShader);
 		
 		VertexArray::bind(currentVertexArray);
 

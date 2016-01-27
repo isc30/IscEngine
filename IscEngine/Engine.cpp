@@ -1,5 +1,6 @@
 #include "Engine.hpp"
 #include "Graphics\Shaders\PostProcess.hpp"
+#include "World\SkyBox.hpp"
 #include "Utils\Log.hpp"
 using namespace IscEngine;
 
@@ -112,6 +113,7 @@ void Engine::setupOpenGL() {
 void Engine::initializeStaticContent() {
 
 	PostProcess::initializeStatic();
+	SkyBox::initializeStatic();
 
 }
 
