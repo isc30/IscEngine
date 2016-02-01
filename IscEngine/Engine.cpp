@@ -100,7 +100,7 @@ void Engine::setupOpenGL() {
 
 	// Depth control
 	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LEQUAL);
 
 	/* Transparency
 	glEnable(GL_BLEND);

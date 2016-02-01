@@ -1,14 +1,14 @@
 #version 120
 
 // Interpolated values from the vertex shaders
-varying vec2 UV;
+varying vec3 UV;
 
 // Values that stay constant for the whole mesh.
-uniform sampler2D myTextureSampler;
+uniform samplerCube cubeMapSampler;
 
 void main(){
 	
-	gl_FragColor.rgb = texture2D(myTextureSampler, UV).rgb;
+	gl_FragColor.rgb = textureCube(cubeMapSampler, UV).rgb;
 	gl_FragColor.a = 1.f;
 
 }

@@ -21,6 +21,10 @@ bool shadows = true;
 int mapsize = 1;
 float separation = 5.f;
 
+Shader skyShader;
+SkyBox skybox;
+Texture skyboxTexture;
+
 TestScene::TestScene(Window* window) : Scene(window) {
 
 	fpsCount = 0;
@@ -75,7 +79,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
 			StaticEntity* entity = new StaticEntity(mesh[1]);
-			entity->addMesh(30, mesh[2]);
+			entity->addMesh(50, mesh[2]);
 			entity->setPosition(vec3(i * separation, 18.3f, j * separation));
 			entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
 			entities.push_back(entity);
@@ -94,9 +98,23 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	///////////////////////////////////////////////////////
 
+	skyShader.loadFromFiles(RESOURCE_PATH + "Shaders/SkyBox.vsh", RESOURCE_PATH + "Shaders/SkyBox.fsh");
+	skyboxTexture.loadCubeMap(vector<string>({
+		RESOURCE_PATH + "Textures/SkyBox/right.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/left.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/top.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/bottom.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/back.jpg",
+		RESOURCE_PATH + "Textures/SkyBox/front.jpg"
+	}));
+
+	///////////////////////////////////////////////////////
+
 	shadowFrameBuffer = new FrameBuffer(2048, 2048, false, true);
 	postProcessFrameBuffer = new FrameBuffer(this->window->getSize().x, this->window->getSize().y);
-	
+
+	//////////////////////////////////////////////////////
+
 	cout << "Fin carga Escena" << endl;
 
 }
@@ -262,54 +280,6 @@ void TestScene::render() {
 	
 	vec3 cameraPosition = camera.getPosition();
 
-
-
-
-
-
-
-
-
-	/*Shader skyShader;
-	skyShader.loadFromFiles(RESOURCE_PATH + "Shaders/3D_basic.vsh", RESOURCE_PATH + "Shaders/3D_basic.fsh");
-
-	SkyBox skybox;
-	Texture skyboxTexture;
-
-	skyboxTexture.loadCubeMap(vector<string>({
-		RESOURCE_PATH + "Textures/SkyBox/Right.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/Left.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/Top.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/Bottom.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/Back.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/Front.jpg"
-	}));
-
-	Shader::bind(&skyShader);
-
-	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
-	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
-
-	Texture::bind(&skyboxTexture, GL_TEXTURE1, GL_TEXTURE_CUBE_MAP);
-	Shader::currentShader->setUniform("myTextureSampler", 1);
-	mat4 M = ModelView::getModelView(cameraPosition);
-	Shader::currentShader->setUniformMatrix("M", &M[0][0]);
-	skybox.render();
-	Texture::unbind(GL_TEXTURE1, GL_TEXTURE_CUBE_MAP);
-	Shader::unbind();*/
-
-
-
-
-
-
-
-
-
-
-
-
-
 	Shader::bind(&shader);
 
 	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
@@ -352,6 +322,24 @@ void TestScene::render() {
 	Texture::unbind(GL_TEXTURE0);
 
 	Shader::unbind();
+
+	//
+
+	Shader::bind(&skyShader);
+	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
+	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
+
+	Texture::bind(&skyboxTexture, GL_TEXTURE0, GL_TEXTURE_CUBE_MAP);
+	Shader::currentShader->setUniform("cubeMapSampler", 0);
+
+	mat4 M = ModelView::getModelView(cameraPosition);
+	Shader::currentShader->setUniformMatrix("M", &M[0][0]);
+	skybox.render();
+
+	Texture::unbind(GL_TEXTURE0, GL_TEXTURE_CUBE_MAP);
+	Shader::unbind();
+
+	//
 
 	window->pushGLStates();
 	sf::CircleShape a(50.f);
