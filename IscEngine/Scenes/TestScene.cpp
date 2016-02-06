@@ -35,7 +35,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	postProcessShader.loadFromFiles(RESOURCE_PATH + "Shaders/postProcess.vsh", RESOURCE_PATH + "Shaders/postProcess.fsh");
 
 	camera.setPosition(vec3(mapsize * separation / 2 - 3, 30, mapsize * separation / 2 + 25));
-	camera.lookAt(vec3(0, 0, 0));
+	camera.lookAt(vec3(0, 20, 0));
 
 	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
