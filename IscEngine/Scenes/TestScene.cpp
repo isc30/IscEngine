@@ -34,7 +34,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	shShadowMap.loadFromFiles(RESOURCE_PATH + "Shaders/shadowMapper.vsh", RESOURCE_PATH + "Shaders/shadowMapper.fsh");
 	postProcessShader.loadFromFiles(RESOURCE_PATH + "Shaders/postProcess.vsh", RESOURCE_PATH + "Shaders/postProcess.fsh");
 
-	camera.setPosition(vec3(mapsize * separation / 2 - 3, 10.5, mapsize * separation / 2 - 3));
+	camera.setPosition(vec3(mapsize * separation / 2 - 3, 30, mapsize * separation / 2 + 25));
 	camera.lookAt(vec3(0, 0, 0));
 
 	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
@@ -295,7 +295,7 @@ void TestScene::render() {
 	}
 
 	Shader::currentShader->setUniform("lights[0].position_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	Shader::currentShader->setUniform("lights[0].color", 1.f, 0.f, 0.f);
+	Shader::currentShader->setUniform("lights[0].color", 0.75f, 0.75f, 0.75f);
 	Shader::currentShader->setUniform("lights[0].power", 20.f);
 
 	Shader::currentShader->setUniform("lights[1].position_worldspace", 0.f, 20.f, 5.f);
