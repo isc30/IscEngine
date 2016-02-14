@@ -24,7 +24,7 @@ namespace IscEngine {
 
 			Window* window;
 			Scene* currentScene;
-			
+
 			// GameLoop
 			void loop();
 			// Setups OpenGL (glew, ...)
@@ -33,7 +33,7 @@ namespace IscEngine {
 			void initializeStaticContent();
 
 		public:
-			
+
 			// Creates the Engine
 			Engine();
 			// Destroys the Engine
@@ -41,7 +41,7 @@ namespace IscEngine {
 
 			// Returns the Window
 			Window* getWindow() const;
-			
+
 			// Creates a Window
 			void create(const string& title, const unsigned int width, const unsigned int height, const unsigned int style);
 			// Runs the GameLoop

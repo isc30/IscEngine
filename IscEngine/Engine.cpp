@@ -50,7 +50,7 @@ void Engine::create(const string& title, const unsigned int width, const unsigne
 
 	this->window = new Window(sf::VideoMode(width, height), title, style, contextSettings);
 	this->window->setVerticalSyncEnabled(false);
-	//this->window->setFramerateLimit(144);
+	this->window->setFramerateLimit(144);
 
 	contextSettings = window->getSettings();
 	Log::cout << "  >> " << glGetString(GL_VENDOR) << " | " << glGetString(GL_RENDERER) << endl;

@@ -17,9 +17,9 @@ namespace IscEngine {
 
 			unsigned int id;
 			unsigned int width, height;
-			
+
 		public:
-			
+
 			// Binds the Texture in the index
 			static void bind(const Texture* const texture, const unsigned int index = GL_TEXTURE0, unsigned int type = GL_TEXTURE_2D);
 			// Unbinds the Texture

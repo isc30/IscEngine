@@ -3,6 +3,7 @@
 using namespace IscEngine;
 using namespace IscEngine::Scenes;
 
+#include "../Graphics/Resource.hpp"
 #include "../Graphics/Models/Loaders/ObjLoader.hpp"
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Graphics/Buffers/FrameBuffer.hpp"
@@ -30,50 +31,18 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-	shader.loadFromFiles(RESOURCE_PATH + "Shaders/shader.vsh", RESOURCE_PATH + "Shaders/shader.fsh");
-	shShadowMap.loadFromFiles(RESOURCE_PATH + "Shaders/shadowMapper.vsh", RESOURCE_PATH + "Shaders/shadowMapper.fsh");
-	postProcessShader.loadFromFiles(RESOURCE_PATH + "Shaders/postProcess.vsh", RESOURCE_PATH + "Shaders/postProcess.fsh");
+    shader = *Resource::load<Shader*>("shader.vsh", "shader.fsh");
+	shShadowMap = *Resource::load<Shader*>("shadowMapper.vsh", "shadowMapper.fsh");
+	postProcessShader = *Resource::load<Shader*>("postProcess.vsh", "postProcess.fsh");
 
 	camera.setPosition(vec3(mapsize * separation / 2 - 3, 30, mapsize * separation / 2 + 25));
 	camera.lookAt(vec3(0, 20, 0));
 
 	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
-	vector<unsigned int> objIndices;
-	std::vector<glm::vec3> objVertices;
-	std::vector<glm::vec2> objUvs;
-	std::vector<glm::vec3> objNormals;
-
-	loadModel(RESOURCE_PATH + "Models/fbx_PuenteRomano.fbx", objIndices, objVertices, objUvs, objNormals);
-
-	mesh[0] = new Mesh(objVertices);
-	if (objIndices.size() > 0) mesh[0]->addIndices(objIndices);
-	if (objNormals.size() > 0) mesh[0]->addNormals(objNormals);
-	if (objUvs.size() > 0) mesh[0]->addUVs(objUvs);
-
-	objIndices.clear();
-	objVertices.clear();
-	objUvs.clear();
-	objNormals.clear();
-
-	loadModel(RESOURCE_PATH + "Models/katarina.obj", objIndices, objVertices, objUvs, objNormals);
-
-	mesh[1] = new Mesh(objVertices);
-	if (objIndices.size() > 0) mesh[1]->addIndices(objIndices);
-	if (objNormals.size() > 0) mesh[1]->addNormals(objNormals);
-	if (objUvs.size() > 0) mesh[1]->addUVs(objUvs);
-
-	objIndices.clear();
-	objVertices.clear();
-	objUvs.clear();
-	objNormals.clear();
-
-	loadModel(RESOURCE_PATH + "Models/katarina_low.obj", objIndices, objVertices, objUvs, objNormals);
-
-	mesh[2] = new Mesh(objVertices);
-	if (objIndices.size() > 0) mesh[2]->addIndices(objIndices);
-	if (objNormals.size() > 0) mesh[2]->addNormals(objNormals);
-	if (objUvs.size() > 0) mesh[2]->addUVs(objUvs);
+	mesh[0] = Resource::load<Mesh*>("fbx_PuenteRomano.fbx");
+	mesh[1] = Resource::load<Mesh*>("katarina.obj");
+	mesh[2] = Resource::load<Mesh*>("katarina_low.obj");
 
 	// Create StaticEntities
 	for (int i = 0; i < mapsize; i++) {
@@ -86,19 +55,12 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		}
 	}
 
-	textures[0] = new Texture();
-	if (!textures[0]->loadFromFile(RESOURCE_PATH + "Textures/katarina_base_diffuse.png")) {
-		Log::cout << "Texture loading error" << std::endl;
-	}
-
-	textures[1] = new Texture();
-	if (!textures[1]->loadFromFile(RESOURCE_PATH + "Textures/PiedraRomano_Difuse.jpg")) {
-		Log::cout << "Texture loading error" << std::endl;
-	}
+    textures[0] = Resource::load<Texture*>("katarina_base_diffuse.png");
+    textures[1] = Resource::load<Texture*>("PiedraRomano_Difuse.jpg");
 
 	///////////////////////////////////////////////////////
 
-	skyShader.loadFromFiles(RESOURCE_PATH + "Shaders/SkyBox.vsh", RESOURCE_PATH + "Shaders/SkyBox.fsh");
+    skyShader = *Resource::load<Shader*>("SkyBox.vsh", "SkyBox.fsh");
 	skyboxTexture.loadCubeMap(vector<string>({
 		RESOURCE_PATH + "Textures/SkyBox/right.jpg",
 		RESOURCE_PATH + "Textures/SkyBox/left.jpg",
@@ -152,19 +114,19 @@ void TestScene::update() {
 
 	V = camera.getView();
 
-	for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
+	/*for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
 
 		vec3 currentRotation = (*it)->getRotation();
 		currentRotation.y += radians(45.f * deltaTime.asSeconds());
 		(*it)->setRotation(currentRotation);
 
-	}
+	}*/
 
 }
 
 void TestScene::processInput() {
 
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && this->window->isFocused()) {
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
 		float sensibilidad = 0.2f;
 
@@ -184,7 +146,7 @@ void TestScene::processInput() {
 
 	}
 
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) && window->isFocused()) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 
 		camera.setPosition(vec3(camera.getPosition().x + camera.getDirection().x * 20 * deltaTime.asSeconds(),
 								camera.getPosition().y + camera.getDirection().y * 20 * deltaTime.asSeconds(),
@@ -192,11 +154,42 @@ void TestScene::processInput() {
 
 	}
 
-	if ((sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) && window->isFocused()) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 
 		camera.setPosition(vec3(camera.getPosition().x - camera.getDirection().x * 20 * deltaTime.asSeconds(),
 								camera.getPosition().y - camera.getDirection().y * 20 * deltaTime.asSeconds(),
 								camera.getPosition().z - camera.getDirection().z * 20 * deltaTime.asSeconds()));
+
+	}
+
+	///Try moving katarina
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+
+        vec3 newRotation = entities.at(0)->getRotation() + vec3(0, radians(135 * deltaTime.asSeconds()), 0);
+        entities.at(0)->setRotation(newRotation);
+
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+
+        vec3 newRotation = entities.at(0)->getRotation() - vec3(0, radians(135 * deltaTime.asSeconds()), 0);
+        entities.at(0)->setRotation(newRotation);
+
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+
+        vec3 frontDirection = normalize(vec3(entities.at(0)->getModelMatrix() * vec4(0, 0, 1, 0)));
+        vec3 newPosition = entities.at(0)->getPosition() + frontDirection * (5 * deltaTime.asSeconds());
+        entities.at(0)->setPosition(newPosition);
+
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+
+        vec3 frontDirection = normalize(vec3(entities.at(0)->getModelMatrix() * vec4(0, 0, 1, 0)))
+        vec3 newPosition = entities.at(0)->getPosition() - frontDirection * (5 * deltaTime.asSeconds());
+        entities.at(0)->setPosition(newPosition);
 
 	}
 
@@ -271,13 +264,13 @@ void TestScene::render() {
 		//glEnable(GL_CULL_FACE);
 
 	}
-	
+
 	////////////////////////////////////////////////////////
-	
+
 	FrameBuffer::bind(postProcessFrameBuffer);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
+
 	vec3 cameraPosition = camera.getPosition();
 
 	Shader::bind(&shader);
@@ -285,7 +278,7 @@ void TestScene::render() {
 	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
 	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
 	Shader::currentShader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	
+
 	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE0);
 	Shader::currentShader->setUniform("shadowMap", 0);
 
@@ -312,7 +305,7 @@ void TestScene::render() {
 	}
 
 	Texture::bind(textures[0], GL_TEXTURE1);
-	
+
 	mat4 VP = P * V;
 	for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
 		(*it)->render(VP);
@@ -355,7 +348,7 @@ void TestScene::render() {
 	Shader::currentShader->setUniform("renderedTexture", 0);
 	Shader::currentShader->setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
 	//postProcessShader.setUniform("textureSize", window->getSize().x, window->getSize().y);
-	
+
 	Texture::bind(postProcessFrameBuffer->getTexture());
 	PostProcess::render();
 	Texture::unbind();
