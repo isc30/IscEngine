@@ -91,7 +91,7 @@ void TestScene::processEvent(const sf::Event& event) {
 
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Escape) this->endScene();
-			//if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
+			if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
 			break;
 
 	}
@@ -162,7 +162,7 @@ void TestScene::processInput() {
 
 	}
 
-	///Try moving katarina
+	//Try moving katarina
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 
         vec3 newRotation = entities.at(0)->getRotation() + vec3(0, radians(135 * deltaTime.asSeconds()), 0);
@@ -187,7 +187,7 @@ void TestScene::processInput() {
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 
-        vec3 frontDirection = normalize(vec3(entities.at(0)->getModelMatrix() * vec4(0, 0, 1, 0)))
+		vec3 frontDirection = normalize(vec3(entities.at(0)->getModelMatrix() * vec4(0, 0, 1, 0)));
         vec3 newPosition = entities.at(0)->getPosition() - frontDirection * (5 * deltaTime.asSeconds());
         entities.at(0)->setPosition(newPosition);
 
