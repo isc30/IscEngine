@@ -23,8 +23,8 @@ vec3 Camera::getPosition() const {
 
 //////////////////////////////////////////////////////////////////////
 // Sets a new position for the camera
-void Camera::setPosition(const vec3& position){
-	
+void Camera::setPosition(const vec3& position) {
+
 	this->position = position;
 
 	updateView();
@@ -34,15 +34,15 @@ void Camera::setPosition(const vec3& position){
 //////////////////////////////////////////////////////////////////////
 // Returns current rotation of the camera
 vec2 Camera::getRotation() const {
-	
+
 	return this->rotation;
 
 }
 
 //////////////////////////////////////////////////////////////////////
 // Sets a new rotation for the camera
-void Camera::setRotation(const vec2& rotation){
-	
+void Camera::setRotation(const vec2& rotation) {
+
 	this->rotation = rotation;
 
 	updateDirection();
@@ -129,7 +129,7 @@ void Camera::updateDirection() {
 	float sinY = sin(radians(this->rotation.y));
 	float cosY = cos(radians(this->rotation.y));
 
-	this->direction = vec3(cosX * sinY,	sinX, cosX * cosY);
+	this->direction = vec3(cosX * sinY, sinX, cosX * cosY);
 
 }
 

@@ -128,7 +128,7 @@ void TestScene::processInput() {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
-		float sensibilidad = 0.2f;
+		float sensibilidad = 0.15f;
 
 		this->window->setMouseCursorVisible(false);
 		sf::Vector2i centerWindow = sf::Vector2i(this->window->getSize().x / 2, this->window->getSize().y / 2);
