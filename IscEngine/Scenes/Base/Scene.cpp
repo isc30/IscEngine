@@ -1,4 +1,5 @@
 #include "Scene.hpp"
+#include "../../Utils/Log.hpp"
 using namespace IscEngine;
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +39,10 @@ void Scene::loop() {
 
 	this->update();
 	this->render();
+
+	// Check for OpenGL errors
+	GLenum glError = glGetError();
+	if (glError != GL_NO_ERROR) Log::cout << "OpenGL Error " << glError << std::endl;
 
 	////////////////////////////////////////////////////////////////////////////////////////
 	// Custom fps limiter

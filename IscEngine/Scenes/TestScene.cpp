@@ -36,7 +36,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	postProcessShader = *Resource::load<Shader*>("postProcess.vsh", "postProcess.fsh");
 
 	camera.setPosition(vec3(mapsize * separation / 2 - 3, 30, mapsize * separation / 2 + 25));
-	camera.lookAt(vec3(0, 20, 0));
+	camera.setTarget(vec3(0, 20, 0));
 
 	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
@@ -128,14 +128,24 @@ void TestScene::processInput() {
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 
-		float sensibilidad = 0.2f;
+		float sensibilidad = 0.15f;
 
 		this->window->setMouseCursorVisible(false);
 		sf::Vector2i centerWindow = sf::Vector2i(this->window->getSize().x / 2, this->window->getSize().y / 2);
 		sf::Vector2i diferencia = centerWindow - sf::Mouse::getPosition(*this->window);
 		if (diferencia.x != 0 || diferencia.y != 0) {
 
-			camera.setRotation(vec2(camera.getRotation().x + diferencia.y * sensibilidad, camera.getRotation().y + diferencia.x * sensibilidad));
+			mat4 rotationMatrix(1.f);
+			rotationMatrix = glm::rotate(rotationMatrix, glm::radians(diferencia.y * sensibilidad), vec3(1.0f, 0.0f, 0.0f));
+			rotationMatrix = glm::rotate(rotationMatrix, glm::radians(diferencia.x * sensibilidad), vec3(0.0f, 1.0f, 0.0f));
+			rotationMatrix = glm::rotate(rotationMatrix, 0.f, vec3(0.0f, 0.0f, 1.0f));
+
+			vec3 dir = vec3(rotationMatrix * vec4(camera.getDirection(), 1));
+
+			camera.setDirection(dir);
+
+			//camera.setRotation(vec2(camera.getRotation().x + diferencia.y * sensibilidad, camera.getRotation().y + diferencia.x * sensibilidad));
+
 			sf::Mouse::setPosition(centerWindow, *this->window);
 
 		}
@@ -148,17 +158,13 @@ void TestScene::processInput() {
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
 
-		camera.setPosition(vec3(camera.getPosition().x + camera.getDirection().x * 20 * deltaTime.asSeconds(),
-								camera.getPosition().y + camera.getDirection().y * 20 * deltaTime.asSeconds(),
-								camera.getPosition().z + camera.getDirection().z * 20 * deltaTime.asSeconds()));
+		camera.setPosition(camera.getPosition() + camera.getDirection() * 20.f * deltaTime.asSeconds());
 
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
 
-		camera.setPosition(vec3(camera.getPosition().x - camera.getDirection().x * 20 * deltaTime.asSeconds(),
-								camera.getPosition().y - camera.getDirection().y * 20 * deltaTime.asSeconds(),
-								camera.getPosition().z - camera.getDirection().z * 20 * deltaTime.asSeconds()));
+		camera.setPosition(camera.getPosition() - camera.getDirection() * 20.f * deltaTime.asSeconds());
 
 	}
 
