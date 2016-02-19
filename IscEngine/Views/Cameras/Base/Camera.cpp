@@ -6,8 +6,8 @@ using namespace IscEngine;
 Camera::Camera() {
 
 	this->position = vec3(0, 0, 0);
-	this->direction = vec3(0, 0, -1); // Default OpenGL looks to -Z
-	this->up = vec3(0, 1, 0);
+	this->rotation = vec2(0, 0);
+	this->direction = vec3(0, 0, 1); // Default OpenGL looks to -Z
 
 	updateView();
 
@@ -32,6 +32,25 @@ void Camera::setPosition(const vec3& position){
 }
 
 //////////////////////////////////////////////////////////////////////
+// Returns current rotation of the camera
+vec2 Camera::getRotation() const {
+	
+	return this->rotation;
+
+}
+
+//////////////////////////////////////////////////////////////////////
+// Sets a new rotation for the camera
+void Camera::setRotation(const vec2& rotation){
+	
+	this->rotation = rotation;
+
+	updateDirection();
+	updateView();
+
+}
+
+//////////////////////////////////////////////////////////////////////
 // Returns current direction of the camera
 vec3 Camera::getDirection() const {
 
@@ -43,27 +62,10 @@ vec3 Camera::getDirection() const {
 // Sets a new direction for the camera
 void Camera::setDirection(const vec3& direction) {
 
-	this->direction = glm::normalize(direction);
-	
+	this->direction = direction;
+
+	this->updateRotation();
 	this->updateView();
-
-}
-
-//////////////////////////////////////////////////////////////////////
-// Returns current up vector of the camera
-vec3 Camera::getUp() const {
-
-	return this->up;
-
-}
-
-//////////////////////////////////////////////////////////////////////
-// Sets a new up vector for the camera
-void Camera::setUp(const vec3& up) {
-
-	this->up = up;
-
-	updateView();
 
 }
 
@@ -78,11 +80,56 @@ mat4 Camera::getView() const {
 
 //////////////////////////////////////////////////////////////////////
 // Forces camera to look at a point
-void Camera::setTarget(const vec3& target) {
-	
-	this->direction = glm::normalize(target - this->position);
-	
+void Camera::lookAt(const vec3& point) {
+
+	this->view = glm::lookAt(this->position, point, vec3(0, 1, 0));
+	this->direction = glm::normalize(point - this->position);
+
+	this->updateRotation();
 	this->updateView();
+
+}
+
+//////////////////////////////////////////////////////////////////////
+// Updates current rotation of the camera based on direction
+void Camera::updateRotation() {
+
+	float distXZ = sqrt(this->direction.x * this->direction.x + this->direction.z * this->direction.z);
+	float distXYZ = sqrt(this->direction.x * this->direction.x + this->direction.y * this->direction.y + this->direction.z * this->direction.z);
+
+	if (this->direction.x != 0 || this->direction.z != 0) {
+		this->rotation.y = degrees(acos(this->direction.z / distXZ));
+	}
+
+	if (this->direction.x != 0 || this->direction.y != 0 || this->direction.z != 0) {
+		this->rotation.x = -degrees(acos(distXZ / distXYZ));
+	}
+
+	if (this->direction.x > 0) {
+		this->rotation.y = -this->rotation.y;
+	}
+
+	if (this->direction.y > 0) {
+		this->rotation.x = -this->rotation.x;
+	}
+
+}
+
+//////////////////////////////////////////////////////////////////////
+// Updates current direction of the camera based on rotation
+void Camera::updateDirection() {
+
+	if (this->rotation.y > 360) this->rotation.y -= 360;
+	if (this->rotation.y < 0) this->rotation.y += 360;
+	if (this->rotation.x > 89) this->rotation.x = 89;
+	if (this->rotation.x < -89) this->rotation.x = -89;
+
+	float sinX = sin(radians(this->rotation.x));
+	float cosX = cos(radians(this->rotation.x));
+	float sinY = sin(radians(this->rotation.y));
+	float cosY = cos(radians(this->rotation.y));
+
+	this->direction = vec3(cosX * sinY,	sinX, cosX * cosY);
 
 }
 
@@ -90,6 +137,6 @@ void Camera::setTarget(const vec3& target) {
 // Updates camera view matrix based on position + direction
 void Camera::updateView() {
 
-	this->view = glm::lookAt(this->position, this->position + this->direction, this->up);
+	this->view = glm::lookAt(this->position, this->position + this->direction, vec3(0, 1, 0));
 
 }
