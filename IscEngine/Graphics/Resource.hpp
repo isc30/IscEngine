@@ -14,11 +14,11 @@ namespace IscEngine {
 
         public:
 
-            template<class T>
-            static T load(const char* fileName);
+            template <typename T>
+            static T* load(const char* fileName);
 
-            template<class T>
-            static T load(const char* fileName0, const char* fileName1);
+            template <typename T>
+            static T* load(const char* fileName0, const char* fileName1);
 
     };
 

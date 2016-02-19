@@ -14,7 +14,7 @@ const string Resource::ERROR_TEXTURE = "error.png";
 namespace IscEngine {
 
     template<>
-    Texture* Resource::load<Texture*>(const char* fileName) {
+    Texture* Resource::load<Texture>(const char* fileName) {
 
         Texture* texture = new Texture();
         if (!texture->loadFromFile(Resource::RESOURCE_PATH + "Textures/" + fileName)) {
@@ -26,7 +26,7 @@ namespace IscEngine {
     }
 
     template<>
-    Mesh* Resource::load<Mesh*>(const char* fileName) {
+    Mesh* Resource::load<Mesh>(const char* fileName) {
 
         vector<unsigned int> objIndices;
         std::vector<glm::vec3> objVertices;
@@ -44,7 +44,7 @@ namespace IscEngine {
     }
 
     template<>
-    Shader* Resource::load<Shader*>(const char* vertexFileName, const char* fragmentFileName) {
+    Shader* Resource::load<Shader>(const char* vertexFileName, const char* fragmentFileName) {
 
         Shader* shader = new Shader();
         shader->loadFromFiles(Resource::RESOURCE_PATH + "Shaders/" + vertexFileName, Resource::RESOURCE_PATH + "Shaders/" + fragmentFileName);

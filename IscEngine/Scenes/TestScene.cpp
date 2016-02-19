@@ -31,18 +31,18 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-    shader = *Resource::load<Shader*>("shader.vsh", "shader.fsh");
-	shShadowMap = *Resource::load<Shader*>("shadowMapper.vsh", "shadowMapper.fsh");
-	postProcessShader = *Resource::load<Shader*>("postProcess.vsh", "postProcess.fsh");
+    shader = *Resource::load<Shader>("shader.vsh", "shader.fsh");
+	shShadowMap = *Resource::load<Shader>("shadowMapper.vsh", "shadowMapper.fsh");
+	postProcessShader = *Resource::load<Shader>("postProcess.vsh", "postProcess.fsh");
 
 	camera.setPosition(vec3(mapsize * separation / 2 - 3, 30, mapsize * separation / 2 + 25));
 	camera.lookAt(vec3(0, 20, 0));
 
 	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
-	mesh[0] = Resource::load<Mesh*>("fbx_PuenteRomano.fbx");
-	mesh[1] = Resource::load<Mesh*>("katarina.obj");
-	mesh[2] = Resource::load<Mesh*>("katarina_low.obj");
+	mesh[0] = Resource::load<Mesh>("fbx_PuenteRomano.fbx");
+	mesh[1] = Resource::load<Mesh>("katarina.obj");
+	mesh[2] = Resource::load<Mesh>("katarina_low.obj");
 
 	// Create StaticEntities
 	for (int i = 0; i < mapsize; i++) {
@@ -55,12 +55,12 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		}
 	}
 
-    textures[0] = Resource::load<Texture*>("katarina_base_diffuse.png");
-    textures[1] = Resource::load<Texture*>("PiedraRomano_Difuse.jpg");
+    textures[0] = Resource::load<Texture>("katarina_base_diffuse.png");
+    textures[1] = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
 
 	///////////////////////////////////////////////////////
 
-    skyShader = *Resource::load<Shader*>("SkyBox.vsh", "SkyBox.fsh");
+    skyShader = *Resource::load<Shader>("SkyBox.vsh", "SkyBox.fsh");
 	skyboxTexture.loadCubeMap(vector<string>({
 		RESOURCE_PATH + "Textures/SkyBox/right.jpg",
 		RESOURCE_PATH + "Textures/SkyBox/left.jpg",
@@ -220,7 +220,7 @@ void TestScene::render() {
 		glViewport(0, 0, shadowFrameBuffer->getTexture()->getWidth(), shadowFrameBuffer->getTexture()->getHeight());
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//glDisable(GL_CULL_FACE);
+		//glCullFace(GL_FRONT);
 
 		Shader::bind(&shShadowMap);
 
@@ -261,7 +261,7 @@ void TestScene::render() {
 
 		Shader::unbind();
 
-		//glEnable(GL_CULL_FACE);
+		//glCullFace(GL_BACK);
 
 	}
 
@@ -335,7 +335,7 @@ void TestScene::render() {
 	//
 
 	window->pushGLStates();
-	sf::CircleShape a(50.f);
+	sf::CircleShape a(25.f);
 	a.setFillColor(sf::Color::Red);
 	window->draw(a);
 	window->popGLStates();
@@ -349,9 +349,9 @@ void TestScene::render() {
 	Shader::currentShader->setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
 	//postProcessShader.setUniform("textureSize", window->getSize().x, window->getSize().y);
 
-	Texture::bind(postProcessFrameBuffer->getTexture());
+	Texture::bind(postProcessFrameBuffer->getTexture(), GL_TEXTURE0);
 	PostProcess::render();
-	Texture::unbind();
+	Texture::unbind(GL_TEXTURE0);
 
 	Shader::unbind();
 
