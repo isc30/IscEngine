@@ -19,7 +19,7 @@ mat4 V;
 
 bool rotatingCamera = false;
 
-int mapsize = 2;
+int mapsize = 1;
 float separation = 5.f;
 
 Shader skyShader;
@@ -232,22 +232,32 @@ void TestScene::render() {
 
 	Shader::bind(&shader);
 
-	Shader::currentShader->setUniform("lightCount", 2);
-
 	Texture::bind(shadowFrameBuffer->getTexture(), 0);
 	Shader::currentShader->setUniform("shadowMap", 0);
 
-	IscEngine::Graphics::Lighting::LightSource l0;
+	LightSource l0;
 	l0.position = cameraPosition;
 	l0.color = vec3(1.f, 1.f, 1.f);
 	l0.power = 15.f;
 	simpleRenderer->addLightSource(&l0);
 
-	IscEngine::Graphics::Lighting::LightSource l1;
+	LightSource l1;
 	l1.position = vec3(0.f, 20.f, 5.f);
 	l1.color = vec3(0.f, 0.f, 1.f);
-	l1.power = 50.f;
+	l1.power = 20.f;
 	simpleRenderer->addLightSource(&l1);
+
+	LightSource l2;
+	l2.position = vec3(0.f, 20.f, 40.f);
+	l2.color = vec3(0.f, 1.f, 0.f);
+	l2.power = 20.f;
+	simpleRenderer->addLightSource(&l2);
+
+	LightSource l3;
+	l3.position = vec3(0.f, 20.f, 80.f);
+	l3.color = vec3(1.f, 0.5f, 0.5f);
+	l3.power = 20.f;
+	simpleRenderer->addLightSource(&l3);
 
 	Texture::bind(textures[1], 1);
 	Shader::currentShader->setUniform("myTextureSampler", 1);
@@ -259,7 +269,7 @@ void TestScene::render() {
 	}
 
 	Texture::bind(textures[0], 1);
-
+	
 	simpleRenderer->render(P, &camera);
 
 	Texture::unbind(1);

@@ -55,17 +55,17 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 	
 	//Shader::bind(this->shader);
 
-	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
-	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
-	Shader::currentShader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	this->shader->setUniformMatrix("V", &V[0][0]);
+	this->shader->setUniformMatrix("P", &P[0][0]);
+	this->shader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
 	auto currentLightSetup = this->lightSetup.getLightSources();
+	this->shader->setUniform("lightCount", (int)currentLightSetup.size());
 
 	unsigned int i = 0;
 	for (auto it = currentLightSetup.begin(), end = currentLightSetup.end(); it != end; ++it, ++i) {
-		Shader::currentShader->setUniform(("lights[" + std::to_string(i) + "].position_worldspace").c_str(), (*it)->position.x, (*it)->position.y, (*it)->position.z);
-		Shader::currentShader->setUniform(("lights[" + std::to_string(i) + "].color").c_str(), (*it)->color.r, (*it)->color.g, (*it)->color.b);
-		Shader::currentShader->setUniform(("lights[" + std::to_string(i) + "].power").c_str(), (*it)->power);
+		string lightUniform = "lights[" + std::to_string(i) + "]";
+		(*it)->setShaderUniforms(this->shader, lightUniform);
 	}
 
 	for (auto it = this->entities.begin(), end = this->entities.end(); it != end; ++it) {
@@ -76,7 +76,7 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 			model_cameraspace.x / model_cameraspace.w >= -1.f && model_cameraspace.x / model_cameraspace.w <= 1.f &&
 			model_cameraspace.y / model_cameraspace.w >= -1.f && model_cameraspace.y / model_cameraspace.w <= 1.f) {
 
-			Shader::currentShader->setUniformMatrix("M", &(*it)->getModelMatrix()[0][0]);
+			this->shader->setUniformMatrix("M", &(*it)->getModelMatrix()[0][0]);
 
 			(*it)->render(model_cameraspace.z);
 

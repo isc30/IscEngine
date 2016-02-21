@@ -28,7 +28,7 @@ struct LightSource {
 
 };
 
-uniform LightSource lights[2];
+uniform LightSource lights[100];
 
 vec3 applyLight(LightSource light, vec3 surfaceColor, vec3 normal, vec3 surfacePosition, vec3 surfaceToCamera) {
 

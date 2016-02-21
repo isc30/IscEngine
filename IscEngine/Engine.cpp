@@ -44,7 +44,7 @@ void Engine::create(const string& title, const unsigned int width, const unsigne
 	sf::ContextSettings contextSettings;
 	contextSettings.depthBits = 24;
 	contextSettings.stencilBits = 8;
-	contextSettings.antialiasingLevel = 2;
+	contextSettings.antialiasingLevel = 0;
 	contextSettings.majorVersion = 2;
 	contextSettings.minorVersion = 1;
 
