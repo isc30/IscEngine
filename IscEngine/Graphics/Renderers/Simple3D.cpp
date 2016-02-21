@@ -18,36 +18,6 @@ Simple3D::~Simple3D() {
 
 }
 
-void Simple3D::addLightSource(LightSource* const light) {
-
-	this->lightSetup.add(light);
-
-}
-
-void Simple3D::addLightSource(const vector<LightSource*>& light) {
-
-	this->lightSetup.add(light);
-
-}
-
-void Simple3D::addLightSource(const list<LightSource*>& light) {
-
-	this->lightSetup.add(light);
-
-}
-
-void Simple3D::removeLightSource(LightSource* const light) {
-
-	this->lightSetup.remove(light);
-
-}
-
-void Simple3D::clearLightSource() {
-
-	this->lightSetup.clear();
-
-}
-
 void Simple3D::render(const mat4& P, const Camera* const camera) {
 
 	vec3 cameraPosition = camera->getPosition();

@@ -220,7 +220,7 @@ float wat = 0;
 
 void TestScene::render() {
 
-	simpleRenderer->clearLightSource();
+	simpleRenderer->lightSetup.clear();
 	simpleRenderer->clearEntities();
 	simpleRenderer->addEntities(entities);
 
@@ -239,25 +239,25 @@ void TestScene::render() {
 	l0.position = cameraPosition;
 	l0.color = vec3(1.f, 1.f, 1.f);
 	l0.power = 15.f;
-	simpleRenderer->addLightSource(&l0);
+	simpleRenderer->lightSetup.add(&l0);
 
 	LightSource l1;
 	l1.position = vec3(0.f, 20.f, 5.f);
 	l1.color = vec3(0.f, 0.f, 1.f);
 	l1.power = 20.f;
-	simpleRenderer->addLightSource(&l1);
+	simpleRenderer->lightSetup.add(&l1);
 
 	LightSource l2;
 	l2.position = vec3(0.f, 20.f, 40.f);
 	l2.color = vec3(0.f, 1.f, 0.f);
 	l2.power = 20.f;
-	simpleRenderer->addLightSource(&l2);
+	simpleRenderer->lightSetup.add(&l2);
 
 	LightSource l3;
 	l3.position = vec3(0.f, 20.f, 80.f);
 	l3.color = vec3(1.f, 0.5f, 0.5f);
 	l3.power = 20.f;
-	simpleRenderer->addLightSource(&l3);
+	simpleRenderer->lightSetup.add(&l3);
 
 	Texture::bind(textures[1], 1);
 	Shader::currentShader->setUniform("myTextureSampler", 1);

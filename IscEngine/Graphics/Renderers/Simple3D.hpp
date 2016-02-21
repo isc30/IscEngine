@@ -12,20 +12,15 @@ namespace IscEngine { namespace Renderers {
 		private:
 
 		Shader* shader;
-		LightSetup lightSetup;
 
 		public:
 
 		Simple3D();
 		~Simple3D();
 
-		void render(const mat4& P, const Camera* const camera);
+		LightSetup lightSetup;
 
-		void addLightSource(LightSource* const light);
-		void addLightSource(const vector<LightSource*>& light);
-		void addLightSource(const list<LightSource*>& light);
-		void removeLightSource(LightSource* const light);
-		void clearLightSource();
+		void render(const mat4& P, const Camera* const camera);
 
 	};
 
