@@ -20,7 +20,7 @@ namespace IscEngine {
 			StaticEntity(Mesh* const mesh);
 			
 			void addMesh(const float distance, Mesh* const mesh);
-			void render(mat4& VP);
+			void render(const float distance);
 
 	};
 

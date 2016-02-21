@@ -10,6 +10,7 @@ using namespace IscEngine::Scenes;
 #include "../Views/Modelview.hpp"
 #include "../Graphics/Shaders/PostProcess.hpp"
 #include "../World/SkyBox.hpp"
+#include "../Graphics/Renderers/Simple3D.hpp"
 
 Camera camera;
 
@@ -19,19 +20,21 @@ mat4 V;
 bool rotatingCamera = false;
 bool shadows = true;
 
-int mapsize = 1;
+int mapsize = 150;
 float separation = 5.f;
 
 Shader skyShader;
 SkyBox skybox;
 Texture skyboxTexture;
 
+Renderers::Simple3D* simpleRenderer;
+
 TestScene::TestScene(Window* window) : Scene(window) {
 
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-    shader = *Resource::load<Shader>("shader.vsh", "shader.fsh");
+    shader = *Resource::load<Shader>("Simple3D.vsh", "Simple3D.fsh");
 	shShadowMap = *Resource::load<Shader>("shadowMapper.vsh", "shadowMapper.fsh");
 	postProcessShader = *Resource::load<Shader>("postProcess.vsh", "postProcess.fsh");
 
@@ -44,6 +47,8 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	mesh[1] = Resource::load<Mesh>("katarina.obj");
 	mesh[2] = Resource::load<Mesh>("katarina_low.obj");
 
+	simpleRenderer = new Renderers::Simple3D();
+
 	// Create StaticEntities
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
@@ -52,6 +57,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 			entity->setPosition(vec3(i * separation, 18.3f, j * separation));
 			entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
 			entities.push_back(entity);
+			//simpleRenderer->addEntity(entity);
 		}
 	}
 
@@ -92,6 +98,19 @@ void TestScene::processEvent(const sf::Event& event) {
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Escape) this->endScene();
 			if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
+			if (event.key.code == sf::Keyboard::Y) {
+				if (entities.size() > 0) {
+					delete entities.back();
+					entities.pop_back();
+				}
+			}
+			if (event.key.code == sf::Keyboard::U) {
+				StaticEntity* entity = new StaticEntity(mesh[1]);
+				entity->addMesh(50, mesh[2]);
+				entity->setPosition(vec3(entities.size() * separation, 18.3f, entities.size() * separation));
+				entity->setRotation(vec3(0, radians(entities.size() * 25.f + entities.size() * 25.f), 0));
+				entities.push_back(entity);
+			}
 			break;
 
 	}
@@ -211,6 +230,9 @@ struct LightSource {
 
 void TestScene::render() {
 
+	simpleRenderer->clearEntities();
+	simpleRenderer->addEntities(entities);
+
 	mat4 depthBiasVP;
 
 	if (shadows) {
@@ -254,10 +276,7 @@ void TestScene::render() {
 			mesh[0]->render(GL_TRIANGLES);
 		}
 
-		mat4 VP = depthVP;
-		for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
-			(*it)->render(VP);
-		}
+		simpleRenderer->render(P, V);
 
 		Shader::unbind();
 
@@ -306,10 +325,7 @@ void TestScene::render() {
 
 	Texture::bind(textures[0], GL_TEXTURE1);
 
-	mat4 VP = P * V;
-	for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
-		(*it)->render(VP);
-	}
+	simpleRenderer->render(P, camera.getView());
 
 	Texture::unbind(GL_TEXTURE1);
 	Texture::unbind(GL_TEXTURE0);
