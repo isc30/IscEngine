@@ -3,10 +3,14 @@
 #include <glm/glm.hpp>
 using namespace glm;
 
-struct LightSource {
+namespace IscEngine { namespace Graphics { namespace Lighting {
 
-	vec3 position;
-	vec3 color;
-	float power;
+	struct LightSource {
 
-};
+		vec3 position;
+		vec3 color;
+		float power;
+
+	};
+
+} } }

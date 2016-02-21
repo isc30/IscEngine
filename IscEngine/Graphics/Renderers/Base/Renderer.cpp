@@ -35,11 +35,11 @@ void Renderer::removeEntity(StaticEntity* const entity) {
 
 }
 
-void Renderer::render(const mat4& P, const Camera* const camera) {
+/*void Renderer::render(const mat4& P, const Camera* const camera) {
 
 	mat4 VP = P * camera->getView();
 	for (auto it = this->entities.begin(), end = this->entities.end(); it != end; ++it) {
 		(*it)->render(1.f);
 	}
-
-}
+	
+}*/

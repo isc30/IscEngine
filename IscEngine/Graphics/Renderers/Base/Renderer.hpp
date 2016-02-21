@@ -29,7 +29,7 @@ namespace IscEngine { namespace Renderers {
 		void addEntities(const list<StaticEntity*>& entities);
 		void removeEntity(StaticEntity* const entity);
 
-		virtual void render(const mat4& P, const Camera* const camera);
+		virtual void render(const mat4& P, const Camera* const camera) = 0;
 
 	};
 

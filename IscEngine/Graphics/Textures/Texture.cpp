@@ -57,7 +57,7 @@ bool Texture::loadCubeMap(const vector<string>& fileNames) {
 	// http://learnopengl.com/#!Advanced-OpenGL/Cubemaps
 
 	glGenTextures(1, &this->id);
-	Texture::bind(this, GL_TEXTURE0, GL_TEXTURE_CUBE_MAP);
+	Texture::bind(this, 0, GL_TEXTURE_CUBE_MAP);
 
 	sf::Image image;
 	for (unsigned int i = 0, size = fileNames.size(); i < size; i++) {
@@ -73,7 +73,7 @@ bool Texture::loadCubeMap(const vector<string>& fileNames) {
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	Texture::unbind(GL_TEXTURE0, GL_TEXTURE_CUBE_MAP);
+	Texture::unbind(0, GL_TEXTURE_CUBE_MAP);
 
 	return true;
 

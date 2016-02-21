@@ -16,6 +16,8 @@ namespace IscEngine { namespace Graphics { namespace Lighting {
 
 	public:
 		
+		list<LightSource*>& getLightSources() { return this->lightSources; }
+
 		void add(LightSource* const light);
 		void add(const vector<LightSource*>& light);
 		void add(const list<LightSource*>& light);

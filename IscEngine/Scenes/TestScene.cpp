@@ -18,7 +18,6 @@ mat4 P;
 mat4 V;
 
 bool rotatingCamera = false;
-bool shadows = true;
 
 int mapsize = 2;
 float separation = 5.f;
@@ -219,72 +218,11 @@ float pos = 20;
 
 float wat = 0;
 
-struct LightSource {
-
-	vec3 position_worldspace;
-	//vec3 direction_cameraspace;
-	vec3 color;
-	float power;
-
-};
-
 void TestScene::render() {
 
+	simpleRenderer->clearLightSource();
 	simpleRenderer->clearEntities();
 	simpleRenderer->addEntities(entities);
-
-	mat4 depthBiasVP;
-
-	if (shadows) {
-
-		// Render to texture
-		FrameBuffer::bind(shadowFrameBuffer);
-		glViewport(0, 0, shadowFrameBuffer->getTexture()->getWidth(), shadowFrameBuffer->getTexture()->getHeight());
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		//glCullFace(GL_FRONT);
-
-		Shader::bind(&shShadowMap);
-
-		float size = 80;
-		float viewDistance = 150;
-		glm::mat4 depthProjectionMatrix = glm::ortho<float>(-size, size, -size, size, -viewDistance, viewDistance);
-		//glm::mat4 depthProjectionMatrix = glm::perspective<float>(45.0f, 1.0f, 2.0f, 50000.0f);
-		glm::mat4 depthViewMatrix = glm::lookAt(vec3(-4.15f, 20, 20), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-
-		/*if (moveRight) pos += 5 * deltaTime.asSeconds(); else pos -= 5 * deltaTime.asSeconds();
-		if (moveRight && pos > 20) moveRight = !moveRight;
-		if (!moveRight && pos < -20) moveRight = !moveRight;
-
-		Log::cout << pos << endl;*/
-
-		shShadowMap.setUniformMatrix("V", &depthViewMatrix[0][0]);
-		shShadowMap.setUniformMatrix("P", &depthProjectionMatrix[0][0]);
-
-		glm::mat4 depthVP = depthProjectionMatrix * depthViewMatrix;
-		glm::mat4 biasMatrix(
-			0.5, 0.0, 0.0, 0.0,
-			0.0, 0.5, 0.0, 0.0,
-			0.0, 0.0, 0.5, 0.0,
-			0.5, 0.5, 0.5, 1.0
-		);
-		depthBiasVP = biasMatrix * depthVP;
-
-		for (int i = 0; i < 5; i++) {
-			mat4 model = ModelView::getModelView(vec3(0, 0, i * 28), vec3(0,0,0), vec3(2,2,2));
-			shShadowMap.setUniformMatrix("M", &model[0][0]);
-			mesh[0]->render(GL_TRIANGLES);
-		}
-
-		simpleRenderer->render(P, &camera);
-
-		Shader::unbind();
-
-		//glCullFace(GL_BACK);
-
-	}
-
-	////////////////////////////////////////////////////////
 
 	FrameBuffer::bind(postProcessFrameBuffer);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
@@ -294,25 +232,22 @@ void TestScene::render() {
 
 	Shader::bind(&shader);
 
-	/*Shader::currentShader->setUniformMatrix("V", &V[0][0]);
-	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
-	Shader::currentShader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);*/
+	Shader::currentShader->setUniform("lightCount", 2);
 
 	Texture::bind(shadowFrameBuffer->getTexture(), 0);
 	Shader::currentShader->setUniform("shadowMap", 0);
 
-	if (shadows) {
-		Shader::currentShader->setUniformMatrix("DepthBiasVP", &depthBiasVP[0][0]);
-		shadows = false;
-	}
+	IscEngine::Graphics::Lighting::LightSource l0;
+	l0.position = cameraPosition;
+	l0.color = vec3(1.f, 1.f, 1.f);
+	l0.power = 15.f;
+	simpleRenderer->addLightSource(&l0);
 
-	Shader::currentShader->setUniform("lights[0].position_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
-	Shader::currentShader->setUniform("lights[0].color", 0.75f, 0.75f, 0.75f);
-	Shader::currentShader->setUniform("lights[0].power", 20.f);
-
-	Shader::currentShader->setUniform("lights[1].position_worldspace", 0.f, 20.f, 5.f);
-	Shader::currentShader->setUniform("lights[1].color", 0.f, 0.f, 1.f);
-	Shader::currentShader->setUniform("lights[1].power", 50.f);
+	IscEngine::Graphics::Lighting::LightSource l1;
+	l1.position = vec3(0.f, 20.f, 5.f);
+	l1.color = vec3(0.f, 0.f, 1.f);
+	l1.power = 50.f;
+	simpleRenderer->addLightSource(&l1);
 
 	Texture::bind(textures[1], 1);
 	Shader::currentShader->setUniform("myTextureSampler", 1);

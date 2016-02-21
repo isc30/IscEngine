@@ -14,6 +14,8 @@ uniform sampler2D myTextureSampler;
 uniform mat4 MV;
 uniform vec3 cameraPosition_worldspace;
 
+uniform int lightCount;
+
 uniform mat4 M;
 uniform mat4 V;
 uniform mat4 P;
@@ -49,7 +51,7 @@ vec3 applyLight(LightSource light, vec3 surfaceColor, vec3 normal, vec3 surfaceP
 void main(){
 	
 	vec3 finalColor = vec3(0, 0, 0);
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < lightCount; i++) {
 		finalColor += applyLight(lights[i], texture2D(myTextureSampler, UV).rgb, normalize(Normal_worldspace), Position_worldspace, normalize(cameraPosition_worldspace - Position_worldspace));
 	}
 
