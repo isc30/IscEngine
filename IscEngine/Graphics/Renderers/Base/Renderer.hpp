@@ -8,6 +8,7 @@ using namespace std;
 using namespace glm;
 
 #include "../../../World/Entities/StaticEntity.hpp"
+#include "../../../Views/Cameras/Base/Camera.hpp"
 
 namespace IscEngine { namespace Renderers {
 
@@ -28,7 +29,7 @@ namespace IscEngine { namespace Renderers {
 		void addEntities(const list<StaticEntity*>& entities);
 		void removeEntity(StaticEntity* const entity);
 
-		virtual void render(mat4 P, mat4 V);
+		virtual void render(const mat4& P, const Camera* const camera);
 
 	};
 

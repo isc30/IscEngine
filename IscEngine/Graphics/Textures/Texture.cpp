@@ -3,7 +3,7 @@ using namespace IscEngine;
 
 void Texture::bind(const Texture* const texture, const unsigned int index, unsigned int type) {
 
-	glActiveTexture(index);
+	glActiveTexture(GL_TEXTURE0 + index);
 	glEnable(type);
 	glBindTexture(type, texture->id);
 
@@ -11,7 +11,7 @@ void Texture::bind(const Texture* const texture, const unsigned int index, unsig
 
 void Texture::unbind(const unsigned int index, unsigned int type) {
 
-	glActiveTexture(index);
+	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(type, 0);
 	glDisable(type);
 

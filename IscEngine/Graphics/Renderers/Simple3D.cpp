@@ -15,12 +15,16 @@ Simple3D::~Simple3D() {
 
 }
 
-void Simple3D::render(mat4 P, mat4 V) {
+void Simple3D::render(const mat4& P, const Camera* const camera) {
 
+	vec3 cameraPosition = camera->getPosition();
+	mat4 V = camera->getView();
+	
 	//Shader::bind(this->shader);
 
 	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
 	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
+	Shader::currentShader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
 
 	for (auto it = this->entities.begin(), end = this->entities.end(); it != end; ++it) {
 

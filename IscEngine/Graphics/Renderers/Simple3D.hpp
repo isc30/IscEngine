@@ -16,7 +16,7 @@ namespace IscEngine { namespace Renderers {
 		Simple3D();
 		~Simple3D();
 
-		void render(mat4 P, mat4 V);
+		void render(const mat4& P, const Camera* const camera);
 
 	};
 

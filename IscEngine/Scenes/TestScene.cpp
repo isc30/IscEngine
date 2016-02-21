@@ -20,7 +20,7 @@ mat4 V;
 bool rotatingCamera = false;
 bool shadows = true;
 
-int mapsize = 150;
+int mapsize = 2;
 float separation = 5.f;
 
 Shader skyShader;
@@ -276,7 +276,7 @@ void TestScene::render() {
 			mesh[0]->render(GL_TRIANGLES);
 		}
 
-		simpleRenderer->render(P, V);
+		simpleRenderer->render(P, &camera);
 
 		Shader::unbind();
 
@@ -294,11 +294,11 @@ void TestScene::render() {
 
 	Shader::bind(&shader);
 
-	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
+	/*Shader::currentShader->setUniformMatrix("V", &V[0][0]);
 	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
-	Shader::currentShader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+	Shader::currentShader->setUniform("cameraPosition_worldspace", cameraPosition.x, cameraPosition.y, cameraPosition.z);*/
 
-	Texture::bind(shadowFrameBuffer->getTexture(), GL_TEXTURE0);
+	Texture::bind(shadowFrameBuffer->getTexture(), 0);
 	Shader::currentShader->setUniform("shadowMap", 0);
 
 	if (shadows) {
@@ -314,7 +314,7 @@ void TestScene::render() {
 	Shader::currentShader->setUniform("lights[1].color", 0.f, 0.f, 1.f);
 	Shader::currentShader->setUniform("lights[1].power", 50.f);
 
-	Texture::bind(textures[1], GL_TEXTURE1);
+	Texture::bind(textures[1], 1);
 	Shader::currentShader->setUniform("myTextureSampler", 1);
 
 	for (int i = 0; i < 5; i++) {
@@ -323,12 +323,12 @@ void TestScene::render() {
 		mesh[0]->render(GL_TRIANGLES);
 	}
 
-	Texture::bind(textures[0], GL_TEXTURE1);
+	Texture::bind(textures[0], 1);
 
-	simpleRenderer->render(P, camera.getView());
+	simpleRenderer->render(P, &camera);
 
-	Texture::unbind(GL_TEXTURE1);
-	Texture::unbind(GL_TEXTURE0);
+	Texture::unbind(1);
+	Texture::unbind(0);
 
 	Shader::unbind();
 
@@ -338,14 +338,14 @@ void TestScene::render() {
 	Shader::currentShader->setUniformMatrix("V", &V[0][0]);
 	Shader::currentShader->setUniformMatrix("P", &P[0][0]);
 
-	Texture::bind(&skyboxTexture, GL_TEXTURE0, GL_TEXTURE_CUBE_MAP);
+	Texture::bind(&skyboxTexture, 0, GL_TEXTURE_CUBE_MAP);
 	Shader::currentShader->setUniform("cubeMapSampler", 0);
 
 	mat4 M = ModelView::getModelView(cameraPosition);
 	Shader::currentShader->setUniformMatrix("M", &M[0][0]);
 	skybox.render();
 
-	Texture::unbind(GL_TEXTURE0, GL_TEXTURE_CUBE_MAP);
+	Texture::unbind(0, GL_TEXTURE_CUBE_MAP);
 	Shader::unbind();
 
 	//
@@ -365,9 +365,9 @@ void TestScene::render() {
 	Shader::currentShader->setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
 	//postProcessShader.setUniform("textureSize", window->getSize().x, window->getSize().y);
 
-	Texture::bind(postProcessFrameBuffer->getTexture(), GL_TEXTURE0);
+	Texture::bind(postProcessFrameBuffer->getTexture(), 0);
 	PostProcess::render();
-	Texture::unbind(GL_TEXTURE0);
+	Texture::unbind(0);
 
 	Shader::unbind();
 
