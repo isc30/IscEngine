@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 using namespace std;
 
 namespace IscEngine {
@@ -14,11 +15,8 @@ namespace IscEngine {
 
         public:
 
-            template <typename T>
-            static T* load(const char* fileName);
-
-            template <typename T>
-            static T* load(const char* fileName0, const char* fileName1);
+            template <typename T0, typename... T1>
+            static T0* load(T1...);
 
     };
 

@@ -7,7 +7,7 @@ using namespace IscEngine::Renderers;
 #include <string>
 
 Simple3D::Simple3D() : Renderer::Renderer() {
-
+	
 	this->shader = Resource::load<Shader>("Simple3D.vsh", "Simple3D.fsh");
 
 }

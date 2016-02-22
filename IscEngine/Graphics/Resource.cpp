@@ -13,7 +13,7 @@ const string Resource::ERROR_TEXTURE = "error.png";
 
 namespace IscEngine {
 
-    template<>
+    template <>
     Texture* Resource::load<Texture>(const char* fileName) {
 
         Texture* texture = new Texture();
@@ -25,7 +25,7 @@ namespace IscEngine {
 
     }
 
-    template<>
+    template <>
     Mesh* Resource::load<Mesh>(const char* fileName) {
 
         vector<unsigned int> objIndices;
@@ -43,7 +43,7 @@ namespace IscEngine {
 
     }
 
-    template<>
+    template <>
     Shader* Resource::load<Shader>(const char* vertexFileName, const char* fragmentFileName) {
 
         Shader* shader = new Shader();
