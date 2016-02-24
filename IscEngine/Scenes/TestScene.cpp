@@ -9,8 +9,6 @@ using namespace IscEngine::Scenes;
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
 #include "../Graphics/Shaders/PostProcess.hpp"
-#include "../World/SkyBox.hpp"
-#include "../Graphics/Renderers/Simple3D.hpp"
 
 Camera camera;
 
@@ -21,12 +19,6 @@ bool rotatingCamera = false;
 
 int mapsize = 1;
 float separation = 5.f;
-
-Shader skyShader;
-SkyBox skybox;
-Texture skyboxTexture;
-
-Renderers::Simple3D* simpleRenderer;
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -269,7 +261,7 @@ void TestScene::render() {
 	}
 
 	Texture::bind(textures[0], 1);
-	
+
 	simpleRenderer->render(P, &camera);
 
 	Texture::unbind(1);
@@ -322,14 +314,6 @@ void TestScene::render() {
 
 TestScene::~TestScene() {
 
-	delete mesh[0]; mesh[0] = nullptr;
-	delete mesh[1]; mesh[1] = nullptr;
-
-	delete textures[0]; textures[0] = nullptr;
-	delete textures[1]; textures[1] = nullptr;
-	delete textures[2]; textures[2] = nullptr;
-
-	delete shadowFrameBuffer; shadowFrameBuffer = nullptr;
-	delete postProcessFrameBuffer; postProcessFrameBuffer = nullptr;
+	// deletes
 
 }

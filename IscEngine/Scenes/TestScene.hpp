@@ -8,6 +8,8 @@
 #include "../World/Entities/StaticEntity.hpp"
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Graphics/Textures/Texture.hpp"
+#include "../World/SkyBox.hpp"
+#include "../Graphics/Renderers/Simple3D.hpp"
 #include "../Utils/Log.hpp"
 
 namespace IscEngine { namespace Scenes {
@@ -21,7 +23,11 @@ namespace IscEngine { namespace Scenes {
 			Shader shader, shShadowMap, postProcessShader;
 			Mesh* mesh[3];
 			Texture* textures[3];
+			Shader skyShader;
+            SkyBox skybox;
+            Texture skyboxTexture;
 			FrameBuffer* shadowFrameBuffer, *postProcessFrameBuffer;
+			Renderers::Simple3D* simpleRenderer;
 			vector<StaticEntity*> entities;
 
 		public:
