@@ -58,7 +58,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	properties.specular = vec3(0.75, 0.75, 0.75);
 	properties.shininess = 50;
 	material->materialProperties = properties;
-	
+
 	models[0] = new Model();
 	models[0]->mesh = mesh[1]; // HD
 	models[0]->material = material;
@@ -115,12 +115,12 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
     skyShader = *Resource::load<Shader>("SkyBox.vsh", "SkyBox.fsh");
 	skyboxTexture.loadCubeMap(vector<string>({
-		RESOURCE_PATH + "Textures/SkyBox/right.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/left.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/top.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/bottom.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/back.jpg",
-		RESOURCE_PATH + "Textures/SkyBox/front.jpg"
+		Resource::RESOURCE_PATH + "Textures/SkyBox/right.jpg",
+		Resource::RESOURCE_PATH + "Textures/SkyBox/left.jpg",
+		Resource::RESOURCE_PATH + "Textures/SkyBox/top.jpg",
+		Resource::RESOURCE_PATH + "Textures/SkyBox/bottom.jpg",
+		Resource::RESOURCE_PATH + "Textures/SkyBox/back.jpg",
+		Resource::RESOURCE_PATH + "Textures/SkyBox/front.jpg"
 	}));
 
 	///////////////////////////////////////////////////////
@@ -292,10 +292,10 @@ void TestScene::render() {
 
 	FrameBuffer::bind(postProcessFrameBuffer);
 	glViewport(0, 0, window->getSize().x, window->getSize().y);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-	
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	simpleRenderer->render(P, &camera);
-	
+
 	//
 
 	Shader::bind(&skyShader);
@@ -341,6 +341,6 @@ void TestScene::render() {
 
 TestScene::~TestScene() {
 
-	
+
 
 }

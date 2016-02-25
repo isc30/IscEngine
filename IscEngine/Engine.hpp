@@ -4,8 +4,6 @@
 #include <fstream>
 using namespace std;
 
-static const string RESOURCE_PATH = "../IscEngine/IscEngine/Resources/"; // ../IscEngine/IscEngine/Resources/
-
 #include <gl/glew.h>
 #include <SFML/OpenGL.hpp>
 #include <SFML/Graphics.hpp>
