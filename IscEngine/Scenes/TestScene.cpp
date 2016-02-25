@@ -52,27 +52,27 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	// Katarina
 	MaterialProperties properties;
 	Material* material = new Material();
-	material->setTexture(textures[0]);
+	material->texture = textures[0];
 	properties.specular = vec3(1, 0, 0);
-	material->setMaterialProperties(properties);
+	material->materialProperties = properties;
 	
 	models[0] = new Model();
-	models[0]->setMesh(mesh[1]); // HD
-	models[0]->setMaterial(material);
+	models[0]->mesh = mesh[1]; // HD
+	models[0]->material = material;
 
 	models[1] = new Model();
-	models[1]->setMesh(mesh[2]); // HD
-	models[1]->setMaterial(material);
+	models[1]->mesh = mesh[2]; // Low poly
+	models[1]->material = material;
 
 	// Puente
 	material = new Material();
-	material->setTexture(textures[1]);
+	material->texture = textures[1];
 	properties.specular = vec3(0, 0, 1);
-	material->setMaterialProperties(properties);
+	material->materialProperties = properties;
 
 	models[2] = new Model();
-	models[2]->setMesh(mesh[0]);
-	models[2]->setMaterial(material);
+	models[2]->mesh = mesh[0];
+	models[2]->material = material;
 
 	////////
 
@@ -84,7 +84,6 @@ TestScene::TestScene(Window* window) : Scene(window) {
 			entity->setPosition(vec3(i * separation, 18.3f, j * separation));
 			entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
 			entities.push_back(entity);
-			//simpleRenderer->addEntity(entity);
 		}
 	}
 

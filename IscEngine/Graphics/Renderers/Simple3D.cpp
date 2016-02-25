@@ -49,10 +49,10 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 			this->shader->setUniformMatrix("M", &(*it)->getModelMatrix()[0][0]);
 
 			Model* model = (*it)->getModel(model_cameraspace.z);
-			Material* material = model->getMaterial();
-			Mesh* mesh = model->getMesh();
+			Material* material = model->material;
+			Mesh* mesh = model->mesh;
 
-			Texture::bind(material->getTexture(), 0);
+			Texture::bind(material->texture, 0);
 			this->shader->setUniform("textureSampler", 0);
 
 			mesh->render(GL_TRIANGLES);
