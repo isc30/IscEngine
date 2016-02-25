@@ -22,7 +22,7 @@ bool rotatingCamera = false;
 int mapsize = 1;
 float separation = 5.f;
 
-Model* models[3];
+Model* models[4];
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -40,9 +40,12 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	mesh[0] = Resource::load<Mesh>("fbx_PuenteRomano.fbx");
 	mesh[1] = Resource::load<Mesh>("katarina.obj");
 	mesh[2] = Resource::load<Mesh>("katarina_low.obj");
+	mesh[3] = Resource::load<Mesh>("mikey.obj");
 
 	textures[0] = Resource::load<Texture>("katarina_base_diffuse.png");
 	textures[1] = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
+	Log::cout << "The following error is intended to test the error texture" << endl;
+	textures[2] = Resource::load<Texture>("mikey.png");
 
 	simpleRenderer = new Renderers::Simple3D();
 
@@ -63,6 +66,13 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	models[1] = new Model();
 	models[1]->mesh = mesh[2]; // Low poly
 	models[1]->material = material;
+
+	// Mikey
+	models[3] = new Model();
+	material = new Material();
+	material->texture = textures[2];
+	models[3]->mesh = mesh[3]; // HD
+	models[3]->material = material;
 
 	// Puente
 	material = new Material();
@@ -95,6 +105,11 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		entities.push_back(entity);
 
 	}
+
+	// Mikey
+	StaticEntity* entity = new StaticEntity(models[3]);
+	entity->setPosition(vec3(0, 18.3f, 60));
+	entities.push_back(entity);
 
 	///////////////////////////////////////////////////////
 
@@ -151,6 +166,11 @@ void TestScene::update() {
 	if (window->isFocused()) processInput();
 
 	V = camera.getView();
+
+	StaticEntity* mikey = entities.at(entities.size() - 1);
+	vec3 currentRotation = mikey->getRotation();
+	currentRotation.y += radians(45.f * deltaTime.asSeconds());
+	mikey->setRotation(currentRotation);
 
 	/*for (auto it = entities.begin(), end = entities.end(); it != end; ++it) {
 
