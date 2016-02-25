@@ -50,7 +50,7 @@ void Engine::create(const string& title, const unsigned int width, const unsigne
 
 	this->window = new Window(sf::VideoMode(width, height), title, style, contextSettings);
 	this->window->setVerticalSyncEnabled(false);
-	//this->window->setFramerateLimit(144);
+	this->window->setFramerateLimit(144);
 
 	contextSettings = window->getSettings();
 	Log::cout << "  >> " << glGetString(GL_VENDOR) << " | " << glGetString(GL_RENDERER) << endl;
@@ -91,7 +91,7 @@ void Engine::setupOpenGL() {
 	Log::cout << endl;
 
 	// Clear color
-	glClearColor(1.0f, 0.7f, 0.1f, 1.0f);
+	//glClearColor(1.0f, 0.7f, 0.1f, 1.0f);
 
 	// Backface culling
 	glEnable(GL_CULL_FACE);
@@ -102,9 +102,9 @@ void Engine::setupOpenGL() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 
-	// Transparency
+	/* Transparency
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
 
 }
 
