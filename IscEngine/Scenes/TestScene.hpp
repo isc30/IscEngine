@@ -20,7 +20,7 @@ namespace IscEngine { namespace Scenes {
 
 			unsigned int fpsCount;
 			sf::Time fpsTime;
-			Shader shader, shShadowMap, postProcessShader;
+			Shader shShadowMap, postProcessShader;
 			Mesh* mesh[3];
 			Texture* textures[3];
 			Shader skyShader;

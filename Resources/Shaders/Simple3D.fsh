@@ -28,6 +28,15 @@ struct LightSource {
 
 };
 
+struct Material {
+
+	float shininess;
+	vec3 specular;
+
+};
+
+uniform Material material;
+
 uniform LightSource lights[100];
 
 vec3 applyLight(LightSource light, vec3 surfaceColor, vec3 normal, vec3 surfacePosition, vec3 surfaceToCamera) {
@@ -40,9 +49,9 @@ vec3 applyLight(LightSource light, vec3 surfaceColor, vec3 normal, vec3 surfaceP
 	vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * light.color;
 
 	float specularCoefficient = 0.f;
-	if (diffuseCoefficient > 0.f)
-		specularCoefficient = pow(max(0.f, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), 75.f); // 80 = materialShininess
-	vec3 specular = specularCoefficient * light.color * vec3(0.3f, 0.3f, 0.3f); // * materialSpecularColor
+	if (diffuseCoefficient > 0.f && material.shininess > 0.f)
+		specularCoefficient = pow(max(0.f, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), material.shininess); // 80 = materialShininess
+	vec3 specular = specularCoefficient * light.color * vec3(0.3f, 0.3f, 0.3f) * material.specular;
 
 	return attenuation * (diffuse + specular);
 	

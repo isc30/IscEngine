@@ -52,6 +52,9 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 			Material* material = model->material;
 			Mesh* mesh = model->mesh;
 
+			this->shader->setUniform("material.specular", material->materialProperties.specular.r, material->materialProperties.specular.g, material->materialProperties.specular.b);
+			this->shader->setUniform("material.shininess", material->materialProperties.shininess);
+
 			Texture::bind(material->texture, 0);
 			this->shader->setUniform("textureSampler", 0);
 

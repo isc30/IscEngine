@@ -29,7 +29,6 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	fpsCount = 0;
 	fpsTime = sf::Time::Zero;
 
-    shader = *Resource::load<Shader>("Simple3D.vsh", "Simple3D.fsh");
 	shShadowMap = *Resource::load<Shader>("shadowMapper.vsh", "shadowMapper.fsh");
 	postProcessShader = *Resource::load<Shader>("postProcess.vsh", "postProcess.fsh");
 
@@ -53,7 +52,8 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	MaterialProperties properties;
 	Material* material = new Material();
 	material->texture = textures[0];
-	properties.specular = vec3(1, 0, 0);
+	properties.specular = vec3(0.75, 0.75, 0.75);
+	properties.shininess = 50;
 	material->materialProperties = properties;
 	
 	models[0] = new Model();
@@ -67,7 +67,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	// Puente
 	material = new Material();
 	material->texture = textures[1];
-	properties.specular = vec3(0, 0, 1);
+	properties.shininess = 0;
 	material->materialProperties = properties;
 
 	models[2] = new Model();
