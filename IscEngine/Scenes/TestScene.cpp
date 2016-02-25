@@ -87,6 +87,15 @@ TestScene::TestScene(Window* window) : Scene(window) {
 		}
 	}
 
+	for (int i = 0; i < 5; i++) {
+
+		StaticEntity* entity = new StaticEntity(models[2]);
+		entity->setPosition(vec3(0, 0, i * 28));
+		entity->setScale(vec3(2, 2, 2));
+		entities.push_back(entity);
+
+	}
+
 	///////////////////////////////////////////////////////
 
     skyShader = *Resource::load<Shader>("SkyBox.vsh", "SkyBox.fsh");
@@ -121,19 +130,6 @@ void TestScene::processEvent(const sf::Event& event) {
 		case sf::Event::KeyPressed:
 			if (event.key.code == sf::Keyboard::Escape) this->endScene();
 			if (event.key.code == sf::Keyboard::B) this->endScene(new Scenes::TestScene(window));
-			if (event.key.code == sf::Keyboard::Y) {
-				if (entities.size() > 0) {
-					delete entities.back();
-					entities.pop_back();
-				}
-			}
-			if (event.key.code == sf::Keyboard::U) {
-				StaticEntity* entity = new StaticEntity(models[2]);
-				//entity->addMesh(50, mesh[2]);
-				entity->setPosition(vec3(entities.size() * separation, 18.3f, entities.size() * separation));
-				entity->setRotation(vec3(0, radians(entities.size() * 25.f + entities.size() * 25.f), 0));
-				entities.push_back(entity);
-			}
 			break;
 
 	}
