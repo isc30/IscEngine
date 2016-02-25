@@ -9,8 +9,8 @@ using namespace IscEngine::Scenes;
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
 #include "../Graphics/Shaders/PostProcess.hpp"
-#include "../World/SkyBox.hpp"
-#include "../Graphics/Renderers/Simple3D.hpp"
+#include "../Graphics/Materials/Material.hpp"
+#include "../Graphics/Models/Model.hpp"
 
 Camera camera;
 
@@ -22,11 +22,7 @@ bool rotatingCamera = false;
 int mapsize = 1;
 float separation = 5.f;
 
-Shader skyShader;
-SkyBox skybox;
-Texture skyboxTexture;
-
-Renderers::Simple3D* simpleRenderer;
+Model* models[3];
 
 TestScene::TestScene(Window* window) : Scene(window) {
 
@@ -46,22 +42,51 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	mesh[1] = Resource::load<Mesh>("katarina.obj");
 	mesh[2] = Resource::load<Mesh>("katarina_low.obj");
 
+	textures[0] = Resource::load<Texture>("katarina_base_diffuse.png");
+	textures[1] = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
+
 	simpleRenderer = new Renderers::Simple3D();
+
+	///////// MODEL
+
+	// Katarina
+	MaterialProperties properties;
+	Material* material = new Material();
+	material->setTexture(textures[0]);
+	properties.specular = vec3(1, 0, 0);
+	material->setMaterialProperties(properties);
+	
+	models[0] = new Model();
+	models[0]->setMesh(mesh[1]); // HD
+	models[0]->setMaterial(material);
+
+	models[1] = new Model();
+	models[1]->setMesh(mesh[2]); // HD
+	models[1]->setMaterial(material);
+
+	// Puente
+	material = new Material();
+	material->setTexture(textures[1]);
+	properties.specular = vec3(0, 0, 1);
+	material->setMaterialProperties(properties);
+
+	models[2] = new Model();
+	models[2]->setMesh(mesh[0]);
+	models[2]->setMaterial(material);
+
+	////////
 
 	// Create StaticEntities
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
-			StaticEntity* entity = new StaticEntity(mesh[1]);
-			entity->addMesh(50, mesh[2]);
+			StaticEntity* entity = new StaticEntity(models[0]);
+			entity->addModel(50, models[1]);
 			entity->setPosition(vec3(i * separation, 18.3f, j * separation));
 			entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
 			entities.push_back(entity);
 			//simpleRenderer->addEntity(entity);
 		}
 	}
-
-    textures[0] = Resource::load<Texture>("katarina_base_diffuse.png");
-    textures[1] = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
 
 	///////////////////////////////////////////////////////
 
@@ -104,8 +129,8 @@ void TestScene::processEvent(const sf::Event& event) {
 				}
 			}
 			if (event.key.code == sf::Keyboard::U) {
-				StaticEntity* entity = new StaticEntity(mesh[1]);
-				entity->addMesh(50, mesh[2]);
+				StaticEntity* entity = new StaticEntity(models[2]);
+				//entity->addMesh(50, mesh[2]);
 				entity->setPosition(vec3(entities.size() * separation, 18.3f, entities.size() * separation));
 				entity->setRotation(vec3(0, radians(entities.size() * 25.f + entities.size() * 25.f), 0));
 				entities.push_back(entity);
@@ -224,16 +249,7 @@ void TestScene::render() {
 	simpleRenderer->clearEntities();
 	simpleRenderer->addEntities(entities);
 
-	FrameBuffer::bind(postProcessFrameBuffer);
-	glViewport(0, 0, window->getSize().x, window->getSize().y);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	vec3 cameraPosition = camera.getPosition();
-
-	Shader::bind(&shader);
-
-	Texture::bind(shadowFrameBuffer->getTexture(), 0);
-	Shader::currentShader->setUniform("shadowMap", 0);
 
 	LightSource l0;
 	l0.position = cameraPosition;
@@ -259,24 +275,12 @@ void TestScene::render() {
 	l3.power = 20.f;
 	simpleRenderer->lightSetup.add(&l3);
 
-	Texture::bind(textures[1], 1);
-	Shader::currentShader->setUniform("myTextureSampler", 1);
-
-	for (int i = 0; i < 5; i++) {
-		mat4 model = ModelView::getModelView(vec3(0, 0, i * 28), vec3(0, 0, 0), vec3(2, 2, 2));
-		shShadowMap.setUniformMatrix("M", &model[0][0]);
-		mesh[0]->render(GL_TRIANGLES);
-	}
-
-	Texture::bind(textures[0], 1);
+	FrameBuffer::bind(postProcessFrameBuffer);
+	glViewport(0, 0, window->getSize().x, window->getSize().y);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
 	
 	simpleRenderer->render(P, &camera);
-
-	Texture::unbind(1);
-	Texture::unbind(0);
-
-	Shader::unbind();
-
+	
 	//
 
 	Shader::bind(&skyShader);
@@ -322,14 +326,6 @@ void TestScene::render() {
 
 TestScene::~TestScene() {
 
-	delete mesh[0]; mesh[0] = nullptr;
-	delete mesh[1]; mesh[1] = nullptr;
-
-	delete textures[0]; textures[0] = nullptr;
-	delete textures[1]; textures[1] = nullptr;
-	delete textures[2]; textures[2] = nullptr;
-
-	delete shadowFrameBuffer; shadowFrameBuffer = nullptr;
-	delete postProcessFrameBuffer; postProcessFrameBuffer = nullptr;
+	
 
 }

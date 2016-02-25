@@ -1,27 +1,27 @@
 #include "StaticEntity.hpp"
 using namespace IscEngine;
 
-StaticEntity::StaticEntity(Mesh* const mesh) : Entity() {
+StaticEntity::StaticEntity(Model* const model) : Entity() {
 
-	this->meshes[0.f] = mesh;
-
-}
-
-void StaticEntity::addMesh(const float distance, Mesh* const mesh) {
-
-	this->meshes[distance] = mesh;
+	this->models[0.f] = model;
 
 }
 
-void StaticEntity::render(const float distance) {
+void StaticEntity::addModel(const float distance, Model* const model) {
+
+	this->models[distance] = model;
+
+}
+
+Model* StaticEntity::getModel(const float distance) {
 	
-	Mesh* renderMesh = this->meshes.begin()->second;
-	for (auto it = this->meshes.begin(), end = this->meshes.end(); it != end; ++it) {
+	Model* model = this->models.begin()->second;
+	for (auto it = this->models.begin(), end = this->models.end(); it != end; ++it) {
 		if (distance >= (*it).first) {
-			renderMesh = (*it).second;
+			model = (*it).second;
 		}
 	}
 
-	renderMesh->render(GL_TRIANGLES);
+	return model;
 
 }

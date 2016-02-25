@@ -4,16 +4,16 @@ using namespace IscEngine;
 void Texture::bind(const Texture* const texture, const unsigned int index, unsigned int type) {
 
 	glActiveTexture(GL_TEXTURE0 + index);
-	glEnable(type);
+	if (!glIsEnabled(type)) glEnable(type);
 	glBindTexture(type, texture->id);
 
 }
 
 void Texture::unbind(const unsigned int index, unsigned int type) {
-
+	
 	glActiveTexture(GL_TEXTURE0 + index);
 	glBindTexture(type, 0);
-	glDisable(type);
+	if (glIsEnabled(type)) glDisable(type);
 
 }
 

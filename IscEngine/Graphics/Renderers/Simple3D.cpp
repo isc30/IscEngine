@@ -23,7 +23,7 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 	vec3 cameraPosition = camera->getPosition();
 	mat4 V = camera->getView();
 	
-	//Shader::bind(this->shader);
+	Shader::bind(this->shader);
 
 	this->shader->setUniformMatrix("V", &V[0][0]);
 	this->shader->setUniformMatrix("P", &P[0][0]);
@@ -42,18 +42,27 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 
 		vec4 model_cameraspace = P * V * (*it)->getModelMatrix() * vec4(0, 4, 0, 1);
 
-		if (model_cameraspace.z >= 0.f && model_cameraspace.z <= 1000.0f &&
+		/*if (model_cameraspace.z >= 0.f && model_cameraspace.z <= 1000.0f &&
 			model_cameraspace.x / model_cameraspace.w >= -1.f && model_cameraspace.x / model_cameraspace.w <= 1.f &&
-			model_cameraspace.y / model_cameraspace.w >= -1.f && model_cameraspace.y / model_cameraspace.w <= 1.f) {
+			model_cameraspace.y / model_cameraspace.w >= -1.f && model_cameraspace.y / model_cameraspace.w <= 1.f) {*/
 
 			this->shader->setUniformMatrix("M", &(*it)->getModelMatrix()[0][0]);
 
-			(*it)->render(model_cameraspace.z);
+			Model* model = (*it)->getModel(model_cameraspace.z);
+			Material* material = model->getMaterial();
+			Mesh* mesh = model->getMesh();
 
-		}
+			Texture::bind(material->getTexture(), 0);
+			this->shader->setUniform("textureSampler", 0);
+
+			mesh->render(GL_TRIANGLES);
+
+		//}
 
 	}
 
-	//Shader::unbind();
+	Texture::unbind(0);
+
+	Shader::unbind();
 
 }

@@ -10,7 +10,7 @@ varying vec3 EyeDirection_cameraspace;
 varying vec3 LightDirection_cameraspace;
 
 // Values that stay constant for the whole mesh.
-uniform sampler2D myTextureSampler;
+uniform sampler2D textureSampler;
 uniform mat4 MV;
 uniform vec3 cameraPosition_worldspace;
 
@@ -52,10 +52,10 @@ void main(){
 	
 	vec3 finalColor = vec3(0, 0, 0);
 	for (int i = 0; i < lightCount; i++) {
-		finalColor += applyLight(lights[i], texture2D(myTextureSampler, UV).rgb, normalize(Normal_worldspace), Position_worldspace, normalize(cameraPosition_worldspace - Position_worldspace));
+		finalColor += applyLight(lights[i], texture2D(textureSampler, UV).rgb, normalize(Normal_worldspace), Position_worldspace, normalize(cameraPosition_worldspace - Position_worldspace));
 	}
 
-	vec3 ambient = vec3(0.2f, 0.2f, 0.2f) * texture2D(myTextureSampler, UV).rgb;
+	vec3 ambient = vec3(0.2f, 0.2f, 0.2f) * texture2D(textureSampler, UV).rgb;
 	gl_FragColor.rgb = ambient + finalColor;
 	gl_FragColor.a = 1.f;
 

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Entity.hpp"
-#include "../../Graphics/Models/Mesh.hpp"
 #include "../../Views/Cameras/Base/Camera.hpp"
+#include "../../Graphics/Models/Model.hpp"
+using namespace IscEngine::Graphics;
 
 #include <map>
 using namespace std;
@@ -13,14 +14,14 @@ namespace IscEngine {
 
 		private:
 			
-			map<float, Mesh*> meshes;
+			map<float, Model*> models;
 
 		public:
 			
-			StaticEntity(Mesh* const mesh);
+			StaticEntity(Model* const model);
 			
-			void addMesh(const float distance, Mesh* const mesh);
-			void render(const float distance);
+			Model* getModel(const float distance);
+			void addModel(const float distance, Model* const model);
 
 	};
 
