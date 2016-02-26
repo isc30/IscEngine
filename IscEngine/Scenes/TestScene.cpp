@@ -327,7 +327,7 @@ void TestScene::render() {
 	Shader::bind(&postProcessShader);
 	Shader::currentShader->setUniform("renderedTexture", 0);
 	Shader::currentShader->setUniform("time", wat += deltaTime.asSeconds()); //(float)deltaTime.asMicroseconds()
-	//postProcessShader.setUniform("textureSize", window->getSize().x, window->getSize().y);
+	Shader::currentShader->setUniform("textureSize", (float)window->getSize().x, (float)window->getSize().y);
 
 	Texture::bind(postProcessFrameBuffer->getTexture(), 0);
 	PostProcess::render();
