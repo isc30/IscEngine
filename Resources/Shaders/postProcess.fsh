@@ -101,7 +101,7 @@ void main(){
 	
 	vec2 size = textureSize;
 
-	//gl_FragColor = texture2D(renderedTexture, UV);
-	gl_FragColor = apply(renderedTexture, UV * size, size);
+	gl_FragColor = texture2D(renderedTexture, UV);
+	//gl_FragColor = apply(renderedTexture, UV * size, size);
 
 }

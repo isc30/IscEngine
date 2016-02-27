@@ -22,8 +22,6 @@ bool rotatingCamera = false;
 int mapsize = 1;
 float separation = 5.f;
 
-Model* models[4];
-
 TestScene::TestScene(Window* window) : Scene(window) {
 
 	fpsCount = 0;
@@ -37,60 +35,51 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	P = glm::perspective(45.0f, window->getDefaultView().getSize().x / window->getDefaultView().getSize().y, 0.1f, 1000.0f);
 
-	mesh[0] = Resource::load<Mesh>("fbx_PuenteRomano.fbx");
-	mesh[1] = Resource::load<Mesh>("katarina.obj");
-	mesh[2] = Resource::load<Mesh>("katarina_low.obj");
-	mesh[3] = Resource::load<Mesh>("mikey.obj");
-
-	textures[0] = Resource::load<Texture>("katarina_base_diffuse.png");
-	textures[1] = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
-	Log::cout << "The following error is intended to test the error texture" << endl;
-	textures[2] = Resource::load<Texture>("mikey.png");
-
 	simpleRenderer = new Renderers::Simple3D();
 
 	///////// MODEL
 
+	Mesh* katarinaMeshFull = Resource::load<Mesh>("katarina.obj");
+	Mesh* katarinaMeshLow = Resource::load<Mesh>("katarina_low.obj");
+	Texture* katarinaDiffuse = Resource::load<Texture>("katarina_base_diffuse.png");
+	Texture* katarinaSpecular = Resource::load<Texture>("katarina_base_specular.png");
+
 	// Katarina
-	MaterialProperties properties;
-	Material* material = new Material();
-	material->texture = textures[0];
-	properties.specular = vec3(0.75, 0.75, 0.75);
-	properties.shininess = 50;
-	material->materialProperties = properties;
+	Model* katarinaModelHD = new Model();
+	katarinaModelHD->mesh = katarinaMeshFull; // HD
+	katarinaModelHD->material = new Material();
+	katarinaModelHD->material->diffuseMap = katarinaDiffuse;
+	katarinaModelHD->material->specularMap = katarinaSpecular;
 
-	models[0] = new Model();
-	models[0]->mesh = mesh[1]; // HD
-	models[0]->material = material;
-
-	models[1] = new Model();
-	models[1]->mesh = mesh[2]; // Low poly
-	models[1]->material = material;
+	Model* katarinaModelLow = new Model();
+	katarinaModelLow->mesh = katarinaMeshLow; // Low poly
+	katarinaModelLow->material = new Material();
+	katarinaModelLow->material->diffuseMap = katarinaDiffuse;
+	katarinaModelLow->material->specularMap = katarinaSpecular;
 
 	// Mikey
-	models[3] = new Model();
-	material = new Material();
-	material->texture = textures[2];
-	models[3]->mesh = mesh[3]; // HD
-	models[3]->material = material;
+	Model* mikeyModel = new Model();
+	mikeyModel->mesh = Resource::load<Mesh>("mikey.obj");
+	mikeyModel->material = new Material();
+	mikeyModel->material->diffuseMap = Resource::load<Texture>("Mickey_Mouse_D.tga");;
+	mikeyModel->material->specularMap = Resource::load<Texture>("Mickey_Mouse_S.tga");
+	mikeyModel->material->materialProperties.shininess = 50.f;
 
 	// Puente
-	material = new Material();
-	material->texture = textures[1];
-	properties.shininess = 0;
-	material->materialProperties = properties;
-
-	models[2] = new Model();
-	models[2]->mesh = mesh[0];
-	models[2]->material = material;
+	Model* puenteModel = new Model();
+	puenteModel->mesh = Resource::load<Mesh>("fbx_PuenteRomano.fbx");;
+	puenteModel->material = new Material();
+	puenteModel->material->diffuseMap = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
+	puenteModel->material->materialProperties.specularColor = vec3(1, 0, 0);
+	puenteModel->material->materialProperties.shininess = 0.f;
 
 	////////
 
 	// Create StaticEntities
 	for (int i = 0; i < mapsize; i++) {
 		for (int j = 0; j < mapsize; j++) {
-			StaticEntity* entity = new StaticEntity(models[0]);
-			entity->addModel(50, models[1]);
+			StaticEntity* entity = new StaticEntity(katarinaModelHD);
+			entity->addModel(50, katarinaModelLow);
 			entity->setPosition(vec3(i * separation, 18.3f, j * separation));
 			entity->setRotation(vec3(0, radians(i * 25.f + j * 25.f), 0));
 			entities.push_back(entity);
@@ -99,7 +88,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	for (int i = 0; i < 5; i++) {
 
-		StaticEntity* entity = new StaticEntity(models[2]);
+		StaticEntity* entity = new StaticEntity(puenteModel);
 		entity->setPosition(vec3(0, 0, i * 28));
 		entity->setScale(vec3(2, 2, 2));
 		entities.push_back(entity);
@@ -107,7 +96,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	}
 
 	// Mikey
-	StaticEntity* entity = new StaticEntity(models[3]);
+	StaticEntity* entity = new StaticEntity(mikeyModel);
 	entity->setPosition(vec3(0, 18.3f, 60));
 	entities.push_back(entity);
 
@@ -269,7 +258,7 @@ void TestScene::render() {
 	LightSource l0;
 	l0.position = cameraPosition;
 	l0.color = vec3(1.f, 1.f, 1.f);
-	l0.power = 15.f;
+	l0.power = 5.f;
 	simpleRenderer->lightSetup.add(&l0);
 
 	LightSource l1;

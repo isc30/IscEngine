@@ -52,13 +52,39 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 			Material* material = model->material;
 			Mesh* mesh = model->mesh;
 
-			this->shader->setUniform("material.specular", material->materialProperties.specular.r, material->materialProperties.specular.g, material->materialProperties.specular.b);
+			this->shader->setUniform("material.specularColor", material->materialProperties.specularColor.r, material->materialProperties.specularColor.g, material->materialProperties.specularColor.b);
 			this->shader->setUniform("material.shininess", material->materialProperties.shininess);
 
-			Texture::bind(material->texture, 0);
-			this->shader->setUniform("textureSampler", 0);
+			this->shader->setUniform("material.hasDiffuseMap", false);
+			this->shader->setUniform("material.hasSpecularMap", false);
+
+			int currentIndex = 0;
+
+			if (material->diffuseMap != nullptr) {
+				Texture::bind(material->diffuseMap, currentIndex);
+				this->shader->setUniform("material.diffuseMap", currentIndex);
+				this->shader->setUniform("material.hasDiffuseMap", true);
+				currentIndex++;
+			}
+
+			if (material->specularMap != nullptr) {
+				Texture::bind(material->specularMap, currentIndex);
+				this->shader->setUniform("material.specularMap", currentIndex);
+				this->shader->setUniform("material.hasSpecularMap", true);
+				currentIndex++;
+			}
 
 			mesh->render(GL_TRIANGLES);
+
+			if (material->specularMap != nullptr) {
+				currentIndex--;
+				Texture::unbind(currentIndex);
+			}
+
+			if (material->diffuseMap != nullptr) {
+				currentIndex--;
+				Texture::unbind(currentIndex);
+			}
 
 		//}
 

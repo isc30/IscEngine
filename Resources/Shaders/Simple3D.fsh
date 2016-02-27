@@ -10,8 +10,6 @@ varying vec3 EyeDirection_cameraspace;
 varying vec3 LightDirection_cameraspace;
 
 // Values that stay constant for the whole mesh.
-uniform sampler2D textureSampler;
-uniform mat4 MV;
 uniform vec3 cameraPosition_worldspace;
 
 uniform int lightCount;
@@ -29,9 +27,12 @@ struct LightSource {
 };
 
 struct Material {
+	
+	bool hasDiffuseMap; sampler2D diffuseMap;
+	bool hasSpecularMap; sampler2D specularMap;
 
 	float shininess;
-	vec3 specular;
+	vec3 specularColor;
 
 };
 
@@ -39,19 +40,19 @@ uniform Material material;
 
 uniform LightSource lights[100];
 
-vec3 applyLight(LightSource light, vec3 surfaceColor, vec3 normal, vec3 surfacePosition, vec3 surfaceToCamera) {
+vec3 applyLight(LightSource light, vec3 diffuseMap, vec3 specularMap, vec3 surfaceNormal, vec3 surfacePosition, vec3 surfaceToCamera) {
 
 	vec3 surfaceToLight = normalize(light.position_worldspace - surfacePosition);
 	float distanceToLight = length(light.position_worldspace - surfacePosition);
 	float attenuation = 1.0 / (0.5f + 1.f / (light.power * 10) * pow(distanceToLight, 2));
 
-	float diffuseCoefficient = max(0.f, dot(normal, surfaceToLight));
-	vec3 diffuse = diffuseCoefficient * surfaceColor.rgb * light.color;
+	float diffuseCoefficient = max(0.f, dot(surfaceNormal, surfaceToLight));
+	vec3 diffuse = diffuseCoefficient * diffuseMap.rgb * light.color;
 
 	float specularCoefficient = 0.f;
 	if (diffuseCoefficient > 0.f && material.shininess > 0.f)
-		specularCoefficient = pow(max(0.f, dot(surfaceToCamera, reflect(-surfaceToLight, normal))), material.shininess); // 80 = materialShininess
-	vec3 specular = specularCoefficient * light.color * vec3(0.3f, 0.3f, 0.3f) * material.specular;
+		specularCoefficient = pow(max(0.f, dot(surfaceToCamera, reflect(-surfaceToLight, surfaceNormal))), material.shininess);
+	vec3 specular = specularCoefficient * light.color * vec3(0.3f, 0.3f, 0.3f) * material.specularColor * specularMap;
 
 	return attenuation * (diffuse + specular);
 	
@@ -59,12 +60,19 @@ vec3 applyLight(LightSource light, vec3 surfaceColor, vec3 normal, vec3 surfaceP
 
 void main(){
 	
+	vec3 surfaceToCamera = normalize(cameraPosition_worldspace - Position_worldspace);
+	vec3 surfaceNormal = normalize(Normal_worldspace);
+
+	vec3 diffuseMap = material.hasDiffuseMap ? texture2D(material.diffuseMap, UV).rgb : vec3(0.75f, 0.75f, 0.75f);
+	vec3 specularMap = material.hasSpecularMap ? texture2D(material.specularMap, UV).rgb : vec3(1, 1, 1);
+
 	vec3 finalColor = vec3(0, 0, 0);
 	for (int i = 0; i < lightCount; i++) {
-		finalColor += applyLight(lights[i], texture2D(textureSampler, UV).rgb, normalize(Normal_worldspace), Position_worldspace, normalize(cameraPosition_worldspace - Position_worldspace));
+		finalColor += applyLight(lights[i], diffuseMap, specularMap, surfaceNormal, Position_worldspace, surfaceToCamera);
 	}
+	finalColor = clamp(finalColor, 0, 0.8f);
 
-	vec3 ambient = vec3(0.2f, 0.2f, 0.2f) * texture2D(textureSampler, UV).rgb;
+	vec3 ambient = vec3(0.2f, 0.2f, 0.2f) * diffuseMap;
 	gl_FragColor.rgb = ambient + finalColor;
 	gl_FragColor.a = 1.f;
 
