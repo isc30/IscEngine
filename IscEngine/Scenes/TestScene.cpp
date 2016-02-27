@@ -55,23 +55,22 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	katarinaModelLow->mesh = katarinaMeshLow; // Low poly
 	katarinaModelLow->material = new Material();
 	katarinaModelLow->material->diffuseMap = katarinaDiffuse;
-	katarinaModelLow->material->specularMap = katarinaSpecular;
+	//katarinaModelLow->material->specularMap = katarinaSpecular;
 
-	// Mikey
-	Model* mikeyModel = new Model();
-	mikeyModel->mesh = Resource::load<Mesh>("mikey.obj");
-	mikeyModel->material = new Material();
-	mikeyModel->material->diffuseMap = Resource::load<Texture>("Mickey_Mouse_D.tga");;
-	mikeyModel->material->specularMap = Resource::load<Texture>("Mickey_Mouse_S.tga");
-	mikeyModel->material->materialProperties.shininess = 50.f;
+	// Sphere
+	Model* sphereModel = new Model();
+	sphereModel->mesh = Resource::load<Mesh>("sphere.fbx");
+	sphereModel->material = new Material();
+	sphereModel->material->diffuseMap = Resource::load<Texture>("d.jpg");;
+	sphereModel->material->specularMap = Resource::load<Texture>("s.jpg");
+	sphereModel->material->materialProperties.shininess = 5.f;
 
 	// Puente
 	Model* puenteModel = new Model();
 	puenteModel->mesh = Resource::load<Mesh>("fbx_PuenteRomano.fbx");;
 	puenteModel->material = new Material();
 	puenteModel->material->diffuseMap = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
-	puenteModel->material->materialProperties.specularColor = vec3(1, 0, 0);
-	puenteModel->material->materialProperties.shininess = 0.f;
+	puenteModel->material->materialProperties.shininess = 50.f;
 
 	////////
 
@@ -95,9 +94,10 @@ TestScene::TestScene(Window* window) : Scene(window) {
 
 	}
 
-	// Mikey
-	StaticEntity* entity = new StaticEntity(mikeyModel);
-	entity->setPosition(vec3(0, 18.3f, 60));
+	// Sphere
+	StaticEntity* entity = new StaticEntity(sphereModel);
+	entity->setPosition(vec3(0, 22.3f, 60));
+	entity->setScale(vec3(2, 2, 2));
 	entities.push_back(entity);
 
 	///////////////////////////////////////////////////////
