@@ -63,7 +63,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	sphereModel->material = new Material();
 	sphereModel->material->diffuseMap = Resource::load<Texture>("d.jpg");;
 	sphereModel->material->specularMap = Resource::load<Texture>("s.jpg");
-	sphereModel->material->materialProperties.shininess = 5.f;
+	sphereModel->material->materialProperties.shininess = 10.f;
 
 	// Puente
 	Model* puenteModel = new Model();
