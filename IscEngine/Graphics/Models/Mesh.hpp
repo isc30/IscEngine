@@ -22,8 +22,8 @@ namespace IscEngine {
 
 			Buffer* vertexBuffer;
 			IndexBuffer* indexBuffer;
-			Buffer* normalBuffer;
 			Buffer* UVBuffer;
+			Buffer* normalBuffer;
 			Buffer* colorBuffer;
 
 		public:
@@ -44,19 +44,19 @@ namespace IscEngine {
 			// Adds the IndexBuffer
 			void addIndexBuffer(IndexBuffer* const indexBuffer);
 
-			// Adds the normals
-			void addNormals(const vector<float>& normals);
-			// Adds the normals
-			void addNormals(const vector<vec3>& normals);
-			// Adds the normal Buffer
-			void addNormalBuffer(Buffer* const normalBuffer);
-
 			// Adds the UVs
 			void addUVs(const vector<float>& textureCoords);
 			// Adds the UVs
 			void addUVs(const vector<vec2>& textureCoords);
 			// Adds the UV Buffer
 			void addUVBuffer(Buffer* const textureBuffer);
+
+			// Adds the normals
+			void addNormals(const vector<float>& normals);
+			// Adds the normals
+			void addNormals(const vector<vec3>& normals);
+			// Adds the normal Buffer
+			void addNormalBuffer(Buffer* const normalBuffer);
 
 			// Adds the Colors
 			void addColors(const vector<float>& colors);

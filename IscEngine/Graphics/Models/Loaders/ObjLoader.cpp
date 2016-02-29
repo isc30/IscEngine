@@ -11,12 +11,14 @@ bool loadModel(
 	std::vector<unsigned int> & indices,
 	std::vector<glm::vec3> & vertices,
 	std::vector<glm::vec2> & uvs,
-	std::vector<glm::vec3> & normals
+	std::vector<glm::vec3> & normals,
+	std::vector<glm::vec3> & tangents,
+	std::vector<glm::vec3> & bitangents
 ) {
 
 	Assimp::Importer importer;
 
-	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes);
+	const aiScene* scene = importer.ReadFile(path, aiProcess_FlipUVs | aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_OptimizeMeshes | aiProcess_SortByPType);
 	if (!scene) {
 		fprintf(stderr, importer.GetErrorString());
 		getchar();
@@ -48,8 +50,12 @@ bool loadModel(
 			if (mesh->HasNormals()) {
 				aiVector3D n = mesh->mNormals[i];
 				normals.push_back(glm::vec3(n.x, n.y, n.z));
-			} else {
-				normals.push_back(glm::vec3(1, 1, 1));
+			}
+			if (mesh->HasTangentsAndBitangents()) {
+				aiVector3D t = mesh->mTangents[i];
+				aiVector3D bt = mesh->mBitangents[i];
+				tangents.push_back(vec3(t.x, t.y, t.z));
+				bitangents.push_back(vec3(bt.x, bt.y, bt.z));
 			}
 		}
 		

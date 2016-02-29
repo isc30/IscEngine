@@ -70,6 +70,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	puenteModel->mesh = Resource::load<Mesh>("fbx_PuenteRomano.fbx");;
 	puenteModel->material = new Material();
 	puenteModel->material->diffuseMap = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
+	puenteModel->material->specularMap = Resource::load<Texture>("piedra_specular.png");
 	puenteModel->material->materialProperties.shininess = 50.f;
 
 	////////

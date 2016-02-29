@@ -84,6 +84,36 @@ void Mesh::addIndexBuffer(IndexBuffer* const indexBuffer) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the UVs
+void Mesh::addUVs(const vector<float>& textureCoords) {
+
+	this->UVBuffer = new Buffer(textureCoords, 2);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the UVs
+void Mesh::addUVs(const vector<vec2>& textureCoords) {
+
+	vector<float> UVs;
+	for (const vec2& vertice : textureCoords) {
+		UVs.push_back(vertice.x);
+		UVs.push_back(vertice.y);
+	}
+
+	this->UVBuffer = new Buffer(UVs, 2);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the UV Buffer
+void Mesh::addUVBuffer(Buffer* const textureBuffer) {
+
+	this->UVBuffer = textureBuffer;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Adds the normals
 void Mesh::addNormals(const vector<float>& normals) {
 
@@ -111,36 +141,6 @@ void Mesh::addNormals(const vector<vec3>& normals) {
 void Mesh::addNormalBuffer(Buffer* const normalBuffer) {
 
 	this->normalBuffer = normalBuffer;
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Adds the UVs
-void Mesh::addUVs(const vector<float>& textureCoords) {
-
-	this->UVBuffer = new Buffer(textureCoords, 2);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Adds the UVs
-void Mesh::addUVs(const vector<vec2>& textureCoords) {
-
-	vector<float> UVs;
-	for (const vec2& vertice : textureCoords) {
-		UVs.push_back(vertice.x);
-		UVs.push_back(vertice.y);
-	}
-
-	this->UVBuffer = new Buffer(UVs, 2);
-
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Adds the UV Buffer
-void Mesh::addUVBuffer(Buffer* const textureBuffer) {
-
-	this->UVBuffer = textureBuffer;
 
 }
 

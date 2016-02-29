@@ -62,6 +62,7 @@ void main(){
 	
 	vec3 surfaceToCamera = normalize(cameraPosition_worldspace - Position_worldspace);
 	vec3 surfaceNormal = normalize(Normal_worldspace);
+	//surfaceNormal = normalize(texture2D(material.specularMap, UV).rgb * 2 - 1);
 
 	vec3 diffuseMap = material.hasDiffuseMap ? texture2D(material.diffuseMap, UV).rgb : vec3(0.75f, 0.75f, 0.75f);
 	vec3 specularMap = material.hasSpecularMap ? texture2D(material.specularMap, UV).rgb : vec3(1, 1, 1);
