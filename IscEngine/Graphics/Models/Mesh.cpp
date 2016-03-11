@@ -17,6 +17,8 @@ Mesh::Mesh(const vector<vec3>& vertices) {
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
 	this->UVBuffer = nullptr;
+	this->tangentBuffer = nullptr;
+	this->bitangentBuffer = nullptr;
 	this->colorBuffer = nullptr;
 
 }
@@ -29,6 +31,8 @@ Mesh::Mesh(const vector<float>& vertices) {
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
 	this->UVBuffer = nullptr;
+	this->tangentBuffer = nullptr;
+	this->bitangentBuffer = nullptr;
 	this->colorBuffer = nullptr;
 
 }
@@ -41,6 +45,8 @@ Mesh::Mesh(Buffer* const vertexBuffer) {
 	this->indexBuffer = nullptr;
 	this->normalBuffer = nullptr;
 	this->UVBuffer = nullptr;
+	this->tangentBuffer = nullptr;
+	this->bitangentBuffer = nullptr;
 	this->colorBuffer = nullptr;
 
 }
@@ -55,6 +61,8 @@ Mesh::~Mesh() {
 	delete this->indexBuffer; this->indexBuffer = nullptr;
 	delete this->normalBuffer; this->normalBuffer = nullptr;
 	delete this->UVBuffer; this->UVBuffer = nullptr;
+	delete this->tangentBuffer; this->tangentBuffer = nullptr;
+	delete this->bitangentBuffer; this->bitangentBuffer = nullptr;
 	delete this->colorBuffer; this->colorBuffer = nullptr;
 
 }
@@ -102,7 +110,7 @@ void Mesh::addNormals(const vector<vec3>& normals) {
 		normalVector.push_back(vertice.z);
 	}
 
-	this->normalBuffer = new Buffer(normalVector, 3);
+	this->addNormals(normalVector);
 
 }
 
@@ -132,7 +140,7 @@ void Mesh::addUVs(const vector<vec2>& textureCoords) {
 		UVs.push_back(vertice.y);
 	}
 
-	this->UVBuffer = new Buffer(UVs, 2);
+	this->addUVs(UVs);
 
 }
 
@@ -141,6 +149,68 @@ void Mesh::addUVs(const vector<vec2>& textureCoords) {
 void Mesh::addUVBuffer(Buffer* const textureBuffer) {
 
 	this->UVBuffer = textureBuffer;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the tangents
+void Mesh::addTangents(const vector<float>& tangents) {
+
+	this->tangentBuffer = new Buffer(tangents, 3);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the tangents
+void Mesh::addTangents(const vector<vec3>& tangents) {
+
+	vector<float> tangentVector;
+	for (const vec3& vertice : tangents) {
+		tangentVector.push_back(vertice.x);
+		tangentVector.push_back(vertice.y);
+		tangentVector.push_back(vertice.z);
+	}
+
+	this->addTangents(tangentVector);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the tangent Buffer
+void Mesh::addTangentBuffer(Buffer* const tangentBuffer) {
+
+	this->tangentBuffer = tangentBuffer;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the bitangents
+void Mesh::addBitangents(const vector<float>& bitangents) {
+
+	this->bitangentBuffer = new Buffer(bitangents, 3);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the bitangents
+void Mesh::addBitangents(const vector<vec3>& bitangents) {
+
+	vector<float> bitangentVector;
+	for (const vec3& vertice : bitangents) {
+		bitangentVector.push_back(vertice.x);
+		bitangentVector.push_back(vertice.y);
+		bitangentVector.push_back(vertice.z);
+	}
+
+	this->addBitangents(bitangentVector);
+
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Adds the bitangent Buffer
+void Mesh::addBitangentBuffer(Buffer* const bitangentBuffer) {
+
+	this->bitangentBuffer = bitangentBuffer;
 
 }
 
@@ -191,6 +261,10 @@ VertexArray* Mesh::cacheVertexArray(Shader* const currentShader) {
 		if (position > -1 && this->UVBuffer != nullptr) currentVertexArray->addBuffer(this->UVBuffer, position);
 		position = currentShader->getAttributeLocation("vertexNormal_modelspace");
 		if (position > -1 && this->normalBuffer != nullptr) currentVertexArray->addBuffer(this->normalBuffer, position);
+		position = currentShader->getAttributeLocation("vertexTangent_modelspace");
+		if (position > -1 && this->tangentBuffer != nullptr) currentVertexArray->addBuffer(this->tangentBuffer, position);
+		position = currentShader->getAttributeLocation("vertexBitangent_modelspace");
+		if (position > -1 && this->bitangentBuffer != nullptr) currentVertexArray->addBuffer(this->bitangentBuffer, position);
 
 		vertexArrays[currentShader] = currentVertexArray;
 		return currentVertexArray;
@@ -227,7 +301,7 @@ void Mesh::render(const unsigned int type) { // WIREFRAME: GL_LINE_LOOP
 
 	} else {
 
-		int attributeLocation[3];
+		int attributeLocation[5];
 
 		attributeLocation[0] = currentShader->getAttributeLocation("vertexPosition_modelspace");
 		if (attributeLocation[0] > -1 && this->vertexBuffer != nullptr) {
@@ -274,6 +348,36 @@ void Mesh::render(const unsigned int type) { // WIREFRAME: GL_LINE_LOOP
 			Buffer::unbind();
 		}
 
+		attributeLocation[3] = currentShader->getAttributeLocation("vertexTangent_modelspace");
+		if (attributeLocation[3] > -1 && this->tangentBuffer != nullptr) {
+			glEnableVertexAttribArray(attributeLocation[3]);
+			Buffer::bind(this->tangentBuffer);
+			glVertexAttribPointer(
+				attributeLocation[3],
+				this->tangentBuffer->getComponentCount(),
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)0
+				);
+			Buffer::unbind();
+		}
+
+		attributeLocation[4] = currentShader->getAttributeLocation("vertexBitangent_modelspace");
+		if (attributeLocation[4] > -1 && this->bitangentBuffer != nullptr) {
+			glEnableVertexAttribArray(attributeLocation[4]);
+			Buffer::bind(this->bitangentBuffer);
+			glVertexAttribPointer(
+				attributeLocation[4],
+				this->bitangentBuffer->getComponentCount(),
+				GL_FLOAT,
+				GL_FALSE,
+				0,
+				(void*)0
+				);
+			Buffer::unbind();
+		}
+
 		if (this->indexBuffer != nullptr) {
 			IndexBuffer::bind(this->indexBuffer);
 			glDrawElements(type, this->indexBuffer->getSize(), this->indexBuffer->getType(), 0);
@@ -285,6 +389,8 @@ void Mesh::render(const unsigned int type) { // WIREFRAME: GL_LINE_LOOP
 		if (attributeLocation[0] > -1 && this->vertexBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[0]);
 		if (attributeLocation[1] > -1 && this->UVBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[1]);
 		if (attributeLocation[2] > -1 && this->normalBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[2]);
+		if (attributeLocation[3] > -1 && this->tangentBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[3]);
+		if (attributeLocation[4] > -1 && this->bitangentBuffer != nullptr) glDisableVertexAttribArray(attributeLocation[4]);
 
 	}
 

@@ -32,12 +32,16 @@ namespace IscEngine {
         std::vector<glm::vec3> objVertices;
         std::vector<glm::vec2> objUvs;
         std::vector<glm::vec3> objNormals;
-        loadModel(Resource::RESOURCE_PATH + "Models/" + fileName, objIndices, objVertices, objUvs, objNormals);
+		vector<vec3> objTangents;
+		vector<vec3> objBitangents;
+        loadModel(Resource::RESOURCE_PATH + "Models/" + fileName, objIndices, objVertices, objUvs, objNormals, objTangents, objBitangents);
 
         Mesh* mesh = new Mesh(objVertices);
         if (objIndices.size() > 0) mesh->addIndices(objIndices);
         if (objNormals.size() > 0) mesh->addNormals(objNormals);
         if (objUvs.size() > 0) mesh->addUVs(objUvs);
+		if (objTangents.size() > 0) mesh->addTangents(objTangents);
+		if (objBitangents.size() > 0) mesh->addBitangents(objBitangents);
 
         return mesh;
 

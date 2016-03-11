@@ -57,6 +57,7 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 
 			this->shader->setUniform("material.hasDiffuseMap", false);
 			this->shader->setUniform("material.hasSpecularMap", false);
+			this->shader->setUniform("material.hasNormalMap", false);
 
 			int currentIndex = 0;
 
@@ -74,6 +75,13 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 				currentIndex++;
 			}
 
+			if (material->normalMap != nullptr) {
+				Texture::bind(material->normalMap, currentIndex);
+				this->shader->setUniform("material.normalMap", currentIndex);
+				this->shader->setUniform("material.hasNormalMap", true);
+				currentIndex++;
+			}
+
 			mesh->render(GL_TRIANGLES);
 
 			if (material->specularMap != nullptr) {
@@ -82,6 +90,11 @@ void Simple3D::render(const mat4& P, const Camera* const camera) {
 			}
 
 			if (material->diffuseMap != nullptr) {
+				currentIndex--;
+				Texture::unbind(currentIndex);
+			}
+
+			if (material->normalMap != nullptr) {
 				currentIndex--;
 				Texture::unbind(currentIndex);
 			}

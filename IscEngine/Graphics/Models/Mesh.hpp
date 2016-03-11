@@ -24,6 +24,8 @@ namespace IscEngine {
 			IndexBuffer* indexBuffer;
 			Buffer* normalBuffer;
 			Buffer* UVBuffer;
+			Buffer* tangentBuffer;
+			Buffer* bitangentBuffer;
 			Buffer* colorBuffer;
 
 		public:
@@ -57,6 +59,20 @@ namespace IscEngine {
 			void addUVs(const vector<vec2>& textureCoords);
 			// Adds the UV Buffer
 			void addUVBuffer(Buffer* const textureBuffer);
+
+			// Adds the tangents
+			void addTangents(const vector<float>& tangents);
+			// Adds the tangents
+			void addTangents(const vector<vec3>& tangents);
+			// Adds the tangent Buffer
+			void addTangentBuffer(Buffer* const tangentBuffer);
+
+			// Adds the bitangents
+			void addBitangents(const vector<float>& bitangents);
+			// Adds the bitangents
+			void addBitangents(const vector<vec3>& bitangents);
+			// Adds the bitangent Buffer
+			void addBitangentBuffer(Buffer* const bitangentBuffer);
 
 			// Adds the Colors
 			void addColors(const vector<float>& colors);

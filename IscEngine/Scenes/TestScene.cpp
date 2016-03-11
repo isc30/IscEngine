@@ -43,6 +43,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	Mesh* katarinaMeshLow = Resource::load<Mesh>("katarina_low.obj");
 	Texture* katarinaDiffuse = Resource::load<Texture>("katarina_base_diffuse.png");
 	Texture* katarinaSpecular = Resource::load<Texture>("katarina_base_specular.png");
+	Texture* katarinaNormal = Resource::load<Texture>("katarina_base_normal.png");
 
 	// Katarina
 	Model* katarinaModelHD = new Model();
@@ -50,6 +51,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	katarinaModelHD->material = new Material();
 	katarinaModelHD->material->diffuseMap = katarinaDiffuse;
 	katarinaModelHD->material->specularMap = katarinaSpecular;
+	katarinaModelHD->material->normalMap = katarinaNormal;
 
 	Model* katarinaModelLow = new Model();
 	katarinaModelLow->mesh = katarinaMeshLow; // Low poly
@@ -63,6 +65,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	sphereModel->material = new Material();
 	sphereModel->material->diffuseMap = Resource::load<Texture>("d.jpg");;
 	sphereModel->material->specularMap = Resource::load<Texture>("s.jpg");
+	sphereModel->material->normalMap = Resource::load<Texture>("katarina_base_normal.png");
 	sphereModel->material->materialProperties.shininess = 10.f;
 
 	// Puente
@@ -70,6 +73,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	puenteModel->mesh = Resource::load<Mesh>("fbx_PuenteRomano.fbx");;
 	puenteModel->material = new Material();
 	puenteModel->material->diffuseMap = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
+	puenteModel->material->specularMap = Resource::load<Texture>("s.jpg");
 	puenteModel->material->materialProperties.shininess = 50.f;
 
 	////////

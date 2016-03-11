@@ -6,6 +6,9 @@ precision lowp float;
 varying vec2 UV;
 varying vec3 Position_worldspace;
 varying vec3 Normal_worldspace;
+varying vec3 tangent_worldspace;
+varying vec3 bitangent_worldspace;
+
 varying vec3 EyeDirection_cameraspace;
 varying vec3 LightDirection_cameraspace;
 
@@ -28,6 +31,7 @@ struct LightSource {
 
 struct Material {
 	
+	bool hasNormalMap; sampler2D normalMap;
 	bool hasDiffuseMap; sampler2D diffuseMap;
 	bool hasSpecularMap; sampler2D specularMap;
 
@@ -61,14 +65,19 @@ vec3 applyLight(LightSource light, vec3 diffuseMap, vec3 specularMap, vec3 surfa
 void main(){
 	
 	vec3 surfaceToCamera = normalize(cameraPosition_worldspace - Position_worldspace);
-	vec3 surfaceNormal = normalize(Normal_worldspace);
+	
+	vec3 T = normalize(tangent_worldspace);
+	vec3 B = normalize(bitangent_worldspace);
+	vec3 N = normalize(Normal_worldspace);
+	mat3 TBN = mat3(T, B, N);
 
 	vec3 diffuseMap = material.hasDiffuseMap ? texture2D(material.diffuseMap, UV).rgb : vec3(0.75f, 0.75f, 0.75f);
 	vec3 specularMap = material.hasSpecularMap ? texture2D(material.specularMap, UV).rgb : vec3(1, 1, 1);
+	vec3 normalMap = material.hasNormalMap ? normalize(TBN * normalize(texture2D(material.normalMap, UV).rgb * 2.0 - 1.0)) : normalize(Normal_worldspace);
 
 	vec3 finalColor = vec3(0, 0, 0);
 	for (int i = 0; i < lightCount; i++) {
-		finalColor += applyLight(lights[i], diffuseMap, specularMap, surfaceNormal, Position_worldspace, surfaceToCamera);
+		finalColor += applyLight(lights[i], diffuseMap, specularMap, normalMap, Position_worldspace, surfaceToCamera);
 	}
 	finalColor = clamp(finalColor, 0, 0.8f);
 
