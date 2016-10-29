@@ -1,4 +1,4 @@
 # IscEngine
-Pure C++ and OpenGL-based 3D Game engine
+Pure C++ and OpenGL-based 3D Game engine created from scratch
 ## Demo
 [![IscEngine Demo](http://img.youtube.com/vi/xovvfez4KaQ/0.jpg)](http://www.youtube.com/watch?v=xovvfez4KaQ)

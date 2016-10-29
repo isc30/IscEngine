@@ -8,12 +8,13 @@ using namespace IscEngine;
 
 ///////////////////////////////////////////////////////////////////////////////
 // https://github.com/isc30/IscEngine
-int main()
-{
+int main() {
+
 	Engine game;
-	game.create("Woo", 1920, 1080, sf::Style::Fullscreen);
+	game.create("Woo", 800, 600, sf::Style::Close);
 	game.setScene(new Scenes::TestScene(game.getWindow()));
 	game.run();
 
 	return 0;
+
 }
