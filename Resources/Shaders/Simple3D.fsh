@@ -71,7 +71,7 @@ void main(){
 	vec3 N = normalize(Normal_worldspace);
 	mat3 TBN = mat3(T, B, N);
 
-	vec3 diffuseMap = material.hasDiffuseMap ? texture2D(material.diffuseMap, UV).rgb : vec3(0.75f, 0.75f, 0.75f);
+	vec3 diffuseMap = material.hasDiffuseMap ? texture2D(material.diffuseMap, UV).rgb : vec3(1.0, 1.0, 1.0);
 	vec3 specularMap = material.hasSpecularMap ? texture2D(material.specularMap, UV).rgb : vec3(1, 1, 1);
 	vec3 normalMap = material.hasNormalMap ? normalize(TBN * normalize(texture2D(material.normalMap, UV).rgb * 2.0 - 1.0)) : normalize(Normal_worldspace);
 
@@ -79,9 +79,9 @@ void main(){
 	for (int i = 0; i < lightCount; i++) {
 		finalColor += applyLight(lights[i], diffuseMap, specularMap, normalMap, Position_worldspace, surfaceToCamera);
 	}
-	finalColor = clamp(finalColor, 0, 0.8f);
+	finalColor = clamp(finalColor, 0, 0.7f);
 
-	vec3 ambient = vec3(0.2f, 0.2f, 0.2f) * diffuseMap;
+	vec3 ambient = vec3(0.3f, 0.3f, 0.3f) * diffuseMap;
 	gl_FragColor.rgb = ambient + finalColor;
 	gl_FragColor.a = 1.f;
 

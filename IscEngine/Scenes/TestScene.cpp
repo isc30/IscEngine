@@ -4,7 +4,6 @@ using namespace IscEngine;
 using namespace IscEngine::Scenes;
 
 #include "../Graphics/Resource.hpp"
-#include "../Graphics/Models/Loaders/ObjLoader.hpp"
 #include "../Views/Cameras/Base/Camera.hpp"
 #include "../Graphics/Buffers/FrameBuffer.hpp"
 #include "../Views/Modelview.hpp"
@@ -64,7 +63,7 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	sphereModel->mesh = Resource::load<Mesh>("sphere.fbx");
 	sphereModel->material = new Material();
 	sphereModel->material->diffuseMap = Resource::load<Texture>("d.jpg");;
-	sphereModel->material->specularMap = Resource::load<Texture>("s.jpg");
+	sphereModel->material->specularMap = Resource::load<Texture>("katarina_base_specular.png");
 	sphereModel->material->normalMap = Resource::load<Texture>("katarina_base_normal.png");
 	sphereModel->material->materialProperties.shininess = 10.f;
 
@@ -72,8 +71,8 @@ TestScene::TestScene(Window* window) : Scene(window) {
 	Model* puenteModel = new Model();
 	puenteModel->mesh = Resource::load<Mesh>("fbx_PuenteRomano.fbx");;
 	puenteModel->material = new Material();
-	puenteModel->material->diffuseMap = Resource::load<Texture>("PiedraRomano_Difuse.jpg");
-	puenteModel->material->specularMap = Resource::load<Texture>("s.jpg");
+	puenteModel->material->diffuseMap = Resource::load<Texture>("d0.jpg");
+	puenteModel->material->normalMap = Resource::load<Texture>("n0.jpg");
 	puenteModel->material->materialProperties.shininess = 50.f;
 
 	////////
