@@ -1,3 +1,6 @@
+# ABANDONED PROJECT
+
+
 # IscEngine
 Pure C++ and OpenGL-based 3D Game engine created from scratch
 ## Demo
